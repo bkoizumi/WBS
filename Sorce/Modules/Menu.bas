@@ -1,0 +1,299 @@
+Attribute VB_Name = "Menu"
+Sub M_xxxxxxxxxxxxxxxxx()
+  Call Library.startScript
+  Call ProgressBar.showStart
+
+
+  Call ProgressBar.showEnd
+  Call Library.endScript
+End Sub
+
+
+
+'**************************************************************************************************
+' * 設定
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Sub M_Help()
+  Call init.setting
+
+End Sub
+
+
+
+Sub M_ショートカット設定()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  
+  Call init.setting
+  endLine = Cells(Rows.count, 7).End(xlUp).row
+  
+  '設定を解除
+  For line = 3 To endLine
+    Application.MacroOptions Macro:="Menu." & setSheet.Range("G" & line), ShortcutKey:=""
+  Next
+  
+  For line = 3 To endLine
+    If setSheet.Range("I" & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & setSheet.Range("G" & line), ShortcutKey:=setSheet.Range("I" & line)
+    End If
+  Next
+  'インデントのショートカット
+  Application.OnKey "%{LEFT}", "Menu.M_インデント減"
+  Application.OnKey "%{RIGHT}", "Menu.M_インデント増"
+  Application.OnKey "%{F1}", "WBS_Option.表示_標準"
+  Application.OnKey "%{F2}", "WBS_Option.表示_ガントチャート"
+  
+  
+End Sub
+
+
+Sub M_オプション画面表示()
+Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
+  Call init.setting
+  
+  Call WBS_Option.オプション画面表示
+
+End Sub
+
+
+Sub M_カレンダー生成()
+  Call Library.startScript
+  Call ProgressBar.showStart
+  
+  Call Library.showDebugForm("カレンダー生成", "処理開始")
+  Call Calendar.makeCalendar
+  
+  Call Library.showDebugForm("カレンダー生成", "処理完了")
+  Call ProgressBar.showEnd
+  Call Library.endScript
+
+End Sub
+
+Sub M_インデント増()
+  If ActiveCell.Column = 3 And ActiveSheet.Name = "WBS" Then
+    Selection.InsertIndent 1
+    Cells(ActiveCell.row, 2).FormulaR1C1 = "=getIndentLevel(ROW())"
+  End If
+  
+End Sub
+
+
+Sub M_インデント減()
+  If ActiveCell.Column = 3 And ActiveSheet.Name = "WBS" Then
+    Selection.InsertIndent -1
+    Cells(ActiveCell.row, 2).FormulaR1C1 = "=getIndentLevel(ROW())"
+  End If
+  
+End Sub
+
+
+'**************************************************************************************************
+' * 共通
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Sub M_選択行色付切替()
+  Call Library.startScript
+  Call WBS_Option.setLineColor
+  Call Library.endScript(True)
+End Sub
+
+
+'--------------------------------------
+Sub M_全データ削除()
+  If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbNo Then
+    End
+  End If
+  
+  Call Library.startScript
+  Call WBS_Option.clearAll
+  Call Library.endScript
+End Sub
+
+
+Sub M_全画面()
+Attribute M_全画面.VB_ProcData.VB_Invoke_Func = " \n14"
+  Application.ScreenUpdating = False
+  ActiveWindow.DisplayHeadings = False
+  Application.DisplayFullScreen = True
+  
+  With DispFullScreenForm
+    .StartUpPosition = 0
+    .top = Application.top + 300
+    .Left = Application.Left + 30
+  End With
+  Application.ScreenUpdating = True
+  DispFullScreenForm.Show vbModeless
+End Sub
+
+Sub M_タスク操作()
+Attribute M_タスク操作.VB_ProcData.VB_Invoke_Func = " \n14"
+End Sub
+
+Sub M_スケール()
+Attribute M_スケール.VB_ProcData.VB_Invoke_Func = " \n14"
+End Sub
+
+
+
+'**************************************************************************************************
+' * タスク
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Sub M_タスクチェック()
+Attribute M_タスクチェック.VB_ProcData.VB_Invoke_Func = "C\n14"
+  Call Library.startScript
+  Call ProgressBar.showStart
+  
+  Call Library.showDebugForm("タスクチェック", "処理開始")
+  Call Check.タスクリスト確認
+  
+  Call Library.showDebugForm("タスクチェック", "処理完了")
+  Call ProgressBar.showEnd
+  Call Library.endScript(True)
+End Sub
+
+
+Sub M_フィルター()
+Attribute M_フィルター.VB_ProcData.VB_Invoke_Func = " \n14"
+  Call init.setting
+  mainSheet.Select
+  
+  With FilterForm
+    .StartUpPosition = 0
+    .top = Application.top + (ActiveWindow.Width / 8)
+    .Left = Application.Left + (ActiveWindow.Height / 8)
+  End With
+  
+  FilterForm.Show
+End Sub
+
+Sub M_すべて表示()
+Attribute M_すべて表示.VB_ProcData.VB_Invoke_Func = " \n14"
+  Cells.EntireRow.Hidden = False
+End Sub
+
+
+Sub M_進捗コピー()
+  Call Task.進捗コピー
+End Sub
+
+
+
+
+
+
+
+
+'**************************************************************************************************
+' * ガントチャート
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+'クリア--------------------------------------------------------------------------------------------
+Sub M_ガントチャートクリア()
+Attribute M_ガントチャートクリア.VB_ProcData.VB_Invoke_Func = "D\n14"
+  Call Library.startScript
+  Call Chart.ガントチャート削除
+  Call Library.endScript
+End Sub
+
+'生成のみ------------------------------------------------------------------------------------------
+Sub M_ガントチャート生成のみ()
+Attribute M_ガントチャート生成のみ.VB_ProcData.VB_Invoke_Func = "A\n14"
+  Call Library.startScript
+  Call ProgressBar.showStart
+  Call Library.showDebugForm("ガントチャート生成", "処理開始")
+  
+  Call Chart.ガントチャート生成
+  
+  Call Library.showDebugForm("ガントチャート生成", "処理完了")
+  Call ProgressBar.showEnd
+  Call Library.endScript(True)
+End Sub
+
+
+'生成----------------------------------------------------------------------------------------------
+Sub M_ガントチャート生成()
+Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
+  Call Library.startScript
+  Call ProgressBar.showStart
+  Call Library.showDebugForm("ガントチャート生成", "処理開始")
+  
+  Call Check.タスクリスト確認
+  Call Chart.ガントチャート生成
+  
+  Call Library.showDebugForm("ガントチャート生成", "処理完了")
+  Call ProgressBar.showEnd
+  Call Library.endScript(True)
+  Application.EnableEvents = True
+End Sub
+
+
+
+'センター----------------------------------------------------------------------------------------------
+Sub M_センター()
+Attribute M_センター.VB_ProcData.VB_Invoke_Func = " \n14"
+  Call Library.startScript
+  Call ProgressBar.showStart
+  Call Library.showDebugForm("センターへ移動", "処理開始")
+  
+  Call Chart.センター
+  
+  Call Library.showDebugForm("センターへ移動", "処理完了")
+  Call ProgressBar.showEnd
+  Call Library.endScript
+End Sub
+
+
+'**************************************************************************************************
+' * import
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+'Excelファイル-------------------------------------------------------------------------------------
+Sub M_Excelインポート()
+  
+  Call Library.startScript
+  Call Library.showDebugForm("ファイルインポート", "処理開始")
+  If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
+    Call WBS_Option.clearAll
+  Else
+    Call WBS_Option.clearCalendar
+  End If
+  Call ProgressBar.showStart
+  
+  
+  Call import.ファイルインポート
+  Call Calendar.書式設定
+  Call import.makeCalendar
+  
+  
+  Call ProgressBar.showEnd
+  Call Library.endScript
+  
+  Call WBS_Option.saveAndRefresh
+  
+  Err.Clear
+  Call Library.showNotice(200, "インポート")
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

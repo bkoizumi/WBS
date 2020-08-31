@@ -1,0 +1,57 @@
+{
+
+  "update.showReleaseNotes": false,      // 更新後にリリース ノートを表示
+  "workbench.startupEditor": "none",     // vscode起動時に「ようこそ」画面を表示しないようにする
+
+  // ファイル設定----------------------------------------------------------------------------------
+  "files.autoGuessEncoding": true,
+  // "files.encoding": "shiftjis"  ,
+  "files.eol": "\r\n",
+  "files.insertFinalNewline": true,      // 保存時にファイルの最後に空行を挿入する
+  "files.trimFinalNewlines": true,       // 保存時にファイルの最後に存在する空行を削除する
+  "files.trimTrailingWhitespace": true,  // 保存時に行の終端に存在する空白文字を削除する
+
+  // エディター設定--------------------------------------------------------------------------------
+  "editor.mouseWheelZoom": true,
+  "editor.wordWrap": "off",
+  "editor.fontFamily": "Ricty Diminished with Fira Code",
+  "editor.fontSize": 15,
+  "editor.renderLineHighlight": "all",    // カーソル行を強調する
+  "editor.cursorBlinking": "phase",       // カーソルを点滅させる
+  "editor.folding": true,                 // コードの折りたたみを許可
+  "editor.renderIndentGuides": true,      // インデントのガイドラインを表示
+  "editor.links": true,                   // リンクをクリック可能に
+  "editor.tabSize" : 2,                   // Tabを押したときスペース何個分に相当するか
+
+
+  // ターミナル------------------------------------------------------------------------------------
+  // "terminal.integrated.fontFamily": "'Roboto Mono'",  // フォント
+  // "terminal.integrated.fontSize": 10,                 // フォントサイズ
+
+
+  "[Batch]": {
+    "files.encoding": "shiftjis",
+  },
+  "[Visual Basic]": {
+    "files.encoding": "shiftjis",
+  },
+  "[ps1]": {
+    "files.encoding": "shiftjis"
+  },
+  "[xml]": {
+    "files.encoding": "utf8"
+  },
+  "[python]": {
+    "files.encoding": "utf8"
+  },
+  "[CSV]": {
+    "files.encoding": "shiftjis",
+    "editor.wordWrap": "off"
+  },
+  "[markdown]": {
+    "files.encoding": "utf8",
+    "editor.wordWrap": "off",
+    "editor.tabSize" : 2,
+    "editor.trimAutoWhitespace":false
+  },
+}
