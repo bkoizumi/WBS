@@ -307,6 +307,8 @@ End Function
 ' “Á•Ê‚È‹x“ú
 '******************************************************************************
 Public Function TokubetsunaKyujitsu(targetdate As Date, HollydayName As String) As Boolean
+    Dim line As Long, endLine As Long
+    
     TokubetsunaKyujitsu = False
     If targetdate = "1959/04/10" Then
         HollydayName = "–¾me‰¤Œ‹¥‚Ì‹V"
@@ -337,6 +339,19 @@ Public Function TokubetsunaKyujitsu(targetdate As Date, HollydayName As String) 
         HollydayName = "R‚Ì“ú"
         TokubetsunaKyujitsu = True
     End If
+    
+    
+    '‰ïĞw’è‹x“ú‚Ìİ’è
+    endLine = setSheet.Cells(Rows.count, 13).End(xlUp).row
+    For line = 3 To endLine
+      If targetdate = setSheet.Range("M" & line) Then
+          HollydayName = "‰ïĞw’è‹x“ú"
+          TokubetsunaKyujitsu = True
+      End If
+    Next
+    
+    
+    
     
     
 End Function

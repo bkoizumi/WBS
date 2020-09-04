@@ -1,27 +1,31 @@
 {
 
-  "update.showReleaseNotes": false,      // 更新後にリリース ノートを表示
-  "workbench.startupEditor": "none",     // vscode起動時に「ようこそ」画面を表示しないようにする
-
+  "update.showReleaseNotes": false,
+  "workbench.startupEditor": "newUntitledFile",
   // ファイル設定----------------------------------------------------------------------------------
   "files.autoGuessEncoding": true,
   // "files.encoding": "shiftjis"  ,
   "files.eol": "\r\n",
-  "files.insertFinalNewline": true,      // 保存時にファイルの最後に空行を挿入する
-  "files.trimFinalNewlines": true,       // 保存時にファイルの最後に存在する空行を削除する
-  "files.trimTrailingWhitespace": true,  // 保存時に行の終端に存在する空白文字を削除する
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "**/~$*.xlsm": true
+  },
+
 
   // エディター設定--------------------------------------------------------------------------------
   "editor.mouseWheelZoom": true,
   "editor.wordWrap": "off",
-  "editor.fontFamily": "Ricty Diminished with Fira Code",
+  "editor.fontFamily": "'Ricty Diminished with Fira Code','Meiryo UI'",
+  "editor.fontLigatures": true,
   "editor.fontSize": 15,
-  "editor.renderLineHighlight": "all",    // カーソル行を強調する
-  "editor.cursorBlinking": "phase",       // カーソルを点滅させる
-  "editor.folding": true,                 // コードの折りたたみを許可
-  "editor.renderIndentGuides": true,      // インデントのガイドラインを表示
-  "editor.links": true,                   // リンクをクリック可能に
-  "editor.tabSize" : 2,                   // Tabを押したときスペース何個分に相当するか
+  "editor.renderLineHighlight": "all",
+  "editor.cursorBlinking": "phase",
+  "editor.folding": true,
+  "editor.renderIndentGuides": true,
+  "editor.links": true,
+  "editor.tabSize" : 2,
 
 
   // ターミナル------------------------------------------------------------------------------------

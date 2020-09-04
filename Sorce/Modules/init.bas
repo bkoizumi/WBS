@@ -8,14 +8,19 @@ Public helpSheet As Worksheet
 Public setSheet As Worksheet
 Public mainSheet As Worksheet
 Public tmpSheet As Worksheet
+Public ResourcesSheet As Worksheet
 
 
 
 'グローバル変数----------------------------------
+Public Const thisAppName = "Excel for Work Breakdown Structure"
+
+
+
 Public setVal As Collection
 Public getVal As Collection
 Public memberColor As Object
-Public debugMode As String
+
 
 'Public lineColor As String
 'Public SaturdayColor As String
@@ -45,15 +50,18 @@ Public changeShapesName As String
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '***********************************************************************************************************************************************
-Function setting()
+Function setting(Optional reCheckFlg As Boolean)
   Dim line As Long
+  
+  
+  On Error GoTo catchError
 
-  If debugMode <> "" Then
+  If logFile <> "" And setVal("debugMode") = setSheet.Range("B3") And reCheckFlg <> True Then
+    Exit Function
     Set setVal = Nothing
   End If
-  
-  Set setVal = New Collection
-  Set memberColor = CreateObject("Scripting.Dictionary")
+
+Label_reset:
   
   'ブックの設定
   Set ThisBook = ThisWorkbook
@@ -63,8 +71,18 @@ Function setting()
   Set helpSheet = ThisBook.Worksheets("Help")
   Set noticeCodeSheet = ThisBook.Worksheets("Notice")
   Set setSheet = ThisBook.Worksheets("設定")
-  Set mainSheet = ThisBook.Worksheets("WBS")
+  Set mainSheet = ThisBook.Worksheets("メイン")
   Set tmpSheet = ThisBook.Worksheets("Tmp")
+  Set ResourcesSheet = ThisBook.Worksheets("リソース")
+  
+  If reCheckFlg = True Then
+    Call Check.項目列チェック
+    Set setVal = Nothing
+  End If
+  
+  Set setVal = New Collection
+  Set memberColor = CreateObject("Scripting.Dictionary")
+  
   
   '期間、基準日が未入力時の初期値
   Select Case True
@@ -85,8 +103,12 @@ Function setting()
        .Add item:=setSheet.Range("B" & line), Key:=setSheet.Range("A" & line)
       End If
     Next
+    For line = 3 To setSheet.Cells(Rows.count, 4).End(xlUp).row
+      If setSheet.Range("D" & line) <> "" Then
+       .Add item:=setSheet.Range("E" & line), Key:=setSheet.Range("D" & line)
+      End If
+    Next
   End With
-  debugMode = setVal("debugMode")
   
   'ショートカットキーの設定追加
   With setVal
@@ -115,6 +137,21 @@ Function setting()
   logFile = ThisBook.Path & "\ExcelMacro.log"
   
   Call 名前定義
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  logFile = ""
+'  Set setVal = Nothing
+'  Set setVal = New Collection
+'
+'  With setVal
+'    .Add item:="ABC", Key:="debugMode"
+'  End With
+
+'  Call Library.showNotice(Err.Number, Err.Description, True)
+  
+  GoTo Label_reset
+  
 End Function
 
 '***********************************************************************************************************************************************
@@ -122,7 +159,7 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '***********************************************************************************************************************************************
-Function chkHollyday(chkDate As Date, HollydayName As String, flg As Boolean)
+Function chkHollyday(chkDate As Date, HollydayName As String)
   Dim line As Long, endLine As Long
   Dim strFilMessage() As Date
   
@@ -130,20 +167,14 @@ Function chkHollyday(chkDate As Date, HollydayName As String, flg As Boolean)
   Call GetHollyday(CDate(chkDate), HollydayName)
   
   '土日を判定
-  If Weekday(chkDate) = vbSunday Then
-    HollydayName = "Sunday"
-  ElseIf Weekday(chkDate) = vbSaturday Then
-    HollydayName = "Saturday"
+  If HollydayName = "" Then
+    If Weekday(chkDate) = vbSunday Then
+      HollydayName = "Sunday"
+    ElseIf Weekday(chkDate) = vbSaturday Then
+      HollydayName = "Saturday"
+    End If
   End If
   
-  If flg = True Then
-    For line = 3 To setSheet.Cells(Rows.count, 12).End(xlUp).row
-      If setSheet.Range("M" & line) = chkDate Then
-        HollydayName = "会社指定休日"
-        Exit For
-      End If
-    Next
-  End If
   
 End Function
 
@@ -158,6 +189,7 @@ Function 名前定義()
   Dim Name As Object
   
 '  On Error GoTo catchError
+
   For Each Name In Names
     If Name.Visible = False Then
       Name.Visible = True
@@ -166,21 +198,88 @@ Function 名前定義()
       Name.Delete
     End If
   Next
-  Set setSheet = ThisWorkbook.Worksheets("設定")
   
-  For line = 3 To 20
+  For line = 3 To 29
     If setSheet.Range("A" & line) <> "" Then
       setSheet.Range("B" & line).Name = setSheet.Range("A" & line)
     End If
   Next
   endLine = setSheet.Cells(Rows.count, 11).End(xlUp).row
-  setSheet.Range("K3:K" & endLine).Name = "担当者"
+  setSheet.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & endLine).Name = "担当者"
 
-  endLine = setSheet.Cells(Rows.count, 15).End(xlUp).row
-  setSheet.Range("O3:O" & endLine).Name = "休日リスト"
+  endLine = setSheet.Cells(Rows.count, 17).End(xlUp).row
+  setSheet.Range(setVal("cell_CompanyHoliday") & "3:" & setVal("cell_CompanyHoliday") & endLine).Name = "休日リスト"
 
   Exit Function
 'エラー発生時=====================================================================================
 catchError:
-
+  Call Library.showNotice(Err.Number, Err.Description, True)
+  
 End Function
+
+
+'***********************************************************************************************************************************************
+' * シートの表示/非表示
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'***********************************************************************************************************************************************
+Function noDispSheet()
+
+  Worksheets("Help").Visible = xlSheetVeryHidden
+  Worksheets("Tmp").Visible = xlSheetVeryHidden
+  Worksheets("Notice").Visible = xlSheetVeryHidden
+'  Worksheets("設定").Visible = xlSheetVeryHidden
+  Worksheets("メイン").Select
+End Function
+
+
+
+Function dispSheet()
+
+  Worksheets("Help").Visible = True
+  Worksheets("Tmp").Visible = True
+  Worksheets("Notice").Visible = True
+  Worksheets("設定").Visible = True
+  
+  Worksheets("メイン").Visible = True
+  Worksheets("メイン").Select
+  
+End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,20 +7,36 @@ Attribute VB_Name = "Check"
 Function 項目列チェック()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   Dim itemName As String
+  Dim defaultLine As Long
   
-  line = 30
-  endLine = Cells(Rows.count, 1).End(xlUp).row
-  Range("A" & line & ":B" & endLine).ClearContents
+'  Call init.setting
+  defaultLine = 40
   startLine = 4
+
+  setSheet.Range("A30:B100").ClearContents
   
-  Call init.setting
+  mainSheet.Select
  
-  For colLine = startLine To 15 Step 2
+  For colLine = 1 To 20
     If mainSheet.Cells(2, colLine) <> "" Then
       itemName = mainSheet.Cells(2, colLine)
+    Else
+      GoTo Label_nextFor
+    End If
+    
+    line = setSheet.Cells(Rows.count, 1).End(xlUp).row + 1
+    If line < defaultLine Then
+      line = defaultLine
     End If
     
     Select Case itemName
+      Case "#"
+      Case "Lv"
+      Case "Info"
+      Case "タスク名"
+        setSheet.Range("cell_TaskArea") = Library.getColumnName(colLine)
+    
+    
       Case "予定日"
         setSheet.Range("A" & line) = "cell_PlanStart"
         setSheet.Range("B" & line) = Library.getColumnName(colLine)
@@ -29,12 +45,9 @@ Function 項目列チェック()
         setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
       
       Case "担当者"
-        setSheet.Range("A" & line) = "cell_AssignP"
+        setSheet.Range("A" & line) = "cell_Assign"
         setSheet.Range("B" & line) = Library.getColumnName(colLine)
-        
-        setSheet.Range("A" & line + 1) = "cell_AssignA"
-        setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
-        
+
       Case "実績日"
         setSheet.Range("A" & line) = "cell_AchievementStart"
         setSheet.Range("B" & line) = Library.getColumnName(colLine)
@@ -49,13 +62,21 @@ Function 項目列チェック()
         setSheet.Range("A" & line + 1) = "cell_Progress"
         setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
                 
-      Case "タスク"
-        setSheet.Range("A" & line) = "cell_TaskA"
+      Case "先行タスク"
+        setSheet.Range("A" & line) = "cell_Task"
         setSheet.Range("B" & line) = Library.getColumnName(colLine)
         
-        setSheet.Range("A" & line + 1) = "cell_TaskB"
+'        setSheet.Range("A" & line + 1) = "cell_TaskB"
+'        setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
+        
+      Case "タスク情報"
+        setSheet.Range("A" & line) = "cell_TaskInfoP"
+        setSheet.Range("B" & line) = Library.getColumnName(colLine)
+        
+        setSheet.Range("A" & line + 1) = "cell_TaskInfoC"
         setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
-                
+                        
+                        
       Case "作業工数"
         setSheet.Range("A" & line) = "cell_WorkLoadP"
         setSheet.Range("B" & line) = Library.getColumnName(colLine)
@@ -63,29 +84,25 @@ Function 項目列チェック()
         setSheet.Range("A" & line + 1) = "cell_WorkLoadA"
         setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
         
+      Case "遅早工数"
+        setSheet.Range("A" & line) = "cell_LateOrEarly"
+        setSheet.Range("B" & line) = Library.getColumnName(colLine)
+        
+      Case "備考"
+        setSheet.Range("A" & line) = "cell_Note"
+        setSheet.Range("B" & line) = Library.getColumnName(colLine)
+        
+        'カレンダー開始セル
+        setSheet.Range("A" & line + 1) = "calendarStartCol"
+        setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
+        
       Case Else
     End Select
 
-    line = line + 2
+Label_nextFor:
   Next
 
-'  colLine = colLine - 1
-  '遅早工数----------------------------
-  setSheet.Range("A" & line) = "cell_LateOrEarly"
-  setSheet.Range("B" & line) = Library.getColumnName(colLine)
-
-  '備考----------------------------
-  colLine = colLine + 1
-  line = line + 1
-  setSheet.Range("A" & line) = "cell_Note"
-  setSheet.Range("B" & line) = Library.getColumnName(colLine)
-
-  'カレンダー開始セル
-  colLine = colLine + 1
-  line = line + 1
-  setSheet.Range("A" & line) = "calendarStartCol"
-  setSheet.Range("B" & line) = Library.getColumnName(colLine)
-  
+  init.logFile = ""
   Call init.setting
 End Function
 
@@ -267,18 +284,33 @@ Function タスクリスト確認()
   '遅早工数のクリア
   Range(setVal("cell_LateOrEarly") & "4:" & setVal("cell_LateOrEarly") & endLine).ClearContents
   
+  'マクロで設定した実績、工程をクリア
+  For line = 6 To endLine
+    If Range(setVal("cell_WorkLoadA") & line).Formula Like "=*" Then
+      Range(setVal("cell_WorkLoadA") & line).ClearContents
+    ElseIf Range(setVal("cell_Assign") & line) = "工程" Then
+      Range(setVal("cell_Assign") & line) = ""
+    End If
+  Next
+  
+  'タスク情報をクリア
+  mainSheet.Range(setVal("cell_TaskInfoP") & 6 & ":" & setVal("cell_TaskInfoC") & endLine).ClearContents
+  
   '親タスクなら、担当者(予定)に「工程」を割り当て
   For line = 6 To endLine
-    'Levelがなければループを抜ける
-    If mainSheet.Range("B" & line) = "" Then Exit For
-    
     Call ProgressBar.showCount("タスク確認", line, endLine, "親タスク判定")
+    
+    'タスクレベルが1ならリセット
+    If mainSheet.Range("B" & line) = 1 Then
+      parentTaskLine = ""
+    ElseIf mainSheet.Range("B" & line) = "" Then
+      GoTo Label_nextFor
+    End If
     If mainSheet.Range("B" & line) < mainSheet.Range("B" & line + 1) And mainSheet.Range("B" & line + 1) <> "" Then
       endTaskLine = line + 1
       Do While mainSheet.Range("B" & line).Value <= mainSheet.Range("B" & endTaskLine).Value And mainSheet.Range("B" & endTaskLine) <> ""
         Call ProgressBar.showCount("タスク確認", endTaskLine, endLine, "親タスク判定")
       
-        mainSheet.Rows(line & ":" & endTaskLine).Select
         If Range("B" & line).Value >= Range("B" & endTaskLine).Value Then
           endTaskLine = endTaskLine - 1
           Exit Do
@@ -288,8 +320,7 @@ Function タスクリスト確認()
       If mainSheet.Range("B" & line).Value >= mainSheet.Range("B" & endTaskLine).Value Then
         endTaskLine = endTaskLine - 1
       End If
-      mainSheet.Rows(line & ":" & endTaskLine).Select
-      Range(setVal("cell_AssignP") & line) = "工程"
+      Range(setVal("cell_Assign") & line) = "工程"
       
       'タスクレベルによる色分け
       Select Case Range("B" & line)
@@ -314,18 +345,26 @@ Function タスクリスト確認()
       '作業工数(実績)の算出--------------------------------------------------------------------------
       If Range(setVal("cell_PlanStart") & line) <> "" And Range(setVal("cell_PlanEnd") & line) <> "" Then
         If Range(setVal("cell_WorkLoadA") & line).Formula Like "=*" Or Range(setVal("cell_WorkLoadA") & line) = "" Then
-          If Range(setVal("cell_PlanStart") & line) <= Date Then
+          If Range(setVal("cell_PlanStart") & line) <= setVal("baseDay") Then
             Range(setVal("cell_WorkLoadA") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Range(setVal("cell_PlanStart") & line), setVal("baseDay"), "0000011", Range("休日リスト"))
-          ElseIf Range(setVal("cell_AchievementStart") & line) <= Date Then
+          ElseIf Range(setVal("cell_AchievementStart") & line) <= setVal("baseDay") Then
             Range(setVal("cell_WorkLoadA") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Date, Range(setVal("cell_PlanStart") & line), "0000011", Range("休日リスト"))
           End If
         End If
       End If
       
-      '親タスクの範囲を一時保存------------------
-      mainSheet.Range(setVal("cell_LateOrEarly") & line).NumberFormatLocal = "@"
-      mainSheet.Range(setVal("cell_LateOrEarly") & line) = line + 1 & ":" & endTaskLine
+      '子タスクの範囲を保存
+      mainSheet.Range(setVal("cell_TaskInfoC") & line) = line + 1 & ":" & endTaskLine
+      
+      '親タスク情報
+      mainSheet.Range(setVal("cell_TaskInfoP") & line) = parentTaskLine
+    
+      parentTaskLine = line
+    Else
+      '親タスク情報
+      mainSheet.Range(setVal("cell_TaskInfoP") & line) = parentTaskLine
     End If
+Label_nextFor:
   Next
   
   '子タスクのデータ確認
@@ -338,7 +377,7 @@ Function タスクリスト確認()
     'Levelがなければループを抜ける
     If mainSheet.Range("B" & line) = "" Then Exit For
     
-    If Range(setVal("cell_AssignP") & line) <> "工程" Then
+    If Range(setVal("cell_Assign") & line) <> "工程" Then
       '実績日(開始と終了)が入力されていれば、進捗を100にする---------------------------------------
       If mainSheet.Range(setVal("cell_AchievementStart") & line) <> "" And mainSheet.Range(setVal("cell_AchievementEnd") & line) <> "" Then
         mainSheet.Range(setVal("cell_Progress") & line) = 100
@@ -354,7 +393,7 @@ Function タスクリスト確認()
       '作業工数(実績)の算出--------------------------------------------------------------------------
       If Range(setVal("cell_PlanStart") & line) <> "" And Range(setVal("cell_PlanEnd") & line) <> "" Then
         If Range(setVal("cell_WorkLoadA") & line).Formula Like "=*" Or Range(setVal("cell_WorkLoadA") & line) = "" Then
-          If Range(setVal("cell_PlanStart") & line) <= Date Then
+          If Range(setVal("cell_PlanStart") & line) <= setVal("baseDay") Then
             Range(setVal("cell_WorkLoadA") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Range(setVal("cell_PlanStart") & line), setVal("baseDay"), "0000011", Range("休日リスト"))
 '          Else
 '            Range(setVal("cell_WorkLoadA") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Date, Range(setVal("cell_PlanStart") & line), "0000011", Range("休日リスト"))
@@ -383,12 +422,9 @@ Function タスクリスト確認()
   
   '親タスクのデータ確認============================================================================
   For line = 6 To endLine
-    'Levelがなければループを抜ける
-    If mainSheet.Range("B" & line) = "" Then Exit For
-    
     Call ProgressBar.showCount("タスク確認", line, endLine, "親タスクのデータ確認")
-    If Range(setVal("cell_AssignP") & line) = "工程" Then
-      taskAreas = Split(Range(setVal("cell_LateOrEarly") & line), ":")
+    If Range(setVal("cell_TaskInfoC") & line) <> "" Then
+      taskAreas = Split(Range(setVal("cell_TaskInfoC") & line), ":")
       
       '予定日(開始)設定----------------------------------------------------------------------------------
       workStartDay = Application.WorksheetFunction.Max(Range(setVal("cell_PlanStart") & taskAreas(0) & ":" & setVal("cell_PlanStart") & taskAreas(1)))
@@ -439,7 +475,7 @@ Function タスクリスト確認()
       progress = 0
       progressCnt = 0
       For tmpLine = taskAreas(0) To taskAreas(1)
-        If Range(setVal("cell_AssignP") & tmpLine) <> "工程" Then
+        If Range(setVal("cell_Assign") & tmpLine) <> "工程" Then
           progress = progress + Range(setVal("cell_Progress") & tmpLine)
           progressCnt = progressCnt + 1
         End If
@@ -454,12 +490,12 @@ Function タスクリスト確認()
       lateOrEarly = 0
       lateOrEarlyCnt = 0
       For tmpLine = taskAreas(0) To taskAreas(1)
-        If Range(setVal("cell_AssignP") & tmpLine) <> "工程" Then
+        If Range(setVal("cell_Assign") & tmpLine) <> "工程" Then
           lateOrEarly = lateOrEarly + Range(setVal("cell_LateOrEarly") & tmpLine)
           lateOrEarlyCnt = lateOrEarlyCnt + 1
         End If
       Next
-       Range(setVal("cell_LateOrEarly") & line).Select
+       'Range(setVal("cell_LateOrEarly") & line).Select
       If lateOrEarlyCnt = 0 Then
         Range(setVal("cell_LateOrEarly") & line) = ""
       Else
@@ -476,8 +512,8 @@ Function タスクリスト確認()
   For line = 6 To endLine
     Call ProgressBar.showCount("タスク確認", line, endLine, "全タスクのデータ集計")
     
-    If Range(setVal("cell_AssignP") & line).Text <> "工程" Then
-      mainSheet.Range(setVal("cell_AssignP") & line).Select
+    If Range(setVal("cell_Assign") & line).Text <> "工程" Then
+      mainSheet.Range(setVal("cell_Assign") & line).Select
       progress = progress + mainSheet.Range(setVal("cell_Progress") & line)
       progressCnt = progressCnt + 1
       lateOrEarly = lateOrEarly + mainSheet.Range(setVal("cell_LateOrEarly") & line)

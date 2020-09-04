@@ -2,66 +2,83 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="ctl_ribbon.onLoad">
   <ribbon startFromScratch="false">
     <tabs>
-      <tab id="TestSpecificationTab" label="進捗管理" insertBeforeMso="TabHome">
+      <tab id="WBSTab" label="プロジェクト管理" insertBeforeMso="TabHome">
       <group id="Setting" label="設定">
-        <button id="S_B001" size="large" label="Help"                     onAction="ctl_ribbonenu.Help"      getSupertip="getSupertip" getDescription="getDescription" imageMso="Help" />
-        <button id="S_B002" size="large" label="オプション&#xD;&#xA;"     onAction="ctl_ribbon.dispOption"   getSupertip="getSupertip" getDescription="getDescription" imageMso="AnimationCustomAddActionVerbDialog" />
-        <button id="S_B003" size="large" label="カレンダー生成&#xD;&#xA;" onAction="ctl_ribbon.makeCalendar" getSupertip="getSupertip" getDescription="getDescription" imageMso="CalendarMonthDetailsSplitButton" />
+        <button id="S_B001" size="large" label="Help"                     onAction="ctl_ribbon.Help"          supertip="Helpを表示します"  imageMso="Help" />
+        <button id="S_B002" size="large" label="オプション&#xD;&#xA;"     onAction="ctl_ribbon.dispOption"    supertip="オプション設定画面を表示します" imageMso="AnimationCustomAddActionVerbDialog" />
+        <button id="S_B003" size="large" label="カレンダー生成&#xD;&#xA;" onAction="ctl_ribbon.makeCalendar"  supertip="設定された期間のカレンダーを生成します" imageMso="CalendarMonthDetailsSplitButton" />
         <splitButton id="S_SB001" size="large">
-          <button id="S_B004"            label="View&#xD;&#xA;"           onAction="ctl_ribbon.View"         getSupertip="getSupertip" getDescription="getDescription" imageMso="ImportTextFile" />
+          <button id="S_B004"            label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />
           <menu id="S_M100" itemSize="large">
-            <button id="S_B005"          label="設定"                     onAction="ctl_ribbon.ViewSetting"  getSupertip="getSupertip" getDescription="getDescription" imageMso="GroupDataFormsTool" />
+            <button id="S_B005"          label="タスクシート"             onAction="ctl_ribbon.viewTask"      supertip="タスク編集モードに変更します" imageMso="MenuDailyTaskList" />
+            <button id="S_B006"          label="リソースシート"           onAction="ctl_ribbon.viewResources" supertip="担当者編集モードに変更します" imageMso="TeamPlannerViewGallery" />
+            <button id="S_B007"          label="設定"                     onAction="ctl_ribbon.viewSetting"   supertip="表示項目設定" imageMso="AnimationCustomAddActionVerbDialog" />
           </menu>
         </splitButton>
       </group >
 
       <group id="Common" label="共通">
-        <button id="Com_B001" size="large" label="全画面表示"                 onAction="ctl_ribbon.DispFullScreen" getSupertip="getSupertip" getDescription="getDescription" imageMso="ViewFullScreenView" />
-        <button id="Com_B002" size="large" label="選択行&#xD;&#xA;ハイライト" onAction="ctl_ribbon.setLineColor" getSupertip="getSupertip" getDescription="getDescription" imageMso="RecordsMoreRecordsMenu" />
-        <button id="Com_B003" size="large" label="全削除&#xD;&#xA;"           onAction="ctl_ribbon.ClearAll" getSupertip="getSupertip" getDescription="getDescription" imageMso="ClearAll" />
+        <button id="Com_B001" size="large" label="全画面表示"                 onAction="ctl_ribbon.DispFullScreen"  supertip="全画面表示" imageMso="ViewFullScreenView" />
+        <button id="Com_B002" size="large" label="選択行&#xD;&#xA;ハイライト" onAction="ctl_ribbon.setLineColor"    supertip="選択行ハイライト" imageMso="RecordsMoreRecordsMenu" />
+        <button id="Com_B003" size="large" label="全てクリア&#xD;&#xA;"           onAction="ctl_ribbon.ClearAll"        supertip="全データを削除します" imageMso="ClearAll" />
       </group >
 
       <group id="Task" label="WBS">
-        <button id="T_B001" size="large" label="チェック&#xD;&#xA;"   onAction="ctl_ribbon.chkTaskList" getSupertip="getSupertip" getDescription="getDescription" imageMso="DataValidation" />
-        <button id="T_B002" size="large" label="進捗コピー"           onAction="ctl_ribbon.copyProgress" getSupertip="getSupertip" getDescription="getDescription" imageMso="GroupColumnActions" />
-        <button id="T_B003" size="large" label="抽出&#xD;&#xA;"       onAction="ctl_ribbon.setFilter" getSupertip="getSupertip" getDescription="getDescription" imageMso="DatasheetColumnLookup" />
-        <button id="T_B004" size="large" label="すべて表示&#xD;&#xA;" onAction="ctl_ribbon.dispAllList" getSupertip="getSupertip" getDescription="getDescription" imageMso="FilterClearAllFilters" />
+        <button id="T_B001" size="large" label="チェック&#xD;&#xA;"   onAction="ctl_ribbon.chkTaskList"   supertip="データチェック" imageMso="DataValidation" />
+        <button id="T_B002" size="large" label="進捗コピー"           onAction="ctl_ribbon.copyProgress"  supertip="今回の進捗率を前回にコピーします" imageMso="GroupColumnActions" />
+        <button id="T_B003" size="large" label="抽出&#xD;&#xA;"       onAction="ctl_ribbon.setFilter"     supertip="タスクの抽出をします" imageMso="DatasheetColumnLookup" />
+        <button id="T_B004" size="large" label="すべて表示&#xD;&#xA;" onAction="ctl_ribbon.dispAllList"   supertip="抽出結果を解除します" imageMso="FilterClearAllFilters" />
+        <separator id="T_Bsprt01" />
+        <box id="T_box1" >
+          <button id="T_B005" size="normal" onAction="ctl_ribbon.taskOutdent" supertip="選択したタスクのレベルを1段階ずつ上げます" imageMso="GanttTaskIndent" />
+          <button id="T_B006" size="normal" onAction="ctl_ribbon.taskIndent"  supertip="選択したタスクのレベルを1段階ずつ下げます" imageMso="GanttTaskOutdent" />
+
+          <button id="T_B007" size="normal" onAction="ctl_ribbon.taskLink"    supertip="選択したタスクをリンク"     imageMso="GanttTaskLink" />
+          <button id="T_B008" size="normal" onAction="ctl_ribbon.taskUnlink"  supertip="選択したタスクのリンク解除" imageMso="GanttTaskUnlink" />
+        </box>
+        <box id="T_box2" >
+          <button id="T_B009" size="normal" onAction="ctl_ribbon.progress_0"    supertip="選択したタスクを0%完了とする"   imageMso="_0PercentComplete" />
+          <button id="T_B010" size="normal" onAction="ctl_ribbon.progress_25"   supertip="選択したタスクを25%完了とする"  imageMso="_25PercentComplete" />
+          <button id="T_B011" size="normal" onAction="ctl_ribbon.progress_50"   supertip="選択したタスクを50%完了とする"  imageMso="_50PercentComplete" />
+          <button id="T_B012" size="normal" onAction="ctl_ribbon.progress_75"   supertip="選択したタスクを75%完了とする"  imageMso="_75PercentComplete" />
+          <button id="T_B013" size="normal" onAction="ctl_ribbon.progress_100"  supertip="選択したタスクを100%完了とする" imageMso="_100PercentComplete" />
+        </box>
+
+
       </group >
 
       <group id="Chart" label="ガントチャート">
-        <button id="C_B001" size="large" label="クリア&#xD;&#xA;"   onAction="ctl_ribbon.clearChart" getSupertip="getSupertip" getDescription="getDescription" imageMso="ClearAll"/>
-        <button id="C_B002" size="large" label="センター&#xD;&#xA;" onAction="ctl_ribbon.setCenter" getSupertip="getSupertip" getDescription="getDescription" imageMso="FieldsMenu" />
-        <button id="C_B003" size="large" label="生成&#xD;&#xA;"     onAction="ctl_ribbon.makeChart" getSupertip="getSupertip" getDescription="getDescription" imageMso="CalendarViewGallery" />
+        <button id="C_B001" size="large" label="クリア&#xD;&#xA;"   onAction="ctl_ribbon.clearChart"  supertip="ガントチャートを削除します" imageMso="ClearAll"/>
+        <button id="C_B002" size="large" label="センター&#xD;&#xA;" onAction="ctl_ribbon.setCenter"   supertip="ガントチャートエリアをスクロールさせます" imageMso="FieldsMenu" />
+        <button id="C_B003" size="large" label="生成&#xD;&#xA;"     onAction="ctl_ribbon.makeChart"   supertip="ガントチャートを生成します" imageMso="CalendarViewGallery" />
       </group >
 
       <group id="Import" label="データ連携">
-        <menu id="I_M001" label="インポート&#xD;&#xA;" size="large" itemSize="large"  imageMso="CalendarToolImport" >
+        <menu id="I_M001" label="インポート&#xD;&#xA;" size="large" itemSize="large"  supertip="ファイルをインポート" imageMso="CalendarToolImport" >
           <menuSeparator id="I_S001" title="バイナリ形式のファイルをインポート"/>
-          <button id="I_B001" label="Excel" onAction="ctl_ribbon.importExcel"     getSupertip="getSupertip" getDescription="getDescription" imageMso="ImportWorkbook" />
+          <button id="I_B001" label="Excel" onAction="ctl_ribbon.importExcel"     description="Excelファイルをインポート"  imageMso="ImportWorkbook" />
           <menuSeparator id="I_S002" title="テキスト形式のファイルをインポート"/>
-          <button id="I_B002" label="CSV" onAction="ctl_ribbon.importCsv" getSupertip="getSupertip" getDescription="getDescription" imageMso="ImportTextFile" />
+          <button id="I_B002" label="CSV" onAction="ctl_ribbon.importCsv" description="CSVファイルをインポート"  imageMso="ImportTextFile" />
         </menu>
-        <menu id="E_M001" label="エクスポート&#xD;&#xA;" size="large" itemSize="large"  imageMso="CalendarToolExportAllAppointments" >
+        <menu id="E_M001" label="エクスポート&#xD;&#xA;" size="large" itemSize="large"  supertip="ファイルをエクスポート"  imageMso="CalendarToolExportAllAppointments" >
           <menuSeparator id="E_S001" title="バイナリ形式のファイルをエクスポート"/>
-          <button id="E_B001" label="Excel" onAction="ctl_ribbon.importExcel"     getSupertip="getSupertip" getDescription="getDescription" imageMso="ExportExcel" />
+          <button id="E_B001" label="Excel" onAction="ctl_ribbon.importExcel"     description="Excelファイルをエクスポート"  imageMso="ExportExcel" />
           <menuSeparator id="E_S002" title="テキスト形式のファイルをエクスポート"/>
-          <button id="E_B002" label="redMine" onAction="ctl_ribbon.importRedMine" getSupertip="getSupertip" getDescription="getDescription" imageMso="ExportTextFile" />
-          <button id="E_B003" label="OBPM"    onAction="ctl_ribbon.importOBPM"    getSupertip="getSupertip" getDescription="getDescription" imageMso="ExportTextFile" />
+          <button id="E_B002" label="redMine" onAction="ctl_ribbon.importRedMine" description="CSVファイルをエクスポート"  imageMso="ExportTextFile" />
+          <button id="E_B003" label="OBPM"    onAction="ctl_ribbon.importOBPM"    description="CSVファイルをエクスポート"  imageMso="ExportTextFile" />
         </menu>
       </group >
 
-
       <group id="Group2" label="標準機能">
-        <control idMso="PasteValues"               visible="true" label="値貼付" />          <!--値の貼り付け-->
+        <control idMso="PasteValues"  visible="true" label="値貼付" />          <!--値の貼り付け-->
         <menu id="MyMenu01" label="スタイル"  itemSize="normal" imageMso="AppointmentColorDialog" >
-          <control idMso="CellStylesGallery"         visible="true" />         <!--セルのスタイル-->
-          <control idMso="FormatAsTableGallery"     visible="true" />        <!--テーブルのスタイル-->
+          <control idMso="CellStylesGallery"    visible="true" />         <!--セルのスタイル-->
+          <control idMso="FormatAsTableGallery" visible="true" />        <!--テーブルのスタイル-->
         </menu>
-        <control idMso="WindowNew"                 visible="true" label="新ウインドウ"/>      <!--新しいウインドウ-->
-        <control idMso="WindowsArrangeAll"         visible="true" label="整列"/>              <!--整列-->
-        <control idMso="ViewFreezePanesGallery"   visible="true" label="枠固定" />           <!--ウインドウ枠の固定-->
-        <control idMso="ViewGridlinesToggleExcel" visible="true" label="枠線表示" />         <!--枠線の表示-->
-        <control idMso="TextBoxInsertMenu"         visible="true" label="テキスト" />        <!--テキスト ボックス-->
+        <control idMso="WindowNew"              visible="true" label="新ウインドウ"/>      <!--新しいウインドウ-->
+        <control idMso="WindowsArrangeAll"      visible="true" label="整列"/>              <!--整列-->
+        <control idMso="ViewFreezePanesGallery" visible="true" label="枠固定" />           <!--ウインドウ枠の固定-->
+        <control idMso="TextBoxInsertMenu"      visible="true" label="テキスト" />        <!--テキスト ボックス-->
 
         <menu id="MyMenu02" label="メニュー"  itemSize="normal" imageMso="BlogHomePage" >
           <control idMso="FileSaveAsOtherFormats" visible="true" label="別名保存" />   <!--他の形式で保存-->
@@ -87,8 +104,8 @@
       <firstColumn>
         <group id="grp1" label="更新情報" visible="true">
           <topItems>
-        <labelControl id="v104-01" label="Ver.1.04　休日をマクロで設定するように変更" />
-		<labelControl id="v104-02" label="        　土日祝を色付け、リボンメニュー対応" />
+            <labelControl id="v104-01" label="Ver.1.04　休日をマクロで設定するように変更" />
+            <labelControl id="v104-02" label="        　土日祝を色付け、リボンメニュー対応" />
           </topItems>
         </group>
       </firstColumn>
@@ -96,8 +113,10 @@
       <secondColumn>
        <group id="grp2" label="参考サイト" visible="true">
           <topItems>
-              <hyperlink  id="grp2-201" label="Excelでお仕事!" target="http://www.ne.jp/asahi/excel/inoue/" />
-              <hyperlink  id="grp2-202" label="開発マイルストーン" target="http://zudajijp.zouri.jp/km/" />
+              <hyperlink id="grp2-201" label="Excelでお仕事!"     target="http://www.ne.jp/asahi/excel/inoue/" />
+              <hyperlink id="grp2-202" label="moug モーグ!"       target="https://www.moug.net/" />
+              <hyperlink id="grp2-203" label="Office TANAKA!"     target="http://officetanaka.net" />
+              <hyperlink id="grp2-204" label="開発マイルストーン" target="http://zudajijp.zouri.jp/km/" />
           </topItems>
         </group>
         <group id="grp3" label="著作権について" visible="true">
@@ -107,7 +126,7 @@
             <labelControl id="grp3-302" label="　・当コンテンツは予告無しに変更・削除されることがあります。" />
             <labelControl id="grp3-303" label="　・このライセンスは予告なく改定される場合があります。" />
             <labelControl id="grp3-311" label="Copyright (C) 2020 B.Koizumi All Rights Reserved." />
-            <hyperlink  id="cp0913" label="Excel-VBA" target="https://github.com/bkoizumi/VBA/tree/master/WBS" />
+            <hyperlink    id="grp3-399" label="Excel-VBA" target="https://github.com/bkoizumi/VBA/tree/master/WBS" />
           </topItems>
         </group>
       </secondColumn>

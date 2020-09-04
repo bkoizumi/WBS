@@ -16,6 +16,10 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
   
+  ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) And Target.Value = "複数選択" Then
+    Call WBS_Option.showAssignorForm
+  
+  
   ElseIf Intersect(Target, Columns("C:H")) Is Nothing Then
     Exit Sub
   Else
@@ -27,6 +31,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     End If
   End If
   
+    
 
   Exit Sub
 'エラー発生時=====================================================================================
@@ -39,5 +44,80 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   If changeShapesName <> "" Then
     Call Chart.changeShapes
   End If
+
   
 End Sub
+
+
+
+'**************************************************************************************************
+' * 右クリックメニュー
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
+  Dim menu01 As CommandBarControl
+  
+  Exit Sub
+  
+  '標準状態にリセット
+  Application.CommandBars("Cell").Reset
+
+  If setVal("debugMode") <> "develop" Then
+    '右クリックメニューをクリア
+    For Each menu01 In Application.CommandBars("Cell").Controls
+      'Debug.Print menu01.Caption
+      Select Case True
+        Case menu01.Caption Like "切り取り*"
+        Case menu01.Caption Like "コピー*"
+  '      Case menu01.Caption Like "貼り付け*"
+        Case menu01.Caption Like "挿入*"
+        Case menu01.Caption Like "削除*"
+        Case menu01.Caption Like "数式と値のクリア*"
+  '      Case menu01.Caption Like "コメントの*"
+        Case menu01.Caption Like "セルの書式設定*"
+        Case menu01.Caption Like "XXXXXXXXXX*"
+        Case Else
+          menu01.Visible = False
+      End Select
+    Next
+  End If
+      
+      
+
+  
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .BeginGroup = True
+      .Caption = "タスクのレベル上げ"
+      .FaceId = 3161
+      .OnAction = "menu.M_インデント増"
+  End With
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タスクのレベル下げ"
+      .FaceId = 3162
+      .OnAction = "menu.M_インデント減"
+  End With
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "貼り付け"
+      .FaceId = 22
+      .OnAction = "menu.M_貼り付け"
+  End With
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .BeginGroup = True
+      .Caption = "タスクの挿入"
+      .OnAction = "menu.M_タスクの挿入"
+  End With
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タスクの削除"
+      .OnAction = "menu.M_タスクの削除"
+  End With
+
+
+  Application.CommandBars("Cell").ShowPopup
+  Application.CommandBars("Cell").Reset
+  Cancel = True
+End Sub
+

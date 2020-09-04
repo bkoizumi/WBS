@@ -47,7 +47,7 @@ End Sub
 
 Sub ÅI“ú()
   With Selection.Borders(xlEdgeRight)
-    .LineStyle = xlContinuous
+    .LineStyle = xlDouble
     .Weight = xlThin
   End With
 End Sub

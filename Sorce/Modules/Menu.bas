@@ -3,6 +3,8 @@ Sub M_xxxxxxxxxxxxxxxxx()
   Call Library.startScript
   Call ProgressBar.showStart
 
+  Call init.setting(True)
+  
 
   Call ProgressBar.showEnd
   Call Library.endScript
@@ -30,7 +32,9 @@ Sub M_ショートカット設定()
   
   '設定を解除
   For line = 3 To endLine
-    Application.MacroOptions Macro:="Menu." & setSheet.Range("G" & line), ShortcutKey:=""
+    If setSheet.Range("J" & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & setSheet.Range("H" & line), ShortcutKey:=""
+    End If
   Next
   
   For line = 3 To endLine
@@ -44,7 +48,10 @@ Sub M_ショートカット設定()
   Application.OnKey "%{F1}", "WBS_Option.表示_標準"
   Application.OnKey "%{F2}", "WBS_Option.表示_ガントチャート"
   
-  
+  If setVal("debugMode") <> "develop" Then
+    Application.OnKey "^v", "Menu.M_貼り付け"
+  End If
+
 End Sub
 
 
@@ -52,12 +59,23 @@ Sub M_オプション画面表示()
 Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
   Call init.setting
   
+  Call Library.startScript
+  endLine = setSheet.Cells(Rows.count, 7).End(xlUp).row
+  setSheet.Range("I3:I" & endLine).Copy
+  setSheet.Range("J3:J" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  Application.CutCopyMode = False
   Call WBS_Option.オプション画面表示
-
+  
+  setSheet.Range("J3:J" & endLine).ClearContents
+  Call Library.endScript(True)
 End Sub
 
 
 Sub M_カレンダー生成()
+
+  Call init.setting(True)
+  
+  
   Call Library.startScript
   Call ProgressBar.showStart
   
@@ -65,27 +83,14 @@ Sub M_カレンダー生成()
   Call Calendar.makeCalendar
   
   Call Library.showDebugForm("カレンダー生成", "処理完了")
+  
+  Call WBS_Option.非表示列設定
   Call ProgressBar.showEnd
   Call Library.endScript
 
 End Sub
 
-Sub M_インデント増()
-  If ActiveCell.Column = 3 And ActiveSheet.Name = "WBS" Then
-    Selection.InsertIndent 1
-    Cells(ActiveCell.row, 2).FormulaR1C1 = "=getIndentLevel(ROW())"
-  End If
-  
-End Sub
 
-
-Sub M_インデント減()
-  If ActiveCell.Column = 3 And ActiveSheet.Name = "WBS" Then
-    Selection.InsertIndent -1
-    Cells(ActiveCell.row, 2).FormulaR1C1 = "=getIndentLevel(ROW())"
-  End If
-  
-End Sub
 
 
 '**************************************************************************************************
@@ -136,14 +141,23 @@ Attribute M_スケール.VB_ProcData.VB_Invoke_Func = " \n14"
 End Sub
 
 
+Function M_貼り付け()
+  Selection.PasteSpecial Paste:=xlPasteAllExceptBorders, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+End Function
+
 
 '**************************************************************************************************
-' * タスク
+' * WBS
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Sub M_タスクチェック()
 Attribute M_タスクチェック.VB_ProcData.VB_Invoke_Func = "C\n14"
+
+  Call init.setting
+  mainSheet.Select
+  
+  Application.CalculateFull
   Call Library.startScript
   Call ProgressBar.showStart
   
@@ -172,7 +186,9 @@ End Sub
 
 Sub M_すべて表示()
 Attribute M_すべて表示.VB_ProcData.VB_Invoke_Func = " \n14"
-  Cells.EntireRow.Hidden = False
+  Call Library.startScript
+  Rows("6:" & Rows.count).EntireRow.Hidden = False
+  Call Library.endScript
 End Sub
 
 
@@ -180,10 +196,100 @@ Sub M_進捗コピー()
   Call Task.進捗コピー
 End Sub
 
+Sub M_インデント増()
+  Dim selectedCells As Range
+  Dim targetCell As Range
+  
+  On Error Resume Next
+  
+  Call Library.startScript
+  Call init.setting
+  mainSheet.Select
+   
+  Set selectedCells = Selection
+  
+  For Each targetCell In selectedCells
+    Cells(targetCell.row, getColumnNo(setVal("cell_TaskArea"))).InsertIndent 1
+  Next
+  Call Library.endScript
+End Sub
 
 
+Sub M_インデント減()
+  Dim selectedCells As Range
+  Dim targetCell As Range
+  
+  On Error Resume Next
+  
+  Call Library.startScript
+  Call init.setting
+  mainSheet.Select
+   
+  Set selectedCells = Selection
+  
+  For Each targetCell In selectedCells
+    Cells(targetCell.row, getColumnNo(setVal("cell_TaskArea"))).InsertIndent -1
+  Next
+  Call Library.endScript
+End Sub
 
 
+'進捗率設定----------------------------------------------------------------------------------------
+Sub M_進捗率設定(progress As Long)
+  Call Task.進捗率設定(progress)
+End Sub
+
+'タスクのリンク設定/解除---------------------------------------------------------------------------
+Sub M_タスクのリンク設定()
+  Call Task.taskLink
+End Sub
+Sub M_タスクのリンク解除()
+  Call Task.taskUnlink
+End Sub
+Sub M_タスクの挿入()
+  Call Task.rTaskInsert
+End Sub
+Sub M_タスクの削除()
+  Call Task.rTaskDell
+End Sub
+
+'表示モード----------------------------------------------------------------------------------------
+Sub M_タスク表示_標準()
+  Call Library.startScript
+  
+  If setVal("debugMode") <> "develop" Then
+    mainSheet.Visible = True
+    ResourcesSheet.Visible = xlSheetVeryHidden
+  End If
+  
+  Call init.setting(True)
+  
+  Call WBS_Option.viewNormal
+  
+  Call Library.endScript
+End Sub
+
+Sub M_タスク表示_タスク()
+  Call Library.startScript
+  Call init.setting(True)
+  
+  Call WBS_Option.viewTask
+  
+  Call Library.endScript
+End Sub
+
+Sub M_タスク表示_リソース()
+  Call Library.startScript
+  Call init.setting(True)
+  
+  Call WBS_Option.viewResources
+  Call Library.endScript
+End Sub
+
+Sub M_タスク表示_設定()
+  Call WBS_Option.viewSetting
+  Call Library.endScript
+End Sub
 
 
 
@@ -203,6 +309,7 @@ End Sub
 '生成のみ------------------------------------------------------------------------------------------
 Sub M_ガントチャート生成のみ()
 Attribute M_ガントチャート生成のみ.VB_ProcData.VB_Invoke_Func = "A\n14"
+  Call init.setting
   Call Library.startScript
   Call ProgressBar.showStart
   Call Library.showDebugForm("ガントチャート生成", "処理開始")
@@ -218,6 +325,8 @@ End Sub
 '生成----------------------------------------------------------------------------------------------
 Sub M_ガントチャート生成()
 Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
+  Call init.setting
+  
   Call Library.startScript
   Call ProgressBar.showStart
   Call Library.showDebugForm("ガントチャート生成", "処理開始")
@@ -279,8 +388,6 @@ Sub M_Excelインポート()
   Err.Clear
   Call Library.showNotice(200, "インポート")
 End Sub
-
-
 
 
 

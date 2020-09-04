@@ -13,26 +13,22 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private Declare Function GetForegroundWindow Lib "user32" () As Long
-Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+#If Win64 Then
+  Private Declare PtrSafe Function GetForegroundWindow Lib "user32" () As LongPtr
+  Private Declare PtrSafe Function SetWindowPos Lib "user32" (ByVal hWnd As LongPtr, ByVal hWndInsertAfter As LongPtr, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+#Else
+  Private Declare Function GetForegroundWindow Lib "user32" () As Long
+  Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+#End If
 Private Const HWND_TOPMOST As Long = -1
 Private Const SWP_NOSIZE As Long = &H1&
 Private Const SWP_NOMOVE As Long = &H2&
-
-
-
-
-
-
-
-
-
-
 
 Private Sub UserForm_Activate()
     Call SetWindowPos(GetForegroundWindow, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE)
     Me.StartUpPosition = 1
 End Sub
+
 
 
 
@@ -57,17 +53,19 @@ Private Sub UserForm_Initialize()
       .AddItem item
     Next
   End With
+  
   With taskLeveList
     For list = 1 To Application.WorksheetFunction.Max(Range("B6:B" & mainSheet.Cells(Rows.count, 2).End(xlUp).row))
       .AddItem list
     Next
   End With
+  
   Call Task.タスク名抽出(col)
   With taskNameList
-    For Each item In col
-      .AddItem item
-    Next
+    .RowSource = "設定!" & Range(setVal("cell_DataExtract") & "3:" & setVal("cell_DataExtract") & setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row).Address
   End With
+  
+  
   
   If setVal("workMode") = "CD部用" Then
     filterTaskName.Value = True

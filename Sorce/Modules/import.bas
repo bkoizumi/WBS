@@ -68,58 +68,165 @@ End Function
 Function データコピー(filePath As String)
   Dim line As Long, endLine As Long, targetEndLine As Long, endColLine As Long
   Dim tmpEndLine As Long
+  Dim targetSetVal As Collection
+  Dim targetLevel As Long
+  Dim prgbarMeg As String
+  Dim prgbarCnt As Long
+  Dim taskLevelRange As Range
   
-'  On Error GoTo catchError
+  
+  On Error GoTo catchError
+  
+  Set targetSetVal = New Collection
+  prgbarCnt = 0
 
   Set targetBook = Workbooks.Open(filePath, , True)
   Call Library.startScript
   targetBook.Activate
   
-  If Library.chkSheetName("calendar") = True Then
-    Call Library.showDebugForm("ファイルインポート", "calendar シート発見")
+  
+  Call ProgressBar.showCount("ファイルインポート", prgbarCnt, 100, "対象：" & Dir(filePath))
+  
+  If Library.chkSheetName("WBS") = True Then
+    Call Library.showDebugForm("ファイルインポート", "WBS シート発見")
     
-    targetBook.Sheets("calendar").Select
-    targetBook.Worksheets("calendar").Range("B2").Copy
-    
+    'インポートファイルの設定読み込み
+    With targetSetVal
+      For line = 3 To targetBook.Sheets("設定").Cells(Rows.count, 1).End(xlUp).row
+        If targetBook.Sheets("設定").Range("A" & line) <> "" Then
+         .Add item:=targetBook.Sheets("設定").Range("B" & line), Key:=targetBook.Sheets("設定").Range("A" & line)
+        End If
+      Next
+    End With
+  
     endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row + 1
-    mainSheet.Range("C" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     
-    'ファイル名を備考に格納
-    Call Library.showDebugForm("ファイルインポート", "ファイル名を備考に格納")
-    mainSheet.Range(setVal("cell_Note") & endLine) = Dir(filePath)
+    'ファイル名をタスクとして登録
+    prgbarMeg = "ファイル名をタスクとして登録"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    
-    Call Library.showDebugForm("ファイルインポート", "B6セルコピー")
-    targetEndLine = Cells(Rows.count, 2).End(xlUp).row - 1
-    targetBook.Worksheets("calendar").Range("B6").Copy
+    mainSheet.Range("B" & endLine) = 0
+    mainSheet.Range("C" & endLine) = Dir(filePath)
+    mainSheet.Range(setVal("cell_Note") & endLine) = filePath
+
     endLine = endLine + 1
     
-    mainSheet.Range("D" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Call Library.showDebugForm("ファイルインポート", "インポート開始")
+    targetEndLine = targetBook.Worksheets("メイン").Cells(Rows.count, 1).End(xlUp).row
     
+    '#～タスク名をコピー
+    prgbarMeg = "A～C列コピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    Call Library.showDebugForm("ファイルインポート", "B列コピー")
-    targetBook.Worksheets("calendar").Range("B7:B" & targetEndLine).Copy
-    mainSheet.Range("E" & endLine + 1).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    targetBook.Worksheets("メイン").Range("A6:" & targetSetVal("cell_TaskArea") & targetEndLine).Copy
+    mainSheet.Range("A" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     
-    Call Library.showDebugForm("ファイルインポート", "C列コピー")
-    targetBook.Worksheets("calendar").Range("C6:D" & targetEndLine).Copy
-    mainSheet.Range(setVal("cell_PlanStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
-  
-  End If
-  
-  Call Library.showDebugForm("ファイルインポート", "WBSシート A列設定")
-  tmpEndLine = Cells(Rows.count, 5).End(xlUp).row
-  mainSheet.Range("A6" & ":A" & tmpEndLine).FormulaR1C1 = "=ROW()-5"
-  mainSheet.Range("B6" & ":B" & tmpEndLine).FormulaR1C1 = _
-      "=IF(RC[1]<>"""",1,IF(RC[2]<>"""",2,IF(RC[3]<>"""",3,IF(RC[4]<>"""",4,IF(RC[5]<>"""",5,IF(RC[6]<>"""",6,""""))))))"
-    
-  targetBook.Close
+    '予定日をコピー
+    prgbarMeg = "予定日をコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
 
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_PlanStart") & "6:" & targetSetVal("cell_PlanEnd") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_PlanStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    
+    '担当者をコピー
+    prgbarMeg = "担当者をコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_Assign") & "6:" & targetSetVal("cell_Assign") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_Assign") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        
+    '実績日をコピー
+    prgbarMeg = "実績日をコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_AchievementStart") & "6:" & targetSetVal("cell_AchievementEnd") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_AchievementStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        
+    '進捗率をコピー
+    prgbarMeg = "A～C列コピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_ProgressLast") & "6:" & targetSetVal("cell_Progress") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_ProgressLast") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        
+    'タスクをコピー
+    prgbarMeg = "タスクをコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_TaskA") & "6:" & targetSetVal("cell_TaskB") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_TaskA") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        
+    '作業工数をコピー
+    prgbarMeg = "作業工数をコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_WorkLoadP") & "6:" & targetSetVal("cell_WorkLoadA") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_WorkLoadP") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        
+    '遅早工数をコピー
+    prgbarMeg = "遅早工数をコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_LateOrEarly") & "6:" & targetSetVal("cell_LateOrEarly") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_LateOrEarly") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+         
+    '備考をコピー
+    prgbarMeg = "備考をコピー"
+    prgbarCnt = prgbarCnt + 1
+    Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+    Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
+    
+    targetBook.Worksheets("メイン").Range(targetSetVal("cell_Note") & "6:" & targetSetVal("cell_Note") & targetEndLine).Copy
+    mainSheet.Range(setVal("cell_Note") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    
+  End If
+    
+  Set targetSetVal = Nothing
+  targetBook.Close
+  
   ThisWorkbook.Activate
   mainSheet.Select
-  endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row
-  mainSheet.Range("B6:B" & endLine).Select
+  
+  Call Library.showDebugForm("ファイルインポート", "WBSシート A列設定")
+  tmpEndLine = Cells(Rows.count, 3).End(xlUp).row
+  
+  'レベルの再設定
+  Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+  For line = endLine To tmpEndLine
+    Call ProgressBar.showCount(Dir(filePath), line, tmpEndLine, "レベルの再設定")
+    targetLevel = mainSheet.Range("B" & line)
+    If targetLevel <> 0 Then
+      mainSheet.Range("C" & line).InsertIndent targetLevel
+    End If
+    
+    mainSheet.Range("A" & line).FormulaR1C1 = "=ROW()-5"
+    
+    Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
+    Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+    Set taskLevelRange = Nothing
+  Next
+  
 
+  
+  Application.CalculateFull
   
   Exit Function
 'エラー発生時=====================================================================================

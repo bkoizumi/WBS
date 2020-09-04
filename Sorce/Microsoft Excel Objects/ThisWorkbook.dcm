@@ -7,18 +7,18 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-Private Sub Workbook_Activate()
-  Call init.setting
-  If setVal("baseDay") = Date Then
-    Application.StatusBar = "基準日:" & setVal("baseDay") & "[今日]"
-  Else
-    Application.StatusBar = "基準日:" & setVal("baseDay")
-  End If
-End Sub
+'Private Sub Workbook_Activate()
+'  Call init.setting
+'  If setVal("baseDay") = Date Then
+'    Application.StatusBar = "基準日:" & setVal("baseDay") & "[今日]"
+'  Else
+'    Application.StatusBar = "基準日:" & setVal("baseDay")
+'  End If
+'End Sub
 
-Private Sub Workbook_Deactivate()
-  Application.StatusBar = False
-End Sub
+'Private Sub Workbook_Deactivate()
+'  Application.StatusBar = False
+'End Sub
 
 
 
@@ -35,8 +35,16 @@ Private Sub Workbook_Open()
   On Error GoTo catchError
   
   Call Library.startScript
-  Call init.名前定義
+  Call init.setting
   Call Check.項目列チェック
+  Call init.setting(True)
+  Call menu.M_ショートカット設定
+  
+  
+'  ActiveWindow.SplitColumn = 8
+'  ActiveWindow.SplitRow = 5
+  
+  
   Call Library.endScript
 
 
@@ -45,3 +53,9 @@ Private Sub Workbook_Open()
 catchError:
   Call Library.endScript
 End Sub
+
+
+
+
+
+

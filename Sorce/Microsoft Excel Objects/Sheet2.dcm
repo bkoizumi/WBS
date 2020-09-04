@@ -1,0 +1,19 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "Sheet2"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+Function ÉZÉãê›íË()
+
+
+  Range("A:A,D:D,G:G").ColumnWidth = 20
+  Range("B:B,E:E,H:H,I:I,K:K,M:M,O:P,R:R").ColumnWidth = 15
+  Range("C:C,F:F,J:J,L:L,N:N,Q:Q,S:S").ColumnWidth = 5
+  
+  Application.Goto Reference:=Range("A1"), Scroll:=True
+End Function
+

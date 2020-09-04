@@ -1,4 +1,19 @@
 Attribute VB_Name = "WBS_Option"
+' *************************************************************************************************
+' * カレンダー関連関数
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+' *************************************************************************************************
+Function 選択シート確認()
+
+  If ActiveSheet.Name = "メイン" Or ActiveSheet.Name = "リソース" Then
+  Else
+    Call Library.showNotice(404, , True)
+  End If
+
+
+End Function
+
 '**************************************************************************************************
 ' * saveAndRefresh
 ' *
@@ -24,8 +39,8 @@ Function 日付セル検索(chkDay As Date, Optional chlkFlg As Boolean)
   
   On Error GoTo catchError
   
-  endColLine = mainSheet.Cells(4, Columns.count).End(xlToLeft).Column
-  日付セル検索 = Library.getColumnName(mainSheet.Range(Cells(4, Library.getColumnNo(setVal("calendarStartCol"))), Cells(4, endColLine)).Find(chkDay).Column)
+  endColLine = Cells(4, Columns.count).End(xlToLeft).Column
+  日付セル検索 = Library.getColumnName(Range(Cells(4, Library.getColumnNo(setVal("calendarStartCol"))), Cells(4, endColLine)).Find(chkDay).Column)
 
   
   Exit Function
@@ -96,10 +111,9 @@ Function setLineColor()
   Dim setFlg As String
   
   Call init.setting
-  mainSheet.Select
     
-  endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row
-  endColLine = mainSheet.Cells(4, Columns.count).End(xlToLeft).Column
+  endLine = Cells(Rows.count, 1).End(xlUp).row
+  endColLine = Cells(4, Columns.count).End(xlToLeft).Column
   
   setFlg = setVal("lineColorFlg")
   
@@ -130,7 +144,8 @@ End Function
 '**************************************************************************************************
 Function clearAll()
   Call init.setting
-  mainSheet.Select
+  
+  Call 選択シート確認
   Call Library.delSheetData(6)
   
   Columns(setVal("calendarStartCol") & ":XFD").Delete Shift:=xlToLeft
@@ -325,12 +340,12 @@ Function オプション画面表示()
     .AssignColor35.BackColor = setSheet.Range("K37").Interior.Color
   
     '会社指定休日
-    For line = 3 To setSheet.Cells(Rows.count, 13).End(xlUp).row
-      If setSheet.Range("M" & line) <> "" Then
+    For line = 3 To setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_CompanyHoliday"))).End(xlUp).row
+      If setSheet.Range(setVal("cell_CompanyHoliday") & line) <> "" Then
         If CompanyHolidayList = "" Then
-          CompanyHolidayList = setSheet.Range("M" & line)
+          CompanyHolidayList = setSheet.Range(setVal("cell_CompanyHoliday") & line)
         Else
-          CompanyHolidayList = CompanyHolidayList & vbNewLine & setSheet.Range("M" & line)
+          CompanyHolidayList = CompanyHolidayList & vbNewLine & setSheet.Range(setVal("cell_CompanyHoliday") & line)
         End If
       End If
     Next
@@ -428,27 +443,268 @@ Function エラー情報表示(errorMeg As String)
 End Function
 
 
-
-
-
 '**************************************************************************************************
-' * 表示_標準
+' * xxxxxxxxxx
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function 表示_標準()
-    Cells.Select
-    Selection.EntireColumn.Hidden = False
-
-End Function
-
-
-'**************************************************************************************************
-' * 表示_ガントチャート
-' *
-' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
-'**************************************************************************************************
-Function 表示_ガントチャート()
-    Columns("F:Q").EntireColumn.Hidden = True
+Function 非表示列設定()
+  Dim line As Long, endLine As Long
   
+'  On Error GoTo catchError
+  If setVal("debugMode") <> "develop" Then
+    Exit Function
+  End If
+
+  endLine = setSheet.Cells(Rows.count, 4).End(xlUp).row
+  For line = 3 To endLine
+    If setSheet.Range("E" & line) = False Then
+      Select Case setSheet.Range("D" & line)
+      Case "view_Plan"
+        Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = True
+      
+      Case "view_Assign"
+        Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = True
+      
+      Case "view_Progress"
+        Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = True
+      
+      Case "view_Achievement"
+        Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = True
+      
+      Case "view_Task"
+        Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = True
+      
+      Case "view_TaskInfo"
+        Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = True
+      
+      Case "view_WorkLoad"
+        Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = True
+      
+      Case "view_LateOrEarly"
+        Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = True
+      
+      Case "view_Note"
+        Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = True
+      
+      Case Else
+      End Select
+    End If
+  Next
+  
+
+
+
+Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function viewNormal()
+  On Error GoTo catchError
+
+  mainSheet.Select
+  mainSheet.ScrollArea = ""
+  Cells.EntireColumn.Hidden = False
+
+  'ウインドウ枠の固定
+  Range(setVal("calendarStartCol") & 6).Select
+  ActiveWindow.FreezePanes = False
+  ActiveWindow.FreezePanes = True
+  
+  Call 非表示列設定
+  
+  
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function viewTask()
+  On Error GoTo catchError
+
+  Call Library.startScript
+  Call init.setting
+  
+  ActiveWindow.FreezePanes = False
+  
+  mainSheet.Columns(setVal("calendarStartCol") & ":" & Library.getColumnName(Cells(4, Columns.count).End(xlToLeft).Column)).EntireColumn.Hidden = True
+  mainSheet.ScrollArea = "A1:P" & Rows.count
+  
+  'ウインドウ枠の固定
+  Range("A6").Select
+  ActiveWindow.FreezePanes = True
+    
+    
+  Call Library.endScript(True)
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function viewResources()
+  On Error GoTo catchError
+
+  If setVal("debugMode") <> "develop" Then
+    Worksheets("メイン").Visible = xlSheetVeryHidden
+    Worksheets("リソース").Visible = True
+  End If
+  ResourcesSheet.Select
+  
+  Cells.EntireColumn.Hidden = False
+  Call Resources.データ移行
+  
+  If setVal("debugMode") <> "develop" Then
+    Columns("L:Q").EntireColumn.Hidden = True
+  End If
+
+  
+  Call Library.endScript
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function viewSetting()
+  On Error GoTo catchError
+
+  Call Library.startScript
+  Call Library.endScript(True)
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function 進捗率のバー設定()
+  On Error GoTo catchError
+  
+  Range("K4").Select
+  Selection.FormatConditions.AddDatabar
+  Selection.FormatConditions(Selection.FormatConditions.count).ShowValue = True
+  Selection.FormatConditions(Selection.FormatConditions.count).SetFirstPriority
+  With Selection.FormatConditions(1)
+    .MinPoint.Modify newtype:=xlConditionValueNumber, newvalue:=0
+    .MaxPoint.Modify newtype:=xlConditionValueNumber, newvalue:=100
+  End With
+  With Selection.FormatConditions(1).BarColor
+  .Color = RGB(102, 153, 255)
+    .TintAndShade = 0
+'  Select Case Selection.Value
+'    Case 0 To 49
+'      .Color = RGB(255, 0, 0)
+'    Case 50 To 74
+'      .Color = RGB(102, 153, 255)
+'    Case 75 To 100
+'      .Color = RGB(102, 153, 255)
+'    Case Else
+'  End Select
+  End With
+  Selection.FormatConditions(1).BarFillType = xlDataBarFillSolid
+  Selection.FormatConditions(1).Direction = xlLTR
+  Selection.FormatConditions(1).NegativeBarFormat.ColorType = xlDataBarColor
+  Selection.FormatConditions(1).BarBorder.Type = xlDataBarBorderNone
+  Selection.FormatConditions(1).AxisPosition = xlDataBarAxisAutomatic
+
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function setTaskLevel()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+
+  Dim taskLevelRange As Range
+  
+  Call init.setting
+  line = 6
+  
+  Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
+  Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+  Set taskLevelRange = Nothing
+
+  Range("D" & line).Select
+
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+'**************************************************************************************************
+' * xxxxxxxxxx
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function showAssignorForm()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  On Error GoTo catchError
+
+  endLine = Cells(Rows.count, 1).End(xlUp).row
+  
+  
+  AssignorForm.Show vbModeless
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+
+
+
+
+
+
+
+

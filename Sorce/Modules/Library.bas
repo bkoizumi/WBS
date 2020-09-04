@@ -802,8 +802,17 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Public Function getIndentLevel(targetRow As Long) As Long
-  getIndentLevel = Cells(targetRow, 3).IndentLevel + 1
+Public Function getIndentLevel(targetRange As Range)
+  Dim thisTargetSheet As Worksheet
+  
+  Application.Volatile
+  getIndentLevel = ""
+
+  If targetRange = "" Then
+    getIndentLevel = ""
+  Else
+    getIndentLevel = targetRange.IndentLevel + 1
+  End If
 End Function
 
 
@@ -1185,7 +1194,7 @@ Function showDebugForm(meg1 As String, Optional meg2 As String)
   
   runTime = Format(Now(), "yyyy/mm/dd hh:nn:ss")
   
-  If debugMode = "none" Then
+  If setVal("debugMode") = "none" Then
     Exit Function
   End If
 
@@ -1194,7 +1203,7 @@ Function showDebugForm(meg1 As String, Optional meg2 As String)
     meg1 = meg1 & String(10 - Len(meg1), "Å@")
   End If
   
-  Select Case debugMode
+  Select Case setVal("debugMode")
     Case "file"
       If meg1 <> "" Then
         Call outputLog(runTime & vbTab & meg1 & vbTab & meg2)
@@ -1257,7 +1266,6 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
   
   runTime = Format(Now(), "yyyy/mm/dd hh:nn:ss")
   
-
   endLine = noticeCodeSheet.Cells(Rows.count, 1).End(xlUp).row
   message = Application.WorksheetFunction.VLookup(code, noticeCodeSheet.Range("A2:B" & endLine), 2, False)
   
@@ -1265,23 +1273,24 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
     message = Replace(message, "%%", process)
   End If
 
-  If debugMode = "speak" Or debugMode = "all" Then
+  If setVal("debugMode") = "speak" Or setVal("debugMode") = "all" Then
     Application.Speech.Speak Text:=message, SpeakAsync:=True, SpeakXML:=True
   End If
   
   Select Case code
     Case 0 To 399
-      Call MsgBox(message, vbInformation)
+      Call MsgBox(message, vbInformation, thisAppName)
     
     Case 400 To 499
-      Call MsgBox(message, vbCritical)
+      Call MsgBox(message, vbCritical, thisAppName)
     
     Case 500 To 599
-      Call MsgBox(message, vbExclamation)
+      Call MsgBox(message, vbExclamation, thisAppName)
 
     Case Else
-      Call MsgBox(message, vbCritical)
+      Call MsgBox(message, vbCritical, thisAppName)
   End Select
+'  Stop
 
   'âÊñ ï`é êßå‰èIóπèàóù
   If runEndflg = True Then
