@@ -15,7 +15,7 @@ Function 項目列チェック()
 
   setSheet.Range("A" & defaultLine & ":B100").ClearContents
   
-  mainSheet.Select
+'  mainSheet.Select
  
   For colLine = 1 To 20
     If mainSheet.Cells(2, colLine) <> "" Then
@@ -66,8 +66,9 @@ Function 項目列チェック()
         setSheet.Range("A" & line) = "cell_Task"
         setSheet.Range("B" & line) = Library.getColumnName(colLine)
         
-'        setSheet.Range("A" & line + 1) = "cell_TaskB"
-'        setSheet.Range("B" & line + 1) = Library.getColumnName(colLine + 1)
+      Case "タスク配分"
+        setSheet.Range("A" & line) = "cell_TaskAllocation"
+        setSheet.Range("B" & line) = Library.getColumnName(colLine)
         
       Case "タスク情報"
         setSheet.Range("A" & line) = "cell_TaskInfoP"

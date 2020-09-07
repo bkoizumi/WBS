@@ -73,7 +73,14 @@ End Sub
 Private Sub run_Click()
   
   ActiveCell.Value = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
-  
+  Range(setVal("cell_TaskAllocation") & ActiveCell.row) = Library.TEXTJOIN(",", True, _
+                                                          Assignor01.Text & "<>" & taskAllocation01.Text, _
+                                                          Assignor02.Text & "<>" & taskAllocation02.Text, _
+                                                          Assignor03.Text & "<>" & taskAllocation03.Text, _
+                                                          Assignor04.Text & "<>" & taskAllocation04.Text, _
+                                                          Assignor05.Text & "<>" & taskAllocation05.Text _
+                                                          )
+    
   Unload Me
 End Sub
 
@@ -85,4 +92,23 @@ End Sub
 Private Sub Cancel_Click()
   Unload Me
 End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

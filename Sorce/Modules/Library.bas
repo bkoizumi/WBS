@@ -1859,7 +1859,7 @@ Public Function TEXTJOIN(Delim, Ignore As Boolean, ParamArray par())
         End If
       Next
     Else
-      If par(i) <> "" Or Ignore = False Then
+      If (par(i) <> "" And par(i) <> "<>") Or Ignore = False Then
         TEXTJOIN = TEXTJOIN & Delim & par(i)
       End If
     End If

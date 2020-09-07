@@ -354,6 +354,8 @@ Function オプション画面表示()
     .view_Achievement.Value = setVal("view_Achievement")
     .view_Task.Value = setVal("view_Task")
     .view_TaskInfo.Value = setVal("view_TaskInfo")
+    .View_TaskAllocation.Value = setVal("view_TaskAllocation")
+    
     .view_WorkLoad.Value = setVal("view_WorkLoad")
     .view_LateOrEarly.Value = setVal("view_LateOrEarly")
     .view_Note.Value = setVal("view_Note")
@@ -420,8 +422,8 @@ Function オプション設定値格納()
   '担当者
   setSheet.Range(setVal("cell_AssignorList") & "4:" & setVal("cell_AssignorList") & Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row).Clear
   For line = 4 To 38
-    setSheet.Range(setVal("cell_AssignorList") & line) = getVal("Assign" & Format(line - 2, "00"))
-    setSheet.Range(setVal("cell_AssignorList") & line).Interior.Color = getVal("AssignColor" & Format(line - 2, "00"))
+    setSheet.Range(setVal("cell_AssignorList") & line) = getVal("Assign" & Format(line - 3, "00"))
+    setSheet.Range(setVal("cell_AssignorList") & line).Interior.Color = getVal("AssignColor" & Format(line - 3, "00"))
   Next
   setSheet.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & 38).Select
   Call 罫線.囲み罫線
@@ -502,7 +504,11 @@ End Function
 Function viewNormal()
   On Error GoTo catchError
 
-  mainSheet.Select
+  Call init.setting
+  mainSheet.Visible = True
+  ResourcesSheet.Visible = xlSheetVeryHidden
+    
+    mainSheet.Select
   mainSheet.ScrollArea = ""
   Cells.EntireColumn.Hidden = False
 
@@ -558,21 +564,16 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function viewResources()
-  On Error GoTo catchError
-
-  If setVal("debugMode") <> "develop" Then
-    Worksheets("メイン").Visible = xlSheetVeryHidden
-    Worksheets("リソース").Visible = True
-  End If
-  ResourcesSheet.Select
+'  On Error GoTo catchError
+  
+  
+  ResourcesSheet.Columns("L:Q").EntireColumn.Hidden = True
+  mainSheet.Visible = xlSheetVeryHidden
+  ResourcesSheet.Visible = True
   
   Cells.EntireColumn.Hidden = False
   Call Resources.データ移行
   
-  If setVal("debugMode") <> "develop" Then
-    Columns("L:Q").EntireColumn.Hidden = True
-  End If
-
   
   Call Library.endScript
 

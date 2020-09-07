@@ -27,6 +27,9 @@ Function 書式設定()
     '担当者
     Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).ColumnWidth = 10
     
+    'タスク配分
+    Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).ColumnWidth = 10
+    
     '先行タスク
     Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).ColumnWidth = 10
     
@@ -185,7 +188,7 @@ Function makeCalendar()
   Call 罫線.横線
 
   endLine = Cells(Rows.count, 1).End(xlUp).row
-  If endLine = 5 Then
+  If endLine = 5 And Range(setVal("cell_TaskArea") & 6) = "" Then
     endLine = 25
   End If
   Rows("6:" & endLine).Select

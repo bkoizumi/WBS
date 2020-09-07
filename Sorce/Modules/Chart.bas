@@ -138,19 +138,21 @@ Function 計画線設定(line As Long)
         .Name = "タスク_" & line
         .Fill.ForeColor.RGB = RGB(Red, Green, Blue)
         .Fill.Transparency = 0.6
-        .TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
-        .TextFrame.Characters.Font.Size = 9
-        .TextFrame2.TextRange.Font.Bold = msoTrue
-        .TextFrame2.WordWrap = msoFalse
-        .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
-        .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
-        .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignCenter
-        .TextFrame2.VerticalAnchor = msoAnchorMiddle
-        .TextFrame2.TextRange.Font.NameComplexScript = "メイリオ"
-        .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
-        .TextFrame2.TextRange.Font.Name = "メイリオ"
-        .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
         
+        If setVal("viewGant_TaskName") = True Then
+          .TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
+          .TextFrame.Characters.Font.Size = 9
+          .TextFrame2.TextRange.Font.Bold = msoTrue
+          .TextFrame2.WordWrap = msoFalse
+          .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
+          .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
+          .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignCenter
+          .TextFrame2.VerticalAnchor = msoAnchorMiddle
+          .TextFrame2.TextRange.Font.NameComplexScript = "メイリオ"
+          .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
+          .TextFrame2.TextRange.Font.Name = "メイリオ"
+          .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+        End If
         .OnAction = "beforeChangeShapes"
       End With
     End With

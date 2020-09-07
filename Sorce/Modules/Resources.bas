@@ -11,16 +11,11 @@ Function データ移行()
   
 '  On Error GoTo catchError
 
-  init.logFile = ""
-  
-  Call Library.startScript
-  Call init.setting(True)
   
   ResourcesSheet.Select
   Call WBS_Option.clearAll
   
   mainSheet.Calculate
-  
   
   '担当者リストの取得
   Call Task.担当者抽出(assignName)
@@ -30,11 +25,11 @@ Function データ移行()
   
     For Each assignor In assignName
       If assignor <> "工程" Then
-        For line = 5 To endLine
-          If assignor = mainSheet.Range(setVal("cell_Assign") & line) Then
+        For line = 6 To endLine
+          If mainSheet.Range(setVal("cell_Assign") & line) Like "*" & assignor & "*" Then
             ResourcesSheet.Range("A" & rowLine) = mainSheet.Range("A" & line)
             ResourcesSheet.Range("B" & rowLine) = mainSheet.Range("B" & line).Value
-            ResourcesSheet.Range("D" & rowLine) = mainSheet.Range(setVal("cell_Assign") & line)
+            ResourcesSheet.Range("D" & rowLine) = assignor
             ResourcesSheet.Range("E" & rowLine) = mainSheet.Range(setVal("cell_TaskArea") & line)
             ResourcesSheet.Range("F" & rowLine) = mainSheet.Range(setVal("cell_PlanStart") & line)
             ResourcesSheet.Range("G" & rowLine) = mainSheet.Range(setVal("cell_PlanEnd") & line)
@@ -43,14 +38,20 @@ Function データ移行()
             ResourcesSheet.Range("J" & rowLine) = mainSheet.Range(setVal("cell_ProgressLast") & line)
             ResourcesSheet.Range("K" & rowLine) = mainSheet.Range(setVal("cell_Progress") & line)
             
-            ResourcesSheet.Range("L" & rowLine) = mainSheet.Range(setVal("cell_Task") & line)
-            ResourcesSheet.Range("M" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoP") & line)
-            ResourcesSheet.Range("N" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoC") & line)
-            ResourcesSheet.Range("O" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadP") & line)
-            ResourcesSheet.Range("P" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadA") & line)
-            ResourcesSheet.Range("Q" & rowLine) = mainSheet.Range(setVal("cell_LateOrEarly") & line)
+            For Each taskAllocation In Split(mainSheet.Range(setVal("cell_TaskAllocation") & line), ",")
+              If taskAllocation Like "*" & assignor & "*" Then
+                allocationRate = Split(taskAllocation, "<>")
+                ResourcesSheet.Range("L" & rowLine) = allocationRate(1)
+              End If
+            Next
             
-            ResourcesSheet.Range("R" & rowLine) = mainSheet.Range(setVal("cell_Note") & line)
+            ResourcesSheet.Range("M" & rowLine) = mainSheet.Range(setVal("cell_Task") & line)
+            ResourcesSheet.Range("N" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoP") & line)
+            ResourcesSheet.Range("O" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoC") & line)
+            ResourcesSheet.Range("P" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadP") & line)
+            ResourcesSheet.Range("Q" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadA") & line)
+            ResourcesSheet.Range("R" & rowLine) = mainSheet.Range(setVal("cell_LateOrEarly") & line)
+            ResourcesSheet.Range("S" & rowLine) = mainSheet.Range(setVal("cell_Note") & line)
             
             rowLine = rowLine + 1
           End If
@@ -72,15 +73,19 @@ Function データ移行()
   setVal("cell_AchievementEnd") = "I"
   setVal("cell_ProgressLast") = "J"
   setVal("cell_Progress") = "K"
-  setVal("cell_Task") = "L"
-  setVal("cell_TaskInfoP") = "M"
-  setVal("cell_TaskInfoC") = "N"
-  setVal("cell_WorkLoadP") = "O"
-  setVal("cell_WorkLoadA") = "P"
-  setVal("cell_LateOrEarly") = "Q"
-  setVal("cell_Note") = "R"
+  
+  setVal("cell_TaskAllocation") = "L"
+  
+  setVal("cell_Task") = "M"
+  setVal("cell_TaskInfoP") = "N"
+  setVal("cell_TaskInfoC") = "O"
+  setVal("cell_WorkLoadP") = "P"
+  setVal("cell_WorkLoadA") = "Q"
+  setVal("cell_LateOrEarly") = "R"
+  setVal("cell_Note") = "S"
   
   setVal("setLightning") = False
+  
   
   Call Calendar.makeCalendar
   Call Chart.ガントチャート生成
@@ -91,15 +96,18 @@ Function データ移行()
   Range("D6:D" & endLine).Validation.Delete
   
   startLine = 6
-  For line = 7 To endLine
+  Range(setVal("cell_Assign") & endLine + 1) = "sss"
+  For line = 7 To endLine + 1
     If Range(setVal("cell_Assign") & line) = Range(setVal("cell_Assign") & line - 1) Then
     Else
+      Range(setVal("cell_Assign") & startLine & ":" & setVal("cell_Assign") & line - 1).Select
       Range(setVal("cell_Assign") & startLine & ":" & setVal("cell_Assign") & line - 1).Merge
       Range("A" & startLine & ":" & setVal("calendarEndCol") & line - 1).Borders(xlEdgeBottom).LineStyle = xlDouble
       
       startLine = line
     End If
   Next
+  Range(setVal("cell_Assign") & endLine + 1).ClearContents
 
   'レベルの再設定
   For line = 6 To endLine

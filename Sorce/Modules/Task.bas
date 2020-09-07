@@ -38,7 +38,9 @@ End Function
 '**************************************************************************************************
 Function íSìñé“íäèo(memberList As Collection)
   Dim line As Long, endLine As Long, count As Long
-
+  Dim assignor As String, assignName As Variant
+  
+  
 '  On Error GoTo catchError
 
   Call init.setting
@@ -52,11 +54,16 @@ Function íSìñé“íäèo(memberList As Collection)
   count = count + 1
 
   For line = 6 To endLine
-    If mainSheet.Range(setVal("cell_Assign") & line).Value <> "" And isCollection(memberList, mainSheet.Range(setVal("cell_Assign") & line).Value) = False Then
-      With memberList
-        .Add item:=mainSheet.Range(setVal("cell_Assign") & line).Value, Key:=str(count)
-      End With
-      count = count + 1
+    If mainSheet.Range(setVal("cell_Assign") & line).Value <> "" Then
+      For Each assignName In Split(mainSheet.Range(setVal("cell_Assign") & line).Value, ",")
+        assignor = assignName
+        If assignor <> "" And isCollection(memberList, assignor) = False Then
+          With memberList
+            .Add item:=assignor, Key:=str(count)
+          End With
+          count = count + 1
+        End If
+      Next
     End If
   Next
   Exit Function

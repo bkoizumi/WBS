@@ -21,7 +21,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     Call WBS_Option.’S“–Ò‚Ì•¡”‘I‘ğ
   
   
-  ElseIf Intersect(Target, Columns("C:H")) Is Nothing Then
+  ElseIf Intersect(Target, Columns("C:R")) Is Nothing Then
     Exit Sub
   Else
     If Range("A" & Target.row) = "" And Cells(Target.row, Target.Column) <> "" Then
