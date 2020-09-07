@@ -57,7 +57,7 @@ End Sub
 
 Sub M_オプション画面表示()
 Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
-  Call init.setting
+  Call init.setting(True)
   
   Call Library.startScript
   endLine = setSheet.Cells(Rows.count, 7).End(xlUp).row

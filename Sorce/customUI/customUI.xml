@@ -10,9 +10,9 @@
         <splitButton id="S_SB001" size="large">
           <button id="S_B004"            label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />
           <menu id="S_M100" itemSize="large">
-            <button id="S_B005"          label="タスクシート"             onAction="ctl_ribbon.viewTask"      supertip="タスク編集モードに変更します" imageMso="MenuDailyTaskList" />
-            <button id="S_B006"          label="リソースシート"           onAction="ctl_ribbon.viewResources" supertip="担当者編集モードに変更します" imageMso="TeamPlannerViewGallery" />
-            <button id="S_B007"          label="設定"                     onAction="ctl_ribbon.viewSetting"   supertip="表示項目設定" imageMso="AnimationCustomAddActionVerbDialog" />
+            <button id="S_B005"          label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />
+            <button id="S_B006"          label="タスクシート"             onAction="ctl_ribbon.viewTask"      supertip="タスク編集モードに変更します" imageMso="MenuDailyTaskList" />
+            <button id="S_B007"          label="リソースシート"           onAction="ctl_ribbon.viewResources" supertip="担当者編集モードに変更します" imageMso="TeamPlannerViewGallery" />
           </menu>
         </splitButton>
       </group >

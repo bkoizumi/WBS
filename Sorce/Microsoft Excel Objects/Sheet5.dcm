@@ -11,8 +11,9 @@ Attribute VB_Exposed = True
 
 
 Private Sub Worksheet_Change(ByVal Target As Range)
-  On Error GoTo catchError
-
+'  On Error GoTo catchError
+  
+  Call init.setting
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
   
@@ -20,7 +21,11 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) And Target.Value = "•¡”‘I‘ğ" Then
     Call WBS_Option.’S“–Ò‚Ì•¡”‘I‘ğ
   
-  
+  '’S“–Ò‚ğ•¡”‘I‘ğ‚Å‚È‚¢‚Æ‚«
+  ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) Then
+    Range(setVal("cell_TaskAllocation") & Target.row) = ""
+    
+    
   ElseIf Intersect(Target, Columns("C:R")) Is Nothing Then
     Exit Sub
   Else

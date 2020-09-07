@@ -297,6 +297,7 @@ Function オプション画面表示()
     .Assign34.Text = setSheet.Range(setVal("cell_AssignorList") & 37)
     .Assign35.Text = setSheet.Range(setVal("cell_AssignorList") & 38)
     
+    '担当者色
     .AssignColor01.BackColor = setSheet.Range(setVal("cell_AssignorList") & 4).Interior.Color
     .AssignColor02.BackColor = setSheet.Range(setVal("cell_AssignorList") & 5).Interior.Color
     .AssignColor03.BackColor = setSheet.Range(setVal("cell_AssignorList") & 6).Interior.Color
@@ -332,6 +333,43 @@ Function オプション画面表示()
     .AssignColor33.BackColor = setSheet.Range(setVal("cell_AssignorList") & 36).Interior.Color
     .AssignColor34.BackColor = setSheet.Range(setVal("cell_AssignorList") & 37).Interior.Color
     .AssignColor35.BackColor = setSheet.Range(setVal("cell_AssignorList") & 38).Interior.Color
+    
+    '担当者単価
+    .unitCost01.Text = setSheet.Range(setVal("cell_unitCostorList") & 4)
+    .unitCost02.Text = setSheet.Range(setVal("cell_unitCostorList") & 5)
+    .unitCost03.Text = setSheet.Range(setVal("cell_unitCostorList") & 6)
+    .unitCost04.Text = setSheet.Range(setVal("cell_unitCostorList") & 7)
+    .unitCost05.Text = setSheet.Range(setVal("cell_unitCostorList") & 8)
+    .unitCost06.Text = setSheet.Range(setVal("cell_unitCostorList") & 9)
+    .unitCost07.Text = setSheet.Range(setVal("cell_unitCostorList") & 10)
+    .unitCost08.Text = setSheet.Range(setVal("cell_unitCostorList") & 11)
+    .unitCost09.Text = setSheet.Range(setVal("cell_unitCostorList") & 12)
+    .unitCost10.Text = setSheet.Range(setVal("cell_unitCostorList") & 13)
+    .unitCost11.Text = setSheet.Range(setVal("cell_unitCostorList") & 14)
+    .unitCost12.Text = setSheet.Range(setVal("cell_unitCostorList") & 15)
+    .unitCost13.Text = setSheet.Range(setVal("cell_unitCostorList") & 16)
+    .unitCost14.Text = setSheet.Range(setVal("cell_unitCostorList") & 17)
+    .unitCost15.Text = setSheet.Range(setVal("cell_unitCostorList") & 18)
+    .unitCost16.Text = setSheet.Range(setVal("cell_unitCostorList") & 19)
+    .unitCost17.Text = setSheet.Range(setVal("cell_unitCostorList") & 20)
+    .unitCost18.Text = setSheet.Range(setVal("cell_unitCostorList") & 21)
+    .unitCost19.Text = setSheet.Range(setVal("cell_unitCostorList") & 22)
+    .unitCost20.Text = setSheet.Range(setVal("cell_unitCostorList") & 23)
+    .unitCost21.Text = setSheet.Range(setVal("cell_unitCostorList") & 24)
+    .unitCost22.Text = setSheet.Range(setVal("cell_unitCostorList") & 25)
+    .unitCost23.Text = setSheet.Range(setVal("cell_unitCostorList") & 26)
+    .unitCost24.Text = setSheet.Range(setVal("cell_unitCostorList") & 27)
+    .unitCost25.Text = setSheet.Range(setVal("cell_unitCostorList") & 28)
+    .unitCost26.Text = setSheet.Range(setVal("cell_unitCostorList") & 29)
+    .unitCost27.Text = setSheet.Range(setVal("cell_unitCostorList") & 30)
+    .unitCost28.Text = setSheet.Range(setVal("cell_unitCostorList") & 31)
+    .unitCost29.Text = setSheet.Range(setVal("cell_unitCostorList") & 32)
+    .unitCost30.Text = setSheet.Range(setVal("cell_unitCostorList") & 33)
+    .unitCost31.Text = setSheet.Range(setVal("cell_unitCostorList") & 34)
+    .unitCost32.Text = setSheet.Range(setVal("cell_unitCostorList") & 35)
+    .unitCost33.Text = setSheet.Range(setVal("cell_unitCostorList") & 36)
+    .unitCost34.Text = setSheet.Range(setVal("cell_unitCostorList") & 37)
+    .unitCost35.Text = setSheet.Range(setVal("cell_unitCostorList") & 38)
 
     
     '会社指定休日
@@ -354,7 +392,7 @@ Function オプション画面表示()
     .view_Achievement.Value = setVal("view_Achievement")
     .view_Task.Value = setVal("view_Task")
     .view_TaskInfo.Value = setVal("view_TaskInfo")
-    .View_TaskAllocation.Value = setVal("view_TaskAllocation")
+    .view_TaskAllocation.Value = setVal("view_TaskAllocation")
     
     .view_WorkLoad.Value = setVal("view_WorkLoad")
     .view_LateOrEarly.Value = setVal("view_LateOrEarly")
@@ -424,6 +462,9 @@ Function オプション設定値格納()
   For line = 4 To 38
     setSheet.Range(setVal("cell_AssignorList") & line) = getVal("Assign" & Format(line - 3, "00"))
     setSheet.Range(setVal("cell_AssignorList") & line).Interior.Color = getVal("AssignColor" & Format(line - 3, "00"))
+    
+    setSheet.Range(setVal("cell_unitCostorList") & line) = getVal("unitCost" & Format(line - 3, "00"))
+    
   Next
   setSheet.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & 38).Select
   Call 罫線.囲み罫線
@@ -679,10 +720,7 @@ End Function
 '**************************************************************************************************
 Function 担当者の複数選択()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
-  On Error GoTo catchError
-
-  endLine = Cells(Rows.count, 1).End(xlUp).row
-  
+'  On Error GoTo catchError
   
   AssignorForm.Show vbModeless
 

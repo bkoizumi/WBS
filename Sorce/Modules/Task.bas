@@ -243,7 +243,7 @@ Function taskLink()
       newStartDay = Range(setVal("cell_PlanEnd") & oldLine) + 1
       Call init.chkHollyday(newStartDay, HollydayName)
       Do While HollydayName <> ""
-        newStartDay = newStartDay - 1
+        newStartDay = newStartDay + 1
         Call init.chkHollyday(newStartDay, HollydayName)
       Loop
       Range(setVal("cell_PlanStart") & targetCell.row) = newStartDay

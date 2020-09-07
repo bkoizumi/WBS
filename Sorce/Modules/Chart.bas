@@ -480,7 +480,10 @@ Function changeShapes()
 
   
   ActiveSheet.Shapes("タスク_" & changeShapesName).Delete
-  ActiveSheet.Shapes("担当者_" & changeShapesName).Delete
+  If setVal("viewGant_Assignor") = True Then
+    ActiveSheet.Shapes("担当者_" & changeShapesName).Delete
+  End If
+  
   Call 計画線設定(CLng(changeShapesName))
   
   changeShapesName = ""
@@ -508,27 +511,27 @@ Function タスクのリンク設定(line As Long)
       startTask = "タスク_" & tmpLine
       thisTask = "タスク_" & line
     
-'      interval = DateDiff("d", Range(setVal("cell_PlanEnd") & Range(tmpLine & line)), Range(setVal("cell_PlanStart") & line))
-      
       'カギ線コネクタ生成
       ActiveSheet.Shapes.AddConnector(msoConnectorElbow, 1153.2352755906, 9.7059055118, 1206.1764566929, 30).Select
       Selection.ShapeRange.line.EndArrowheadStyle = msoArrowheadTriangle
       Selection.ShapeRange.ConnectorFormat.BeginConnect ActiveSheet.Shapes(startTask), 4
-      Selection.ShapeRange.ConnectorFormat.EndConnect ActiveSheet.Shapes(thisTask), 1
+      Selection.ShapeRange.ConnectorFormat.EndConnect ActiveSheet.Shapes(thisTask), 2
       Selection.Name = "先行タスク設定_" & line
       
-      If interval < 0 Then
+      interval = DateDiff("d", Range(setVal("cell_PlanEnd") & tmpLine), Range(setVal("cell_PlanStart") & line))
+      If interval < 1 Then
         interval = interval * -1
       End If
       
-     'If interval < 2 Then
-     '   Selection.ShapeRange.Flip msoFlipHorizontal
-     'End If
+     If interval = 0 Then
+     ElseIf interval < 2 Then
+        Selection.ShapeRange.Flip msoFlipHorizontal
+     End If
       
       With Selection.ShapeRange.line
         .Visible = msoTrue
         .Weight = 1.5
-        .ForeColor.RGB = RGB(48, 84, 150)
+        .ForeColor.RGB = RGB(166, 166, 166)
       End With
     Next
   End If
