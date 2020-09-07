@@ -16,8 +16,9 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
   
+  '担当者を複数選択するとき
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) And Target.Value = "複数選択" Then
-    Call WBS_Option.showAssignorForm
+    Call WBS_Option.担当者の複数選択
   
   
   ElseIf Intersect(Target, Columns("C:H")) Is Nothing Then
@@ -70,13 +71,12 @@ Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
       Select Case True
         Case menu01.Caption Like "切り取り*"
         Case menu01.Caption Like "コピー*"
-  '      Case menu01.Caption Like "貼り付け*"
-        Case menu01.Caption Like "挿入*"
-        Case menu01.Caption Like "削除*"
         Case menu01.Caption Like "数式と値のクリア*"
-  '      Case menu01.Caption Like "コメントの*"
         Case menu01.Caption Like "セルの書式設定*"
-        Case menu01.Caption Like "XXXXXXXXXX*"
+'        Case menu01.Caption Like "貼り付け*"
+'        Case menu01.Caption Like "挿入*"
+'        Case menu01.Caption Like "削除*"
+'        Case menu01.Caption Like "コメントの*"
         Case Else
           menu01.Visible = False
       End Select

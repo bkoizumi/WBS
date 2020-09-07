@@ -42,10 +42,9 @@ Private Sub UserForm_Initialize()
   
   '’S“–ŽÒƒŠƒXƒg‚ÌŽæ“¾
   Call init.setting
-  endLine = Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row - 1
+  endLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row
   
-  
-  For line = 3 To endLine
+  For line = 4 To endLine
     With Assignor01
       .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
     End With
@@ -63,13 +62,7 @@ Private Sub UserForm_Initialize()
     End With
   
   Next
-  
 End Sub
-
-
-
-
-
 
 
 '**************************************************************************************************
@@ -78,7 +71,9 @@ End Sub
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Private Sub run_Click()
-
+  
+  ActiveCell.Value = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
+  
   Unload Me
 End Sub
 

@@ -477,24 +477,8 @@ Function changeShapes()
   Range("C" & changeShapesName) = "変"
 
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   ActiveSheet.Shapes("タスク_" & changeShapesName).Delete
+  ActiveSheet.Shapes("担当者_" & changeShapesName).Delete
   Call 計画線設定(CLng(changeShapesName))
   
   changeShapesName = ""

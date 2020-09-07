@@ -680,11 +680,11 @@ End Function
 
 
 '**************************************************************************************************
-' * xxxxxxxxxx
+' * ’S“–Ò‚ğ•¡”‘I‘ğ
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function showAssignorForm()
+Function ’S“–Ò‚Ì•¡”‘I‘ğ()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   On Error GoTo catchError
 
