@@ -50,6 +50,8 @@ Private Const SWP_NOMOVE As Long = &H2&
 Public KeyPressFlg As Boolean
 
 
+
+
 'Private Sub UserForm_Activate()
 '    Call SetWindowPos(GetForegroundWindow, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE)
 '    Me.StartUpPosition = 1
@@ -226,6 +228,89 @@ Function chkScope(minVal As MSForms.TextBox, maxVal As MSForms.TextBox)
   End If
   
 End Function
+
+'**************************************************************************************************
+' * íSìñé“èÓïÒÇÃÉNÉäÉA
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Private Sub clearAssignor_Click()
+    Assign01.Text = ""
+    Assign02.Text = ""
+    Assign03.Text = ""
+    Assign04.Text = ""
+    Assign05.Text = ""
+    Assign06.Text = ""
+    Assign07.Text = ""
+    Assign08.Text = ""
+    Assign09.Text = ""
+    Assign10.Text = ""
+    Assign11.Text = ""
+    Assign12.Text = ""
+    Assign13.Text = ""
+    Assign14.Text = ""
+    Assign15.Text = ""
+    Assign16.Text = ""
+    Assign17.Text = ""
+    Assign18.Text = ""
+    Assign19.Text = ""
+    Assign20.Text = ""
+    Assign21.Text = ""
+    Assign22.Text = ""
+    Assign23.Text = ""
+    Assign24.Text = ""
+'    Assign25.Text = ""
+'    Assign26.Text = ""
+'    Assign27.Text = ""
+'    Assign28.Text = ""
+'    Assign29.Text = ""
+'    Assign30.Text = ""
+'    Assign31.Text = ""
+'    Assign32.Text = ""
+'    Assign33.Text = ""
+'    Assign34.Text = ""
+'    Assign35.Text = ""
+    
+    
+    AssignColor01.BackColor = 16777215
+    AssignColor02.BackColor = 16777215
+    AssignColor03.BackColor = 16777215
+    AssignColor04.BackColor = 16777215
+    AssignColor05.BackColor = 16777215
+    AssignColor06.BackColor = 16777215
+    AssignColor07.BackColor = 16777215
+    AssignColor08.BackColor = 16777215
+    AssignColor09.BackColor = 16777215
+    AssignColor10.BackColor = 16777215
+    AssignColor11.BackColor = 16777215
+    AssignColor12.BackColor = 16777215
+    AssignColor13.BackColor = 16777215
+    AssignColor14.BackColor = 16777215
+    AssignColor15.BackColor = 16777215
+    AssignColor16.BackColor = 16777215
+    AssignColor17.BackColor = 16777215
+    AssignColor18.BackColor = 16777215
+    AssignColor19.BackColor = 16777215
+    AssignColor20.BackColor = 16777215
+    AssignColor21.BackColor = 16777215
+    AssignColor22.BackColor = 16777215
+    AssignColor23.BackColor = 16777215
+    AssignColor24.BackColor = 16777215
+'    AssignColor25.BackColor = 16777215
+'    AssignColor26.BackColor = 16777215
+'    AssignColor27.BackColor = 16777215
+'    AssignColor28.BackColor = 16777215
+'    AssignColor29.BackColor = 16777215
+'    AssignColor30.BackColor = 16777215
+'    AssignColor31.BackColor = 16777215
+'    AssignColor32.BackColor = 16777215
+'    AssignColor33.BackColor = 16777215
+'    AssignColor34.BackColor = 16777215
+'    AssignColor35.BackColor = 16777215
+
+
+
+End Sub
 
 
 '**************************************************************************************************
