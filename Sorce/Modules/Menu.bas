@@ -84,7 +84,7 @@ Sub M_カレンダー生成()
   
   Call Library.showDebugForm("カレンダー生成", "処理完了")
   
-  Call WBS_Option.非表示列設定
+  Call WBS_Option.表示列設定
   Call ProgressBar.showEnd
   Call Library.endScript
 
@@ -257,6 +257,7 @@ End Sub
 Sub M_タスク表示_標準()
   Call Library.startScript
   
+  Call init.setting
   If setVal("debugMode") <> "develop" Then
     mainSheet.Visible = True
     ResourcesSheet.Visible = xlSheetVeryHidden

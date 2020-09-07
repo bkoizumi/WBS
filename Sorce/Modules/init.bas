@@ -199,7 +199,7 @@ Function –¼‘O’è‹`()
     End If
   Next
   
-  For line = 3 To 29
+  For line = 3 To setSheet.Range("B5")
     If setSheet.Range("A" & line) <> "" Then
       setSheet.Range("B" & line).Name = setSheet.Range("A" & line)
     End If

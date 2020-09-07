@@ -9,11 +9,11 @@ Function 項目列チェック()
   Dim itemName As String
   Dim defaultLine As Long
   
-'  Call init.setting
-  defaultLine = 40
+  Call init.setting
+  defaultLine = setVal("sheetRangeStartCell")
   startLine = 4
 
-  setSheet.Range("A30:B100").ClearContents
+  setSheet.Range("A" & defaultLine & ":B100").ClearContents
   
   mainSheet.Select
  

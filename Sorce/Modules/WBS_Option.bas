@@ -347,6 +347,21 @@ Function オプション画面表示()
     .CompanyHoliday.Text = CompanyHolidayList
     
     
+    '表示設定
+    .view_Plan.Value = setVal("view_Plan")
+    .view_Assign.Value = setVal("view_Assign")
+    .view_Progress.Value = setVal("view_Progress")
+    .view_Achievement.Value = setVal("view_Achievement")
+    .view_Task.Value = setVal("view_Task")
+    .view_TaskInfo.Value = setVal("view_TaskInfo")
+    .view_WorkLoad.Value = setVal("view_WorkLoad")
+    .view_LateOrEarly.Value = setVal("view_LateOrEarly")
+    .view_Note.Value = setVal("view_Note")
+    
+    .viewGant_TaskName.Value = setVal("viewGant_TaskName")
+    .viewGant_Assignor.Value = setVal("viewGant_Assignor")
+    
+    
   End With
   
 '  Kill ThisWorkbook.Path & "\" & "msoLineSingle.jpg"
@@ -377,7 +392,7 @@ Function オプション設定値格納()
   Call Library.startScript
   
   setSheet.Select
-  For line = 3 To 28
+  For line = 3 To setSheet.Range("B5")
     Select Case setSheet.Range("A" & line)
       Case "baseDay"
         If getVal(setSheet.Range("A" & line)) = Format(Now, "yyyy/mm/dd") Then
@@ -394,27 +409,29 @@ Function オプション設定値格納()
   
   '会社指定休日の設定
   line = 3
-  setSheet.Range("M3:M" & Cells(Rows.count, 13).End(xlUp).row).ClearContents
+  setSheet.Range(setVal("cell_CompanyHoliday") & "3:" & setVal("cell_CompanyHoliday") & Cells(Rows.count, Library.getColumnNo(setVal("cell_CompanyHoliday"))).End(xlUp).row).ClearContents
   For Each CompanyHoliday In Split(getVal("CompanyHoliday"), vbNewLine)
-    setSheet.Range("M" & line) = CompanyHoliday
+    setSheet.Range(setVal("cell_CompanyHoliday") & line) = CompanyHoliday
     line = line + 1
   Next CompanyHoliday
-  setSheet.Range("M3:M37").Select
-  Call 罫線.囲み罫線
 
 
 
   '担当者
-  setSheet.Range("K3:K" & Cells(Rows.count, 11).End(xlUp).row).Clear
-  For line = 3 To 37
-    setSheet.Range("K" & line) = getVal("Assign" & Format(line - 2, "00"))
-    setSheet.Range("K" & line).Interior.Color = getVal("AssignColor" & Format(line - 2, "00"))
+  setSheet.Range(setVal("cell_AssignorList") & "4:" & setVal("cell_AssignorList") & Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row).Clear
+  For line = 4 To 38
+    setSheet.Range(setVal("cell_AssignorList") & line) = getVal("Assign" & Format(line - 2, "00"))
+    setSheet.Range(setVal("cell_AssignorList") & line).Interior.Color = getVal("AssignColor" & Format(line - 2, "00"))
   Next
-  setSheet.Range("K3:K37").Select
+  setSheet.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & 38).Select
   Call 罫線.囲み罫線
+  
   
   Application.Goto Reference:=Range("A1"), Scroll:=True
   mainSheet.Select
+  
+  Call WBS_Option.表示列設定
+  
   Call Library.endScript
 End Function
 
@@ -439,57 +456,37 @@ End Function
 
 
 '**************************************************************************************************
-' * xxxxxxxxxx
+' * 表示列設定
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function 非表示列設定()
+Function 表示列設定()
   Dim line As Long, endLine As Long
+  Dim viewLineName As Variant
   
 '  On Error GoTo catchError
-  If setVal("debugMode") <> "develop" Then
+  If setVal("debugMode") = "develop" Then
     Exit Function
   End If
+  mainSheet.Select
 
-  endLine = setSheet.Cells(Rows.count, 4).End(xlUp).row
-  For line = 3 To endLine
-    If setSheet.Range("E" & line) = False Then
-      Select Case setSheet.Range("D" & line)
-      Case "view_Plan"
-        Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = True
-      
-      Case "view_Assign"
-        Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = True
-      
-      Case "view_Progress"
-        Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = True
-      
-      Case "view_Achievement"
-        Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = True
-      
-      Case "view_Task"
-        Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = True
-      
-      Case "view_TaskInfo"
-        Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = True
-      
-      Case "view_WorkLoad"
-        Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = True
-      
-      Case "view_LateOrEarly"
-        Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = True
-      
-      Case "view_Note"
-        Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = True
-      
-      Case Else
-      End Select
-    End If
-  Next
+
+  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = setVal("view_Plan")
+  Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = setVal("view_Assign")
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).EntireColumn.Hidden = setVal("view_Progress")
   
+  
+  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = setVal("view_Achievement")
+  Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = setVal("view_Task")
+  Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = setVal("view_TaskInfo")
+  
+  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = setVal("view_WorkLoad")
+  
+  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = setVal("view_LateOrEarly")
+  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = setVal("view_Note")
 
-
-
+  Application.Goto Reference:=Range("A6"), Scroll:=True
+  
 Exit Function
 'エラー発生時=====================================================================================
 catchError:
@@ -514,7 +511,7 @@ Function viewNormal()
   ActiveWindow.FreezePanes = False
   ActiveWindow.FreezePanes = True
   
-  Call 非表示列設定
+  Call 表示列設定
   
   
 

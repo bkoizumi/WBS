@@ -343,8 +343,6 @@ Private Sub run_Click()
     .Add item:=lineColor_TaskLevel2.BackColor, Key:="lineColor_TaskLevel2"
     .Add item:=lineColor_TaskLevel3.BackColor, Key:="lineColor_TaskLevel3"
 
-
-
     'íSìñé“
     .Add item:=Assign01.Text, Key:="Assign01"
     .Add item:=Assign02.Text, Key:="Assign02"
@@ -418,6 +416,20 @@ Private Sub run_Click()
     .Add item:=AssignColor33.BackColor, Key:="AssignColor33"
     .Add item:=AssignColor34.BackColor, Key:="AssignColor34"
     .Add item:=AssignColor35.BackColor, Key:="AssignColor35"
+    
+    
+    'ï\é¶ê›íË
+    .Add item:=view_Plan.Value, Key:="view_Plan"
+    .Add item:=view_Assign.Value, Key:="view_Assign"
+    .Add item:=view_Progress.Value, Key:="view_Progress"
+    .Add item:=view_Achievement.Value, Key:="view_Achievement"
+    .Add item:=view_Task.Value, Key:="view_Task"
+    .Add item:=view_TaskInfo.Value, Key:="view_TaskInfo"
+    .Add item:=view_WorkLoad.Value, Key:="view_WorkLoad"
+    .Add item:=view_LateOrEarly.Value, Key:="view_LateOrEarly"
+    .Add item:=view_Note.Value, Key:="view_Note"
+    .Add item:=viewGant_TaskName.Value, Key:="viewGant_TaskName"
+    .Add item:=viewGant_Assignor.Value, Key:="viewGant_Assignor"
 
   End With
   Unload Me
