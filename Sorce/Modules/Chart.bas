@@ -209,7 +209,7 @@ Function 実績線設定(line As Long)
   
   startColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementStart") & line))
   
-  Call Library.showDebugForm("実績線設定", Library.TEXTJOIN("", True, Range("C" & line & ":" & setVal("cell_TaskAreaEnd") & line)))
+  Call Library.showDebugForm("実績線設定", Library.TEXTJOIN("", True, Range(setVal("cell_Info") & line & ":" & setVal("cell_TaskAreaEnd") & line)))
   Call Library.showDebugForm("実績線設定", "　開始日:" & Range(setVal("cell_AchievementStart") & line))
   Call Library.showDebugForm("実績線設定", "　終了日:" & Range(setVal("cell_AchievementEnd") & line))
   Call Library.showDebugForm("実績線設定", "　進捗　:" & Range(setVal("cell_Progress") & line))
@@ -281,7 +281,7 @@ Function イナズマ線設定(line As Long)
 '    Exit Function
   End If
   
-  Call Library.showDebugForm("イナズマ線設定", Range("C" & line))
+  Call Library.showDebugForm("イナズマ線設定", Range(setVal("cell_Info") & line))
   
   baseColumn = WBS_Option.日付セル検索(setVal("baseDay"))
   
@@ -483,8 +483,14 @@ Function changeShapes()
   Loop
   Range(setVal("cell_PlanEnd") & changeShapesName) = newEndDay
   
-  Range("C" & changeShapesName) = "変"
-
+  If ActiveSheet.Name = TeamsPlannerSheetName Then
+    If Range(setVal("cell_Info") & changeShapesName) = "" Then
+      Range(setVal("cell_Info") & changeShapesName) = "変"
+    ElseIf Range(setVal("cell_Info") & changeShapesName) Like "*変*" Then
+    Else
+      Range(setVal("cell_Info") & changeShapesName) = Range(setVal("cell_Info") & changeShapesName) & ",変"
+    End If
+  End If
   
   ActiveSheet.Shapes("タスク_" & changeShapesName).Delete
   If setVal("viewGant_Assignor") = True Then

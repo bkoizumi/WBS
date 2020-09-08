@@ -10,12 +10,32 @@ Attribute VB_Exposed = True
 
 
 
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+  On Error GoTo catchError
+
+
+  Exit Sub
+'ÉGÉâÅ[î≠ê∂éû=====================================================================================
+catchError:
+  Call Library.endScript
+End Sub
+
 Private Sub Worksheet_Change(ByVal Target As Range)
-'  On Error GoTo catchError
+  Dim selectCells As String
+
+
+  On Error GoTo catchError
   
+  selectCells = Selection.Address(False, False)
+  selectCells = Replace(selectCells, ":", "")
+
   Call init.setting
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
+  
+  ElseIf IsNumeric(selectCells) Then
+    Exit Sub
+  
   
   'íSìñé“Çï°êîëIëÇ∑ÇÈÇ∆Ç´
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) And Target.Value = "ï°êîëIë" Then
@@ -47,10 +67,34 @@ catchError:
 End Sub
 
 Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+  Dim line As Long
+  
+  Call init.setting
   If changeShapesName <> "" Then
     Call Chart.changeShapes
+  ElseIf Cells(Target.row, Target.Column) = "Å{" Then
+    Call Library.startScript
+    line = Target.row + 1
+    Do While Range(setVal("cell_Info") & line) = "ï°"
+      line = line + 1
+    Loop
+    
+    Cells(Target.row, Target.Column) = "Å|"
+    Rows(Target.row + 1 & ":" & line - 1).EntireRow.Hidden = False
+    Range(setVal("cell_TaskArea") & Target.row + 1).Select
+    Call Library.endScript
+  ElseIf Cells(Target.row, Target.Column) = "Å|" Then
+    Call Library.startScript
+    line = Target.row + 1
+    Do While Range(setVal("cell_Info") & line) = "ï°"
+      line = line + 1
+    Loop
+    
+    Cells(Target.row, Target.Column) = "Å{"
+    Rows(Target.row + 1 & ":" & line - 1).EntireRow.Hidden = True
+    Range(setVal("cell_TaskArea") & Target.row + 1).Select
+    Call Library.endScript
   End If
-
   
 End Sub
 

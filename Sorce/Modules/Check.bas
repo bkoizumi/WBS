@@ -373,12 +373,12 @@ Label_nextFor:
   For line = 6 To endLine
     Call ProgressBar.showCount("タスク確認", line, endLine, "子タスクのデータ確認")
 
-    Call Library.showDebugForm("タスク確認", "　" & mainSheet.Range("C" & line))
+    Call Library.showDebugForm("タスク確認", "　" & mainSheet.Range(setVal("cell_Info") & line))
     
     'Levelがなければループを抜ける
     If mainSheet.Range("B" & line) = "" Then Exit For
     
-    If Range(setVal("cell_Assign") & line) <> "工程" Then
+    If Range(setVal("cell_Assign") & line) <> "工程" And Range(setVal("cell_Info") & line) <> "複" Then
       '実績日(開始と終了)が入力されていれば、進捗を100にする---------------------------------------
       If mainSheet.Range(setVal("cell_AchievementStart") & line) <> "" And mainSheet.Range(setVal("cell_AchievementEnd") & line) <> "" Then
         mainSheet.Range(setVal("cell_Progress") & line) = 100

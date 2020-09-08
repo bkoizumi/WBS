@@ -38,7 +38,7 @@ End Function
 '**************************************************************************************************
 Function 担当者抽出(memberList As Collection)
   Dim line As Long, endLine As Long, count As Long
-  Dim assignor As String, assignName As Variant
+  Dim assignor As String
   
   
 '  On Error GoTo catchError
@@ -54,18 +54,34 @@ Function 担当者抽出(memberList As Collection)
   count = count + 1
 
   For line = 6 To endLine
-    If mainSheet.Range(setVal("cell_Assign") & line).Value <> "" Then
-      For Each assignName In Split(mainSheet.Range(setVal("cell_Assign") & line).Value, ",")
-        assignor = assignName
-        If assignor <> "" And isCollection(memberList, assignor) = False Then
+    assignor = mainSheet.Range(setVal("cell_Assign") & line).Value
+    If assignor <> "" Then
+        If isCollection(memberList, assignor) = False Then
           With memberList
             .Add item:=assignor, Key:=str(count)
           End With
           count = count + 1
         End If
-      Next
     End If
   Next
+
+
+
+
+
+'  For line = 6 To endLine
+'    If mainSheet.Range(setVal("cell_Assign") & line).Value <> "" Then
+'      For Each assignName In Split(mainSheet.Range(setVal("cell_Assign") & line).Value, ",")
+'        assignor = assignName
+'        If assignor <> "" And isCollection(memberList, assignor) = False Then
+'          With memberList
+'            .Add item:=assignor, Key:=str(count)
+'          End With
+'          count = count + 1
+'        End If
+'      Next
+'    End If
+'  Next
   Exit Function
 'エラー発生時=====================================================================================
 catchError:
@@ -257,7 +273,7 @@ Function taskLink()
       Loop
       Range(setVal("cell_PlanEnd") & targetCell.row) = newEndDay
       
-      Range("C" & targetCell.row) = "変"
+      Range(setVal("cell_Info") & targetCell.row) = "変"
     End If
     oldLine = targetCell.row
   Next
@@ -313,8 +329,8 @@ Function rTaskInsert()
   Rows(Selection.row & ":" & Selection.row).Insert Shift:=xlDown
   Range("A" & Selection.row).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
   Application.CutCopyMode = False
-  Range("C" & Selection.row & ":XFD" & Selection.row).ClearContents
-  Range("C" & Selection.row & ":XFD" & Selection.row).ClearComments
+  Range(setVal("cell_Info") & Selection.row & ":XFD" & Selection.row).ClearContents
+  Range(setVal("cell_Info") & Selection.row & ":XFD" & Selection.row).ClearComments
   
   Range("A" & Selection.row).FormulaR1C1 = "=ROW()-5"
  

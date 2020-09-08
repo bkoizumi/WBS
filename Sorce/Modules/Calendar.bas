@@ -13,8 +13,7 @@ Function 書式設定()
 '  mainSheet.Select
   
   Columns("A:A").ColumnWidth = 4
-  Columns("B:B").ColumnWidth = 3
-  Columns("C:C").ColumnWidth = 3
+  Columns(setVal("cell_LevelInfo") & ":" & setVal("cell_LineInfo")).ColumnWidth = 3
   
 
     '作業項目
@@ -187,7 +186,7 @@ Function makeCalendar()
   Range(Cells(3, Library.getColumnNo(setVal("calendarStartCol"))), Cells(6, line - 1)).Select
   Call 罫線.横線
 
-  endLine = Cells(Rows.count, 1).End(xlUp).row
+  endLine = Cells(Rows.count, Library.getColumnNo(setVal("cell_LineInfo"))).End(xlUp).row
   If endLine = 5 And Range(setVal("cell_TaskArea") & 6) = "" Then
     endLine = 25
   End If
@@ -218,10 +217,11 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   Dim line As Long
   Dim taskLevel As Long
   Dim taskLevelRange As Range
+  Dim cell_LineInfo As Long
   
 '  On Error GoTo catchError
   
- 
+  cell_LineInfo = 1
   'タスクが記載されている場合、タスクレベルを値としてコピー
   Application.CalculateFull
   If Range(setVal("cell_TaskArea") & startLine) <> "" Then
@@ -244,7 +244,14 @@ Function 行書式コピー(startLine As Long, endLine As Long)
         End If
       End If
       
-      Range("A" & line).FormulaR1C1 = "=ROW()-5"
+      If Range(setVal("cell_Info") & line) <> "複" Then
+        Range("A" & line) = cell_LineInfo
+        cell_LineInfo = cell_LineInfo + 1
+      Else
+        Range("A" & line) = Range("A" & line - 1)
+      End If
+      
+      Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
       Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
       Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
       Set taskLevelRange = Nothing
@@ -252,19 +259,36 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   End If
   
   With Range(setVal("cell_Assign") & startLine & ":" & setVal("cell_Assign") & endLine).Validation
-      .Delete
-      .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-      xlBetween, Formula1:="=担当者"
-      .IgnoreBlank = True
-      .InCellDropdown = False
-      .InputTitle = ""
-      .ErrorTitle = ""
-      .InputMessage = ""
-      .ErrorMessage = ""
-      .IMEMode = xlIMEModeNoControl
-      .ShowInput = True
-      .ShowError = True
-  End With
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:="=担当者"
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .IMEMode = xlIMEModeNoControl
+        .ShowInput = True
+        .ShowError = False
+    End With
+      
+      
+      
+      
+'      .Delete
+'      .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+'      xlBetween, Formula1:="=担当者"
+'      .IgnoreBlank = True
+'      .InCellDropdown = True
+'      .InputTitle = ""
+'      .ErrorTitle = ""
+'      .InputMessage = ""
+'      .ErrorMessage = ""
+'      .IMEMode = xlIMEModeNoControl
+'      .ShowInput = True
+'      .ShowError = True
+'  End With
   
   With Range(setVal("cell_TaskArea") & startLine & ":" & setVal("cell_TaskArea") & endLine).Validation
     .Delete

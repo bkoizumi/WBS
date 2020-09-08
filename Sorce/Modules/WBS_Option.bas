@@ -543,9 +543,26 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function viewNormal()
+  Dim line As Long, endLine As Long, rowLine As Long, endColLine As Long
+  
+  
   On Error GoTo catchError
 
   Call init.setting
+  endLine = TeamsPlannerSheet.Cells(Rows.count, 1).End(xlUp).row
+  
+  Rows("6:" & Rows.count).EntireRow.Hidden = False
+  
+  'チームプランナーで変更した予定日を格納
+  For line = 6 To endLine
+    If TeamsPlannerSheet.Range(("C") & line) Like "*変*" Then
+      rowLine = TeamsPlannerSheet.Range(("D") & line) + 5
+      
+      mainSheet.Range(setVal("cell_PlanStart") & rowLine) = TeamsPlannerSheet.Range(("G") & line)
+      mainSheet.Range(setVal("cell_PlanEnd") & rowLine) = TeamsPlannerSheet.Range(("H") & line)
+    End If
+  Next
+  
   mainSheet.Visible = True
   TeamsPlannerSheet.Visible = xlSheetVeryHidden
     
@@ -558,6 +575,8 @@ Function viewNormal()
   ActiveWindow.FreezePanes = False
   ActiveWindow.FreezePanes = True
   
+  Call Chart.ガントチャート生成
+  Call WBS_Option.複数の担当者行を非表示
   Call 表示列設定
   
   
@@ -723,11 +742,6 @@ End Function
 Function 担当者の複数選択()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   
-
-'  On Error GoTo catchError
-  
-  
-  
   AssignorForm.Show vbModeless
 
   Exit Function
@@ -739,6 +753,60 @@ End Function
 
 
 
+'**************************************************************************************************
+' * 複数の担当者行を非表示
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function 複数の担当者行を非表示()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  
+    Call Library.startScript
+    endLine = Cells(Rows.count, 1).End(xlUp).row
+     
+    For line = 6 To endLine
+      If Range(setVal("cell_Info") & line) = "－" Then
+        Range(setVal("cell_Info") & line) = "＋"
+      ElseIf Range(setVal("cell_Info") & line) = "複" Then
+        Rows(line & ":" & line).EntireRow.Hidden = True
+      End If
+    Next
+    Call Library.endScript
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+'***********************************************************************************************************************************************
+' * タスクレベルの設定
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'***********************************************************************************************************************************************
+Function タスクレベルの設定()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+
+
+  If ActiveSheet.Name = mainSheetName Then
+'    Rows("6:" & Rows.count).EntireRow.Hidden = False
+    
+    endLine = Cells(Rows.count, 1).End(xlUp).row
+    For line = 6 To endLine
+      If Range(setVal("cell_TaskArea") & line) <> "" Then
+        taskLevel = Range(setVal("cell_LevelInfo") & line) - 1
+        If taskLevel > 0 Then
+          If Range(setVal("cell_TaskArea") & line).IndentLevel <> 0 Then
+            Range(setVal("cell_TaskArea") & line).InsertIndent -Range(setVal("cell_TaskArea") & line).IndentLevel
+          End If
+          Range(setVal("cell_TaskArea") & line).InsertIndent taskLevel
+        End If
+      End If
+    Next
+  End If
+
+
+End Function
 
 
 

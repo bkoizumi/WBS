@@ -35,7 +35,24 @@ Public selectShapesName(0) As Variant
 Public changeShapesName As String
 
 
+'***********************************************************************************************************************************************
+' * 設定クリア
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'***********************************************************************************************************************************************
+Function clearSetting()
+  Set helpSheet = Nothing
+  Set noticeCodeSheet = Nothing
+  Set setSheet = Nothing
+  Set mainSheet = Nothing
+  Set tmpSheet = Nothing
+  Set TeamsPlannerSheet = Nothing
+  
+  Set setVal = Nothing
+  Set memberColor = Nothing
 
+  
+End Function
 '***********************************************************************************************************************************************
 ' * 設定
 ' *
@@ -67,11 +84,6 @@ Label_reset:
   Set mainSheet = ThisBook.Worksheets(mainSheetName)
   Set tmpSheet = ThisBook.Worksheets("Tmp")
   Set TeamsPlannerSheet = ThisBook.Worksheets(TeamsPlannerSheetName)
-  
-  If reCheckFlg = True Then
-    Call Check.項目列チェック
-    Set setVal = Nothing
-  End If
   
   Set setVal = New Collection
   Set memberColor = CreateObject("Scripting.Dictionary")
@@ -129,8 +141,17 @@ Label_reset:
   
   logFile = ThisBook.Path & "\ExcelMacro.log"
   
+  If reCheckFlg = True Then
+    Call Check.項目列チェック
+    reCheckFlg = False
+    Call clearSetting
+    
+    GoTo Label_reset
+  End If
+  
   Call 名前定義
   Exit Function
+  
 'エラー発生時=====================================================================================
 catchError:
   logFile = ""
@@ -218,10 +239,12 @@ End Function
 '***********************************************************************************************************************************************
 Function noDispSheet()
 
+  Call init.setting
   Worksheets("Help").Visible = xlSheetVeryHidden
   Worksheets("Tmp").Visible = xlSheetVeryHidden
   Worksheets("Notice").Visible = xlSheetVeryHidden
 '  Worksheets("設定").Visible = xlSheetVeryHidden
+  
   Worksheets(mainSheetName).Select
 End Function
 
@@ -229,17 +252,18 @@ End Function
 
 Function dispSheet()
 
+  Call init.setting
   Worksheets("Help").Visible = True
   Worksheets("Tmp").Visible = True
   Worksheets("Notice").Visible = True
   Worksheets("設定").Visible = True
   
+  Worksheets(TeamsPlannerSheetName).Visible = True
   Worksheets(mainSheetName).Visible = True
+  
   Worksheets(mainSheetName).Select
   
 End Function
-
-
 
 
 

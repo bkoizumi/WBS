@@ -26,32 +26,33 @@ Function データ移行()
     For Each assignor In assignName
       If assignor <> "工程" Then
         For line = 6 To endLine
-          If mainSheet.Range(setVal("cell_Assign") & line) Like "*" & assignor & "*" Then
+          If mainSheet.Range(setVal("cell_Assign") & line) Like "*,*" Then
+          
+          ElseIf mainSheet.Range(setVal("cell_Assign") & line) = assignor Then
             TeamsPlannerSheet.Range("A" & rowLine) = mainSheet.Range("A" & line)
-            TeamsPlannerSheet.Range("B" & rowLine) = mainSheet.Range("B" & line).Value
-            TeamsPlannerSheet.Range("D" & rowLine) = assignor
-            TeamsPlannerSheet.Range("E" & rowLine) = mainSheet.Range(setVal("cell_TaskArea") & line)
-            TeamsPlannerSheet.Range("F" & rowLine) = mainSheet.Range(setVal("cell_PlanStart") & line)
-            TeamsPlannerSheet.Range("G" & rowLine) = mainSheet.Range(setVal("cell_PlanEnd") & line)
-            TeamsPlannerSheet.Range("H" & rowLine) = mainSheet.Range(setVal("cell_AchievementStart") & line)
-            TeamsPlannerSheet.Range("I" & rowLine) = mainSheet.Range(setVal("cell_AchievementEnd") & line)
-            TeamsPlannerSheet.Range("J" & rowLine) = mainSheet.Range(setVal("cell_ProgressLast") & line)
-            TeamsPlannerSheet.Range("K" & rowLine) = mainSheet.Range(setVal("cell_Progress") & line)
+            TeamsPlannerSheet.Range("B" & rowLine) = mainSheet.Range(setVal("cell_LevelInfo") & line)
             
-            For Each taskAllocation In Split(mainSheet.Range(setVal("cell_TaskAllocation") & line), ",")
-              If taskAllocation Like "*" & assignor & "*" Then
-                allocationRate = Split(taskAllocation, "<>")
-                TeamsPlannerSheet.Range("L" & rowLine) = allocationRate(1)
-              End If
-            Next
+            TeamsPlannerSheet.Range("C" & rowLine) = mainSheet.Range(setVal("cell_Info") & line)
+            TeamsPlannerSheet.Range("D" & rowLine) = mainSheet.Range(setVal("cell_LineInfo") & line)
             
-            TeamsPlannerSheet.Range("M" & rowLine) = mainSheet.Range(setVal("cell_Task") & line)
-            TeamsPlannerSheet.Range("N" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoP") & line)
-            TeamsPlannerSheet.Range("O" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoC") & line)
-            TeamsPlannerSheet.Range("P" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadP") & line)
-            TeamsPlannerSheet.Range("Q" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadA") & line)
-            TeamsPlannerSheet.Range("R" & rowLine) = mainSheet.Range(setVal("cell_LateOrEarly") & line)
-            TeamsPlannerSheet.Range("S" & rowLine) = mainSheet.Range(setVal("cell_Note") & line)
+            TeamsPlannerSheet.Range("E" & rowLine) = assignor
+            TeamsPlannerSheet.Range("F" & rowLine) = mainSheet.Range(setVal("cell_TaskArea") & line)
+            TeamsPlannerSheet.Range("G" & rowLine) = mainSheet.Range(setVal("cell_PlanStart") & line)
+            TeamsPlannerSheet.Range("H" & rowLine) = mainSheet.Range(setVal("cell_PlanEnd") & line)
+            TeamsPlannerSheet.Range("I" & rowLine) = mainSheet.Range(setVal("cell_AchievementStart") & line)
+            TeamsPlannerSheet.Range("J" & rowLine) = mainSheet.Range(setVal("cell_AchievementEnd") & line)
+            TeamsPlannerSheet.Range("K" & rowLine) = mainSheet.Range(setVal("cell_ProgressLast") & line)
+            TeamsPlannerSheet.Range("L" & rowLine) = mainSheet.Range(setVal("cell_Progress") & line)
+            
+            TeamsPlannerSheet.Range("M" & rowLine) = mainSheet.Range(setVal("cell_TaskAllocation") & line)
+            
+            TeamsPlannerSheet.Range("N" & rowLine) = mainSheet.Range(setVal("cell_Task") & line)
+            TeamsPlannerSheet.Range("O" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoP") & line)
+            TeamsPlannerSheet.Range("P" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoC") & line)
+            TeamsPlannerSheet.Range("Q" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadP") & line)
+            TeamsPlannerSheet.Range("R" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadA") & line)
+            TeamsPlannerSheet.Range("S" & rowLine) = mainSheet.Range(setVal("cell_LateOrEarly") & line)
+            TeamsPlannerSheet.Range("T" & rowLine) = mainSheet.Range(setVal("cell_Note") & line)
             
             rowLine = rowLine + 1
           End If
@@ -65,24 +66,24 @@ Function データ移行()
   Application.CutCopyMode = False
 
   'リソースシート用に設定値を変更
-  setVal("cell_TaskArea") = "E"
-  setVal("cell_PlanStart") = "F"
-  setVal("cell_PlanEnd") = "G"
-  setVal("cell_Assign") = "D"
-  setVal("cell_AchievementStart") = "H"
-  setVal("cell_AchievementEnd") = "I"
-  setVal("cell_ProgressLast") = "J"
-  setVal("cell_Progress") = "K"
+  setVal("cell_TaskArea") = "F"
+  setVal("cell_PlanStart") = "G"
+  setVal("cell_PlanEnd") = "H"
+  setVal("cell_Assign") = "E"
+  setVal("cell_AchievementStart") = "I"
+  setVal("cell_AchievementEnd") = "J"
+  setVal("cell_ProgressLast") = "K"
+  setVal("cell_Progress") = "L"
   
-  setVal("cell_TaskAllocation") = "L"
+  setVal("cell_TaskAllocation") = "M"
   
-  setVal("cell_Task") = "M"
-  setVal("cell_TaskInfoP") = "N"
-  setVal("cell_TaskInfoC") = "O"
-  setVal("cell_WorkLoadP") = "P"
-  setVal("cell_WorkLoadA") = "Q"
-  setVal("cell_LateOrEarly") = "R"
-  setVal("cell_Note") = "S"
+  setVal("cell_Task") = "N"
+  setVal("cell_TaskInfoP") = "O"
+  setVal("cell_TaskInfoC") = "P"
+  setVal("cell_WorkLoadP") = "Q"
+  setVal("cell_WorkLoadA") = "R"
+  setVal("cell_LateOrEarly") = "S"
+  setVal("cell_Note") = "T"
   
   setVal("setLightning") = False
   

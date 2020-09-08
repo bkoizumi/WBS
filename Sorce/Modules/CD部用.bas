@@ -20,7 +20,7 @@ Function データコピー(filePath As String)
     targetCalSheet.Range("B2").Copy
     
     endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row + 1
-    mainSheet.Range("C" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    mainSheet.Range(setVal("cell_Info") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     mainSheet.Range(setVal("cell_Assign") & endLine) = "工程"
     mainSheet.Range(setVal("cell_Assign") & endLine) = "工程"
     
@@ -38,20 +38,20 @@ Function データコピー(filePath As String)
       If targetCalSheet.Range("B" & line) Like "<*" Then
         Call Library.showDebugForm("ファイルインポート", "　　タスク名設定")
         targetCalSheet.Range("B" & line).Copy
-        mainSheet.Range("C" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
-        mainSheet.Range("C" & endLine).InsertIndent 2
+        mainSheet.Range(setVal("cell_Info") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        mainSheet.Range(setVal("cell_Info") & endLine).InsertIndent 2
       
-        targetCalSheet.Range("C" & line & ":D" & line).Copy
+        targetCalSheet.Range(setVal("cell_Info") & line & ":D" & line).Copy
         mainSheet.Range(setVal("cell_PlanStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
       
       ElseIf targetCalSheet.Range("B" & line) <> "" Then
         Call Library.showDebugForm("ファイルインポート", "　　工程設定")
         targetCalSheet.Range("B" & line).Copy
-        mainSheet.Range("C" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
-        mainSheet.Range("C" & endLine).InsertIndent 1
+        mainSheet.Range(setVal("cell_Info") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        mainSheet.Range(setVal("cell_Info") & endLine).InsertIndent 1
         
       
-        targetCalSheet.Range("C" & line & ":D" & line).Copy
+        targetCalSheet.Range(setVal("cell_Info") & line & ":D" & line).Copy
         mainSheet.Range(setVal("cell_PlanStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
       
         mainSheet.Range(setVal("cell_Assign") & endLine) = "工程"

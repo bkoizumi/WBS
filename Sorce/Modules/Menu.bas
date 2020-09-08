@@ -77,15 +77,18 @@ Sub M_カレンダー生成()
   
   
   Call Library.startScript
-  Call ProgressBar.showStart
+'  Call ProgressBar.showStart
+  Rows("6:" & Rows.count).EntireRow.Hidden = False
   
   Call Library.showDebugForm("カレンダー生成", "処理開始")
   Call Calendar.makeCalendar
   
+  Call WBS_Option.複数の担当者行を非表示
   Call Library.showDebugForm("カレンダー生成", "処理完了")
   
+  
   Call WBS_Option.表示列設定
-  Call ProgressBar.showEnd
+'  Call ProgressBar.showEnd
   Call Library.endScript
 
 End Sub
@@ -187,6 +190,8 @@ Sub M_すべて表示()
 Attribute M_すべて表示.VB_ProcData.VB_Invoke_Func = " \n14"
   Call Library.startScript
   Rows("6:" & Rows.count).EntireRow.Hidden = False
+  Call WBS_Option.複数の担当者行を非表示
+
   Call Library.endScript
 End Sub
 
@@ -285,11 +290,6 @@ Sub M_タスク表示_チームプランナー()
   Call Library.endScript
 End Sub
 
-Sub M_タスク表示_設定()
-  Call WBS_Option.viewSetting
-  Call Library.endScript
-End Sub
-
 
 
 '**************************************************************************************************
@@ -330,9 +330,11 @@ Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
   Call ProgressBar.showStart
   Call Library.showDebugForm("ガントチャート生成", "処理開始")
   
+  Rows("6:" & Rows.count).EntireRow.Hidden = False
   Call Check.タスクリスト確認
   Call Chart.ガントチャート生成
   
+  Call WBS_Option.複数の担当者行を非表示
   Call Library.showDebugForm("ガントチャート生成", "処理完了")
   Call ProgressBar.showEnd
   Call Library.endScript(True)

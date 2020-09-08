@@ -75,6 +75,7 @@ Private Sub UserForm_Initialize()
         taskAllocation01.Text = tmp1(1)
       End If
     End With
+    
     With Assignor02
       .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
       If assignors("2") Like setSheet.Range(setVal("cell_AssignorList") & line) & "*" Then
@@ -120,7 +121,7 @@ Private Sub UserForm_Initialize()
   If assignor01Default <> 34 Then
     Assignor01.ListIndex = assignor01Default
   End If
-  If Assignor02 <> 34 Then
+  If assignor02Default <> 34 Then
     Assignor02.ListIndex = assignor02Default
   End If
   If assignor03Default <> 34 Then
@@ -143,6 +144,15 @@ End Sub
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Private Sub run_Click()
+  Dim line As Long, ActiveCellLine As Long
+  
+  Call Library.startScript
+  line = ActiveCell.row + 1
+  
+  Do While Range(setVal("cell_Info") & line) = "複"
+    line = line + 1
+  Loop
+  Rows(ActiveCell.row + 1 & ":" & line - 1).Delete Shift:=xlUp
   
   ActiveCell.Value = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
   Range(setVal("cell_TaskAllocation") & ActiveCell.row) = Library.TEXTJOIN(",", True, _
@@ -153,7 +163,138 @@ Private Sub run_Click()
                                                           Assignor05.Text & "<>" & taskAllocation05.Text _
                                                           )
     
+  Range(setVal("cell_Info") & ActiveCell.row) = "＋"
+  ActiveCellLine = ActiveCell.row
+  
+  
+  line = ActiveCellLine + 1
+  If Assignor01.Text <> "" And Range(setVal("cell_Info") & line) <> "複" Then
+    Rows(line & ":" & line).Insert Shift:=xlDown
+  End If
+  If Assignor01.Text <> "" Then
+    Rows("4:4").Copy
+    Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    
+    Range("A" & line) = Range("A" & ActiveCellLine).Value
+    Range("B" & line) = Range("B" & ActiveCellLine).Value
+    Range(setVal("cell_Info") & line) = "複"
+    Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
+    Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-1]C"
+    
+    Range(setVal("cell_Assign") & line) = Assignor01.Text
+    Range(setVal("cell_TaskAllocation") & line) = taskAllocation01.Text
+    Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-1]C"
+    Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-1]C"
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+  End If
+  
+  If Assignor02.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "複" Then
+    Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
+  End If
+  If Assignor02.Text <> "" Then
+    line = line + 1
+    
+    Rows("4:4").Copy
+    Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    
+    Range("A" & line) = Range("A" & ActiveCellLine).Value
+    Range("B" & line) = Range("B" & ActiveCellLine).Value
+    Range(setVal("cell_Info") & line) = "複"
+    Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
+    Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-2]C"
+    
+    Range(setVal("cell_Assign") & line) = Assignor02.Text
+    Range(setVal("cell_TaskAllocation") & line) = taskAllocation02.Text
+    Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-2]C"
+    Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-2]C"
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+  End If
+  
+  If Assignor03.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "複" Then
+    Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
+  End If
+  If Assignor03.Text <> "" Then
+    line = line + 1
+    
+    Rows("4:4").Copy
+    Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    
+    Range("A" & line) = Range("A" & ActiveCellLine).Value
+    Range("B" & line) = Range("B" & ActiveCellLine).Value
+    Range(setVal("cell_Info") & line) = "複"
+    Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
+    Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-3]C"
+    
+    Range(setVal("cell_Assign") & line) = Assignor03.Text
+    Range(setVal("cell_TaskAllocation") & line) = taskAllocation03.Text
+    Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-3]C"
+    Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-3]C"
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+  End If
+  
+  If Assignor04.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "複" Then
+    Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
+  End If
+  If Assignor04.Text <> "" Then
+    line = line + 1
+    
+    Rows("4:4").Copy
+    Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    
+    Range("A" & line) = Range("A" & ActiveCellLine).Value
+    Range("B" & line) = Range("B" & ActiveCellLine).Value
+    Range(setVal("cell_Info") & line) = "複"
+    Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
+    Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-4]C"
+    
+    Range(setVal("cell_Assign") & line) = Assignor04.Text
+    Range(setVal("cell_TaskAllocation") & line) = taskAllocation04.Text
+    Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-4]C"
+    Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-4]C"
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+  End If
+  
+  If Assignor05.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "複" Then
+    Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
+  End If
+  If Assignor05.Text <> "" Then
+    line = line + 1
+    
+    Rows("4:4").Copy
+    Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    
+    Range("A" & line) = Range("A" & ActiveCellLine).Value
+    Range("B" & line) = Range("B" & ActiveCellLine).Value
+    Range(setVal("cell_Info") & line) = "複"
+    Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
+    Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-5]C"
+    
+    Range(setVal("cell_Assign") & line) = Assignor05.Text
+    Range(setVal("cell_TaskAllocation") & line) = taskAllocation05.Text
+    Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-5]C"
+    Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-5]C"
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+  End If
+
+  Call WBS_Option.タスクレベルの設定
+  Call Chart.ガントチャート生成
+  
+  Rows(ActiveCellLine + 1 & ":" & line).EntireRow.Hidden = True
+  
+  
+  
   Unload Me
+  Call Library.endScript(True)
 End Sub
 
 '**************************************************************************************************

@@ -5,7 +5,15 @@
       <tab id="WBSTab" label="プロジェクト管理" insertBeforeMso="TabHome">
       <group id="Setting" label="設定">
         <button id="S_B001" size="large" label="Help"                     onAction="ctl_ribbon.Help"          supertip="Helpを表示します"  imageMso="Help" />
-        <button id="S_B002" size="large" label="オプション&#xD;&#xA;"     onAction="ctl_ribbon.dispOption"    supertip="オプション設定画面を表示します" imageMso="AnimationCustomAddActionVerbDialog" />
+
+        <splitButton id="S_SB001" size="large">
+          <button id="S_B002" size="large" label="オプション&#xD;&#xA;"     onAction="ctl_ribbon.dispOption"    supertip="オプション設定画面を表示します" imageMso="AnimationCustomAddActionVerbDialog" />
+          <menu id="S_M002" itemSize="large">
+            <button id="S_B201"          label="列変更"     onAction="ctl_ribbon.viewNormal"    supertip="列を移動させた場合に処理" description="列を移動させた場合に実行してください" imageMso="GanttChartViewGallery" />
+          </menu>
+        </splitButton>
+
+
         <button id="S_B003" size="large" label="カレンダー生成&#xD;&#xA;" onAction="ctl_ribbon.makeCalendar"  supertip="設定された期間のカレンダーを生成します" imageMso="CalendarMonthDetailsSplitButton" />
         <splitButton id="S_SB001" size="large">
           <button id="S_B004"            label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />

@@ -108,7 +108,7 @@ Function データコピー(filePath As String)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
     mainSheet.Range("B" & endLine) = 0
-    mainSheet.Range("C" & endLine) = Dir(filePath)
+    mainSheet.Range(setVal("cell_Info") & endLine) = Dir(filePath)
     mainSheet.Range(setVal("cell_Note") & endLine) = filePath
 
     endLine = endLine + 1
@@ -214,7 +214,7 @@ Function データコピー(filePath As String)
     Call ProgressBar.showCount(Dir(filePath), line, tmpEndLine, "レベルの再設定")
     targetLevel = mainSheet.Range("B" & line)
     If targetLevel <> 0 Then
-      mainSheet.Range("C" & line).InsertIndent targetLevel
+      mainSheet.Range(setVal("cell_Info") & line).InsertIndent targetLevel
     End If
     
     mainSheet.Range("A" & line).FormulaR1C1 = "=ROW()-5"
