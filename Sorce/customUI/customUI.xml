@@ -4,38 +4,39 @@
     <tabs>
       <tab id="WBSTab" label="プロジェクト管理" insertBeforeMso="TabHome">
       <group id="Setting" label="設定">
-        <button id="S_B001" size="large" label="Help"                     onAction="ctl_ribbon.Help"          supertip="Helpを表示します"  imageMso="Help" />
+        <button id="S_B001" size="large"  label="Help"                     onAction="ctl_ribbon.Help"          supertip="Helpを表示します"  imageMso="Help" />
 
-        <splitButton id="S_SB001" size="large">
-          <button id="S_B002" size="large" label="オプション&#xD;&#xA;"     onAction="ctl_ribbon.dispOption"    supertip="オプション設定画面を表示します" imageMso="AnimationCustomAddActionVerbDialog" />
-          <menu id="S_M002" itemSize="large">
-            <button id="S_B201"          label="列変更"     onAction="ctl_ribbon.viewNormal"    supertip="列を移動させた場合に処理" description="列を移動させた場合に実行してください" imageMso="GanttChartViewGallery" />
+        <splitButton id="S_SB002" size="large">
+          <button id="S_B002"             label="オプション&#xD;&#xA;"     onAction="ctl_ribbon.dispOption"    supertip="オプション設定画面を表示します" imageMso="AnimationCustomAddActionVerbDialog" />
+          <menu id="S_M001" itemSize="large">
+            <menuSeparator id="S_MS001" title="列を入れ替えた時の対応"/>
+            <button id="S_B002-1"         label="列入れ替え"     onAction="ctl_ribbon.viewNormal"    supertip="列を入れ替えた場合に処理" description="列を入れ替えた場合に実行してください&#xD;&#xA;" imageMso="GanttChartViewGallery" />
           </menu>
         </splitButton>
 
 
         <button id="S_B003" size="large" label="カレンダー生成&#xD;&#xA;" onAction="ctl_ribbon.makeCalendar"  supertip="設定された期間のカレンダーを生成します" imageMso="CalendarMonthDetailsSplitButton" />
-        <splitButton id="S_SB001" size="large">
-          <button id="S_B004"            label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />
-          <menu id="S_M100" itemSize="large">
-            <button id="S_B005"          label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />
-            <button id="S_B006"          label="タスクシート"             onAction="ctl_ribbon.viewTask"      supertip="タスク編集モードに変更します" imageMso="MenuDailyTaskList" />
-            <button id="S_B007"          label="チームプランナー"         onAction="ctl_ribbon.viewTeamsPlanner" supertip="担当者編集モードに変更します" imageMso="TeamPlannerViewGallery" />
+        <splitButton id="S_SB404" size="large">
+          <button id="S_B404"            label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"    supertip="ガントチャートを表示します" imageMso="GanttChartViewGallery" />
+          <menu id="S_M400" itemSize="large">
+            <button id="S_B405"          label="ガント&#xD;&#xA;チャート" onAction="ctl_ribbon.viewNormal"        supertip="ガントチャート" description="ガントチャートを表示します&#xD;&#xA;"    imageMso="GanttChartViewGallery" />
+            <button id="S_B406"          label="チームプランナー"         onAction="ctl_ribbon.viewTeamsPlanner"  supertip="担当者別表示"   description="担当者別に表示を切り替えます&#xD;&#xA;"  imageMso="TeamPlannerViewGallery" />
+            <!-- <button id="S_B407"          label="タスクシート"             onAction="ctl_ribbon.viewTask"          supertip="タスク表示"     description="タスク編集に表示を切り替えます&#xD;&#xA;"  imageMso="MenuDailyTaskList" /> -->
           </menu>
         </splitButton>
       </group >
 
       <group id="Common" label="共通">
-        <button id="Com_B001" size="large" label="全画面表示"                 onAction="ctl_ribbon.DispFullScreen"  supertip="全画面表示" imageMso="ViewFullScreenView" />
-        <button id="Com_B002" size="large" label="選択行&#xD;&#xA;ハイライト" onAction="ctl_ribbon.setLineColor"    supertip="選択行ハイライト" imageMso="RecordsMoreRecordsMenu" />
-        <button id="Com_B003" size="large" label="全てクリア&#xD;&#xA;"           onAction="ctl_ribbon.ClearAll"        supertip="全データを削除します" imageMso="ClearAll" />
+        <button id="Com_B001" size="large" label="全画面表示"                 onAction="ctl_ribbon.DispFullScreen"  supertip="全画面表示"           imageMso="ViewFullScreenView" />
+        <button id="Com_B002" size="large" label="選択行&#xD;&#xA;ハイライト" onAction="ctl_ribbon.setLineColor"    supertip="選択行ハイライト"     imageMso="RecordsMoreRecordsMenu" />
+        <button id="Com_B003" size="large" label="全てクリア&#xD;&#xA;"       onAction="ctl_ribbon.ClearAll"        supertip="全データを削除します" imageMso="ClearAll" />
       </group >
 
       <group id="Task" label="WBS">
-        <button id="T_B001" size="large" label="チェック&#xD;&#xA;"   onAction="ctl_ribbon.chkTaskList"   supertip="データチェック" imageMso="DataValidation" />
+        <button id="T_B001" size="large" label="チェック&#xD;&#xA;"   onAction="ctl_ribbon.chkTaskList"   supertip="データチェック"                   imageMso="DataValidation" />
         <button id="T_B002" size="large" label="進捗コピー"           onAction="ctl_ribbon.copyProgress"  supertip="今回の進捗率を前回にコピーします" imageMso="GroupColumnActions" />
-        <button id="T_B003" size="large" label="抽出&#xD;&#xA;"       onAction="ctl_ribbon.setFilter"     supertip="タスクの抽出をします" imageMso="DatasheetColumnLookup" />
-        <button id="T_B004" size="large" label="すべて表示&#xD;&#xA;" onAction="ctl_ribbon.dispAllList"   supertip="抽出結果を解除します" imageMso="FilterClearAllFilters" />
+        <button id="T_B003" size="large" label="抽出&#xD;&#xA;"       onAction="ctl_ribbon.setFilter"     supertip="タスクの抽出をします"             imageMso="DatasheetColumnLookup" />
+        <button id="T_B004" size="large" label="すべて表示&#xD;&#xA;" onAction="ctl_ribbon.dispAllList"   supertip="抽出結果を解除します"             imageMso="FilterClearAllFilters" />
         <separator id="T_Bsprt01" />
         <box id="T_box1" >
           <button id="T_B005" size="normal" onAction="ctl_ribbon.taskOutdent" supertip="選択したタスクのレベルを1段階ずつ上げます" imageMso="GanttTaskIndent" />
@@ -51,14 +52,15 @@
           <button id="T_B012" size="normal" onAction="ctl_ribbon.progress_75"   supertip="選択したタスクを75%完了とする"  imageMso="_75PercentComplete" />
           <button id="T_B013" size="normal" onAction="ctl_ribbon.progress_100"  supertip="選択したタスクを100%完了とする" imageMso="_100PercentComplete" />
         </box>
-
-
+        <separator id="T_Bsprt02" />
+        <button id="T_B014" size="large" label="タスクへスクロール"   onAction="ctl_ribbon.scrollTask"    supertip="選択したタスクにスクロールします"                 imageMso="SelectedTaskGoTo" />
+        <button id="T_B015" size="large" label="マイルストーンに追加" onAction="ctl_ribbon.addMilestone"  supertip="選択したタスクをマイルストーンに追加します"       imageMso="AddExistingTasksToTimeline" />
       </group >
 
       <group id="Chart" label="ガントチャート">
-        <button id="C_B001" size="large" label="クリア&#xD;&#xA;"   onAction="ctl_ribbon.clearChart"  supertip="ガントチャートを削除します" imageMso="ClearAll"/>
-        <button id="C_B002" size="large" label="センター&#xD;&#xA;" onAction="ctl_ribbon.setCenter"   supertip="ガントチャートエリアをスクロールさせます" imageMso="FieldsMenu" />
-        <button id="C_B003" size="large" label="生成&#xD;&#xA;"     onAction="ctl_ribbon.makeChart"   supertip="ガントチャートを生成します" imageMso="CalendarViewGallery" />
+        <button id="C_B001" size="large" label="クリア&#xD;&#xA;"     onAction="ctl_ribbon.clearChart"    supertip="ガントチャートを削除します"                       imageMso="ClearAll"/>
+        <button id="C_B002" size="large" label="センター&#xD;&#xA;"   onAction="ctl_ribbon.setCenter"     supertip="ガントチャートエリアを中心にスクロールさせます"   imageMso="FieldsMenu" />
+        <button id="C_B003" size="large" label="生成&#xD;&#xA;"       onAction="ctl_ribbon.makeChart"     supertip="ガントチャートを生成します"                       imageMso="CalendarViewGallery" />
       </group >
 
       <group id="Import" label="データ連携">

@@ -393,6 +393,7 @@ Function オプション画面表示()
     .view_Task.Value = setVal("view_Task")
     .view_TaskInfo.Value = setVal("view_TaskInfo")
     .view_TaskAllocation.Value = setVal("view_TaskAllocation")
+    .view_LineInfo.Value = setVal("view_LineInfo")
     
     .view_WorkLoad.Value = setVal("view_WorkLoad")
     .view_LateOrEarly.Value = setVal("view_LateOrEarly")
@@ -473,6 +474,7 @@ Function オプション設定値格納()
   Application.Goto Reference:=Range("A1"), Scroll:=True
   mainSheet.Select
   
+  Call Chart.ガントチャート生成
   Call WBS_Option.表示列設定
   
   Call Library.endScript
@@ -514,19 +516,25 @@ Function 表示列設定()
   mainSheet.Select
 
 
-  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = setVal("view_Plan")
-  Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = setVal("view_Assign")
-  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).EntireColumn.Hidden = setVal("view_Progress")
+  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = getVal("view_Plan")
+  Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = getVal("view_Assign")
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).EntireColumn.Hidden = getVal("view_Progress")
   
   
-  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = setVal("view_Achievement")
-  Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = setVal("view_Task")
-  Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = setVal("view_TaskInfo")
+  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = getVal("view_Achievement")
+  Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = getVal("view_Task")
+  Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = getVal("view_TaskInfo")
   
-  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = setVal("view_WorkLoad")
+  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = getVal("view_WorkLoad")
   
-  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = setVal("view_LateOrEarly")
-  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = setVal("view_Note")
+  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = getVal("view_LateOrEarly")
+  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = getVal("view_Note")
+
+
+  Columns(setVal("cell_LineInfo") & ":" & setVal("cell_LineInfo")).EntireColumn.Hidden = getVal("view_LineInfo")
+  Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).EntireColumn.Hidden = getVal("view_TaskAllocation")
+
+
 
   Application.Goto Reference:=Range("A6"), Scroll:=True
   
@@ -634,7 +642,7 @@ Function viewTeamsPlanner()
   Call TeamsPlanner.データ移行
   
   If setVal("debugMode") <> "develop" Then
-    TeamsPlannerSheet.Columns("H:R").EntireColumn.Hidden = True
+    TeamsPlannerSheet.Columns("I:S").EntireColumn.Hidden = True
   End If
   
   Call Library.endScript

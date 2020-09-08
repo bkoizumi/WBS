@@ -12,6 +12,10 @@ Function ガントチャート生成()
   Dim startColumn As String, endColumn As String
   
   Call WBS_Option.選択シート確認
+  
+  
+  Rows("6:" & Rows.count).EntireRow.Hidden = False
+  
   Call ガントチャート削除
   endLine = Cells(Rows.count, 2).End(xlUp).row
   
@@ -35,6 +39,11 @@ Function ガントチャート生成()
   For line = 6 To endLine
     Call タスクのリンク設定(line)
   Next
+
+  If ActiveSheet.Name = mainSheetName Then
+    Call WBS_Option.複数の担当者行を非表示
+  End If
+
 End Function
 
 
