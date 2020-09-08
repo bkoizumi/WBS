@@ -1,4 +1,4 @@
-Attribute VB_Name = "Resources"
+Attribute VB_Name = "TeamsPlanner"
 '**************************************************************************************************
 ' * データ移行
 ' *
@@ -12,7 +12,7 @@ Function データ移行()
 '  On Error GoTo catchError
 
   
-  ResourcesSheet.Select
+  TeamsPlannerSheet.Select
   Call WBS_Option.clearAll
   
   mainSheet.Calculate
@@ -27,31 +27,31 @@ Function データ移行()
       If assignor <> "工程" Then
         For line = 6 To endLine
           If mainSheet.Range(setVal("cell_Assign") & line) Like "*" & assignor & "*" Then
-            ResourcesSheet.Range("A" & rowLine) = mainSheet.Range("A" & line)
-            ResourcesSheet.Range("B" & rowLine) = mainSheet.Range("B" & line).Value
-            ResourcesSheet.Range("D" & rowLine) = assignor
-            ResourcesSheet.Range("E" & rowLine) = mainSheet.Range(setVal("cell_TaskArea") & line)
-            ResourcesSheet.Range("F" & rowLine) = mainSheet.Range(setVal("cell_PlanStart") & line)
-            ResourcesSheet.Range("G" & rowLine) = mainSheet.Range(setVal("cell_PlanEnd") & line)
-            ResourcesSheet.Range("H" & rowLine) = mainSheet.Range(setVal("cell_AchievementStart") & line)
-            ResourcesSheet.Range("I" & rowLine) = mainSheet.Range(setVal("cell_AchievementEnd") & line)
-            ResourcesSheet.Range("J" & rowLine) = mainSheet.Range(setVal("cell_ProgressLast") & line)
-            ResourcesSheet.Range("K" & rowLine) = mainSheet.Range(setVal("cell_Progress") & line)
+            TeamsPlannerSheet.Range("A" & rowLine) = mainSheet.Range("A" & line)
+            TeamsPlannerSheet.Range("B" & rowLine) = mainSheet.Range("B" & line).Value
+            TeamsPlannerSheet.Range("D" & rowLine) = assignor
+            TeamsPlannerSheet.Range("E" & rowLine) = mainSheet.Range(setVal("cell_TaskArea") & line)
+            TeamsPlannerSheet.Range("F" & rowLine) = mainSheet.Range(setVal("cell_PlanStart") & line)
+            TeamsPlannerSheet.Range("G" & rowLine) = mainSheet.Range(setVal("cell_PlanEnd") & line)
+            TeamsPlannerSheet.Range("H" & rowLine) = mainSheet.Range(setVal("cell_AchievementStart") & line)
+            TeamsPlannerSheet.Range("I" & rowLine) = mainSheet.Range(setVal("cell_AchievementEnd") & line)
+            TeamsPlannerSheet.Range("J" & rowLine) = mainSheet.Range(setVal("cell_ProgressLast") & line)
+            TeamsPlannerSheet.Range("K" & rowLine) = mainSheet.Range(setVal("cell_Progress") & line)
             
             For Each taskAllocation In Split(mainSheet.Range(setVal("cell_TaskAllocation") & line), ",")
               If taskAllocation Like "*" & assignor & "*" Then
                 allocationRate = Split(taskAllocation, "<>")
-                ResourcesSheet.Range("L" & rowLine) = allocationRate(1)
+                TeamsPlannerSheet.Range("L" & rowLine) = allocationRate(1)
               End If
             Next
             
-            ResourcesSheet.Range("M" & rowLine) = mainSheet.Range(setVal("cell_Task") & line)
-            ResourcesSheet.Range("N" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoP") & line)
-            ResourcesSheet.Range("O" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoC") & line)
-            ResourcesSheet.Range("P" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadP") & line)
-            ResourcesSheet.Range("Q" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadA") & line)
-            ResourcesSheet.Range("R" & rowLine) = mainSheet.Range(setVal("cell_LateOrEarly") & line)
-            ResourcesSheet.Range("S" & rowLine) = mainSheet.Range(setVal("cell_Note") & line)
+            TeamsPlannerSheet.Range("M" & rowLine) = mainSheet.Range(setVal("cell_Task") & line)
+            TeamsPlannerSheet.Range("N" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoP") & line)
+            TeamsPlannerSheet.Range("O" & rowLine) = mainSheet.Range(setVal("cell_TaskInfoC") & line)
+            TeamsPlannerSheet.Range("P" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadP") & line)
+            TeamsPlannerSheet.Range("Q" & rowLine) = mainSheet.Range(setVal("cell_WorkLoadA") & line)
+            TeamsPlannerSheet.Range("R" & rowLine) = mainSheet.Range(setVal("cell_LateOrEarly") & line)
+            TeamsPlannerSheet.Range("S" & rowLine) = mainSheet.Range(setVal("cell_Note") & line)
             
             rowLine = rowLine + 1
           End If
@@ -93,7 +93,7 @@ Function データ移行()
   endLine = Cells(Rows.count, 1).End(xlUp).row
   
   '担当者のプルダウン削除
-  Range("D6:D" & endLine).Validation.Delete
+  Range(setVal("cell_Assign") & "6:" & setVal("cell_Assign") & endLine).Validation.Delete
   
   startLine = 6
   Range(setVal("cell_Assign") & endLine + 1) = "sss"

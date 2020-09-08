@@ -200,7 +200,7 @@ Function makeCalendar()
   Call 書式設定
   Call 行書式コピー(6, endLine)
   
-  If ActiveSheet.Name = "メイン" Then
+  If ActiveSheet.Name = mainSheetName Then
     Call init.名前定義
   End If
 
@@ -235,26 +235,28 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   Application.CutCopyMode = False
   
   'タスクレベルの設定
-  For line = 6 To endLine
-    If Range(setVal("cell_TaskArea") & line) <> "" Then
-      taskLevel = Range("B" & line) - 1
-      If taskLevel > 0 Then
-        Range(setVal("cell_TaskArea") & line).InsertIndent taskLevel
+  If ActiveSheet.Name = mainSheetName Then
+    For line = 6 To endLine
+      If Range(setVal("cell_TaskArea") & line) <> "" Then
+        taskLevel = Range("B" & line) - 1
+        If taskLevel > 0 Then
+          Range(setVal("cell_TaskArea") & line).InsertIndent taskLevel
+        End If
       End If
-    End If
-    
-    Range("A" & line).FormulaR1C1 = "=ROW()-5"
-    Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
-    Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
-    Set taskLevelRange = Nothing
-  Next
+      
+      Range("A" & line).FormulaR1C1 = "=ROW()-5"
+      Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
+      Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+      Set taskLevelRange = Nothing
+    Next
+  End If
   
   With Range(setVal("cell_Assign") & startLine & ":" & setVal("cell_Assign") & endLine).Validation
       .Delete
       .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
       xlBetween, Formula1:="=担当者"
       .IgnoreBlank = True
-      .InCellDropdown = True
+      .InCellDropdown = False
       .InputTitle = ""
       .ErrorTitle = ""
       .InputMessage = ""
@@ -269,7 +271,7 @@ Function 行書式コピー(startLine As Long, endLine As Long)
     .Add Type:=xlValidateInputOnly, AlertStyle:=xlValidAlertStop, Operator _
     :=xlBetween
     .IgnoreBlank = True
-    .InCellDropdown = True
+    .InCellDropdown = False
     .InputTitle = ""
     .ErrorTitle = ""
     .InputMessage = ""

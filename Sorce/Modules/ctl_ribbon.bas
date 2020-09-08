@@ -198,8 +198,8 @@ Function viewTask(control As IRibbonControl)
   Call menu.M_タスク表示_タスク
 End Function
 
-Function viewResources(control As IRibbonControl)
-  Call menu.M_タスク表示_リソース
+Function viewTeamsPlanner(control As IRibbonControl)
+  Call menu.M_タスク表示_チームプランナー
 End Function
 
 Function viewSetting(control As IRibbonControl)

@@ -35,10 +35,21 @@ Private Sub Workbook_Open()
   On Error GoTo catchError
   
   Call Library.startScript
-  Call init.setting
-  Call Check.項目列チェック
   Call init.setting(True)
+  
+  Call Check.項目列チェック
   Call menu.M_ショートカット設定
+  
+  If setVal("debugMode") <> "develop" Then
+    helpSheet.Visible = xlSheetVeryHidden
+    tmpSheet.Visible = xlSheetVeryHidden
+    noticeCodeSheet.Visible = xlSheetVeryHidden
+    TeamsPlannerSheet.Visible = xlSheetVeryHidden
+    'setSheet.Visible = xlSheetVeryHidden
+  End If
+  
+  mainSheet.Select
+  
   
   
 '  ActiveWindow.SplitColumn = 8

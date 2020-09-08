@@ -173,7 +173,6 @@ End Sub
 Sub M_フィルター()
 Attribute M_フィルター.VB_ProcData.VB_Invoke_Func = " \n14"
   Call init.setting
-  mainSheet.Select
   
   With FilterForm
     .StartUpPosition = 0
@@ -260,14 +259,13 @@ Sub M_タスク表示_標準()
   Call init.setting
   If setVal("debugMode") <> "develop" Then
     mainSheet.Visible = True
-    ResourcesSheet.Visible = xlSheetVeryHidden
+    TeamsPlannerSheet.Visible = xlSheetVeryHidden
   End If
   
   Call init.setting(True)
-  
   Call WBS_Option.viewNormal
-  
   Call Library.endScript
+
 End Sub
 
 Sub M_タスク表示_タスク()
@@ -279,11 +277,11 @@ Sub M_タスク表示_タスク()
   Call Library.endScript
 End Sub
 
-Sub M_タスク表示_リソース()
+Sub M_タスク表示_チームプランナー()
   Call Library.startScript
   Call init.setting(True)
   
-  Call WBS_Option.viewResources
+  Call WBS_Option.viewTeamsPlanner
   Call Library.endScript
 End Sub
 

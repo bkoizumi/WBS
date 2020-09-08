@@ -6,7 +6,7 @@ Attribute VB_Name = "WBS_Option"
 ' *************************************************************************************************
 Function 選択シート確認()
 
-  If ActiveSheet.Name = "メイン" Or ActiveSheet.Name = "リソース" Then
+  If ActiveSheet.Name = mainSheetName Or ActiveSheet.Name = TeamsPlannerSheetName Then
   Else
     Call Library.showNotice(404, , True)
   End If
@@ -547,9 +547,9 @@ Function viewNormal()
 
   Call init.setting
   mainSheet.Visible = True
-  ResourcesSheet.Visible = xlSheetVeryHidden
+  TeamsPlannerSheet.Visible = xlSheetVeryHidden
     
-    mainSheet.Select
+  mainSheet.Select
   mainSheet.ScrollArea = ""
   Cells.EntireColumn.Hidden = False
 
@@ -604,17 +604,19 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function viewResources()
+Function viewTeamsPlanner()
 '  On Error GoTo catchError
   
   
-  ResourcesSheet.Columns("L:Q").EntireColumn.Hidden = True
   mainSheet.Visible = xlSheetVeryHidden
-  ResourcesSheet.Visible = True
+  TeamsPlannerSheet.Visible = True
   
   Cells.EntireColumn.Hidden = False
-  Call Resources.データ移行
+  Call TeamsPlanner.データ移行
   
+  If setVal("debugMode") <> "develop" Then
+    TeamsPlannerSheet.Columns("H:R").EntireColumn.Hidden = True
+  End If
   
   Call Library.endScript
 
@@ -720,7 +722,11 @@ End Function
 '**************************************************************************************************
 Function 担当者の複数選択()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  
+
 '  On Error GoTo catchError
+  
+  
   
   AssignorForm.Show vbModeless
 

@@ -162,6 +162,10 @@ End Sub
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Private Sub Cancel_Click()
+
+  ActiveCell.Value = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
+
+
   Unload Me
 End Sub
 

@@ -9,8 +9,8 @@ Function 項目列チェック()
   Dim itemName As String
   Dim defaultLine As Long
   
-  Call init.setting
-  defaultLine = setVal("sheetRangeStartCell")
+'  Call init.setting
+  defaultLine = setSheet.Range("B5")
   startLine = 4
 
   setSheet.Range("A" & defaultLine & ":B100").ClearContents
@@ -103,8 +103,8 @@ Function 項目列チェック()
 Label_nextFor:
   Next
 
-  init.logFile = ""
-  Call init.setting
+'  init.logFile = ""
+'  Call init.setting
 End Function
 
 

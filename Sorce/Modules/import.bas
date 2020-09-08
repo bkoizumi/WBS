@@ -114,7 +114,7 @@ Function データコピー(filePath As String)
     endLine = endLine + 1
     
     Call Library.showDebugForm("ファイルインポート", "インポート開始")
-    targetEndLine = targetBook.Worksheets("メイン").Cells(Rows.count, 1).End(xlUp).row
+    targetEndLine = targetBook.Worksheets(mainSheetName).Cells(Rows.count, 1).End(xlUp).row
     
     '#～タスク名をコピー
     prgbarMeg = "A～C列コピー"
@@ -122,7 +122,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range("A6:" & targetSetVal("cell_TaskArea") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range("A6:" & targetSetVal("cell_TaskArea") & targetEndLine).Copy
     mainSheet.Range("A" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     
     '予定日をコピー
@@ -131,7 +131,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
 
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_PlanStart") & "6:" & targetSetVal("cell_PlanEnd") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_PlanStart") & "6:" & targetSetVal("cell_PlanEnd") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_PlanStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     
     '担当者をコピー
@@ -140,7 +140,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_Assign") & "6:" & targetSetVal("cell_Assign") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_Assign") & "6:" & targetSetVal("cell_Assign") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_Assign") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         
     '実績日をコピー
@@ -149,7 +149,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_AchievementStart") & "6:" & targetSetVal("cell_AchievementEnd") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_AchievementStart") & "6:" & targetSetVal("cell_AchievementEnd") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_AchievementStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         
     '進捗率をコピー
@@ -158,7 +158,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_ProgressLast") & "6:" & targetSetVal("cell_Progress") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_ProgressLast") & "6:" & targetSetVal("cell_Progress") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_ProgressLast") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         
     'タスクをコピー
@@ -167,7 +167,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_TaskA") & "6:" & targetSetVal("cell_TaskB") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_TaskA") & "6:" & targetSetVal("cell_TaskB") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_TaskA") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         
     '作業工数をコピー
@@ -176,7 +176,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_WorkLoadP") & "6:" & targetSetVal("cell_WorkLoadA") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_WorkLoadP") & "6:" & targetSetVal("cell_WorkLoadA") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_WorkLoadP") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         
     '遅早工数をコピー
@@ -185,7 +185,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_LateOrEarly") & "6:" & targetSetVal("cell_LateOrEarly") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_LateOrEarly") & "6:" & targetSetVal("cell_LateOrEarly") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_LateOrEarly") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
          
     '備考をコピー
@@ -194,7 +194,7 @@ Function データコピー(filePath As String)
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 10, prgbarMeg)
     
-    targetBook.Worksheets("メイン").Range(targetSetVal("cell_Note") & "6:" & targetSetVal("cell_Note") & targetEndLine).Copy
+    targetBook.Worksheets(mainSheetName).Range(targetSetVal("cell_Note") & "6:" & targetSetVal("cell_Note") & targetEndLine).Copy
     mainSheet.Range(setVal("cell_Note") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     
   End If

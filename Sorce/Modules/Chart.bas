@@ -100,7 +100,10 @@ Function åvâÊê¸ê›íË(line As Long)
   ElseIf Range(setVal("cell_Assign") & line) <> "" Then
     lColorValue = memberColor.item(Range(setVal("cell_Assign") & line).Value)
   End If
-  If lColorValue <> 0 Then
+  
+  
+  
+  If lColorValue <> 0 And ActiveSheet.Name = mainSheetName Then
     Call Library.getRGB(lColorValue, Red, Green, Blue)
   Else
     Call Library.getRGB(setVal("lineColor_Plan"), Red, Green, Blue)
@@ -414,6 +417,8 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function beforeChangeShapes()
+
+  Call Library.startScript
   ActiveSheet.Shapes.Range(Array(Application.Caller)).Select
   changeShapesName = Application.Caller
   
@@ -423,6 +428,8 @@ Function beforeChangeShapes()
     .ScaleWidth 0.9792388451, msoFalse, msoScaleFromBottomRight
     .ScaleWidth 0.9792388451, msoFalse, msoScaleFromTopLeft
   End With
+  
+  Call Library.endScript
 End Function
 
 

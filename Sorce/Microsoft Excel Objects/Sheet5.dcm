@@ -64,7 +64,9 @@ End Sub
 Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
   Dim menu01 As CommandBarControl
   
-  Exit Sub
+  If setVal("debugMode") = "develop" Then
+    Exit Sub
+  End If
   
   '標準状態にリセット
   Application.CommandBars("Cell").Reset

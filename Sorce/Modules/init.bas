@@ -6,9 +6,9 @@ Public ThisBook As Workbook
 Public noticeCodeSheet As Worksheet
 Public helpSheet As Worksheet
 Public setSheet As Worksheet
-Public mainSheet As Worksheet
 Public tmpSheet As Worksheet
-Public ResourcesSheet As Worksheet
+Public mainSheet As Worksheet
+Public TeamsPlannerSheet As Worksheet
 
 
 
@@ -21,15 +21,8 @@ Public setVal As Collection
 Public getVal As Collection
 Public memberColor As Object
 
-
-'Public lineColor As String
-'Public SaturdayColor As String
-'Public SundayColor As String
-'Public CompanyHolidayColor As String
-'
-'Public taskLevel1Color As String
-'Public taskLevel2Color As String
-'Public taskLevel3Color As String
+Public mainSheetName As String
+Public TeamsPlannerSheetName As String
 
 'レジストリ登録用サブキー
 Public Const RegistrySubKey As String = "WBS"
@@ -40,8 +33,6 @@ Public logFile As String
 'ガントチャート選択
 Public selectShapesName(0) As Variant
 Public changeShapesName As String
-
-
 
 
 
@@ -68,12 +59,14 @@ Label_reset:
   ThisBook.Activate
   
   'ワークシート名の設定
+  mainSheetName = "メイン"
+  TeamsPlannerSheetName = "チームプランナー"
   Set helpSheet = ThisBook.Worksheets("Help")
   Set noticeCodeSheet = ThisBook.Worksheets("Notice")
   Set setSheet = ThisBook.Worksheets("設定")
-  Set mainSheet = ThisBook.Worksheets("メイン")
+  Set mainSheet = ThisBook.Worksheets(mainSheetName)
   Set tmpSheet = ThisBook.Worksheets("Tmp")
-  Set ResourcesSheet = ThisBook.Worksheets("リソース")
+  Set TeamsPlannerSheet = ThisBook.Worksheets(TeamsPlannerSheetName)
   
   If reCheckFlg = True Then
     Call Check.項目列チェック
@@ -90,7 +83,7 @@ Label_reset:
       setSheet.Range("B7") = Format(DateAdd("d", 0, Date), "yyyy/mm/dd")
     
     Case setSheet.Range("B8") = ""
-      setSheet.Range("A8") = Format(DateAdd("d", 30, Date), "yyyy/mm/dd")
+      setSheet.Range("A8") = Format(DateAdd("d", 60, Date), "yyyy/mm/dd")
     
     Case setSheet.Range("B9") = ""
       setSheet.Range("B9") = Format(DateAdd("d", 0, Date), "yyyy/mm/dd")
@@ -229,7 +222,7 @@ Function noDispSheet()
   Worksheets("Tmp").Visible = xlSheetVeryHidden
   Worksheets("Notice").Visible = xlSheetVeryHidden
 '  Worksheets("設定").Visible = xlSheetVeryHidden
-  Worksheets("メイン").Select
+  Worksheets(mainSheetName).Select
 End Function
 
 
@@ -241,8 +234,8 @@ Function dispSheet()
   Worksheets("Notice").Visible = True
   Worksheets("設定").Visible = True
   
-  Worksheets("メイン").Visible = True
-  Worksheets("メイン").Select
+  Worksheets(mainSheetName).Visible = True
+  Worksheets(mainSheetName).Select
   
 End Function
 
