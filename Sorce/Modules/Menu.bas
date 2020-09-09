@@ -32,25 +32,44 @@ Sub M_ショートカット設定()
   
   '設定を解除
   For line = 3 To endLine
-    If setSheet.Range("J" & line) <> "" Then
-      Application.MacroOptions Macro:="Menu." & setSheet.Range("H" & line), ShortcutKey:=""
+    If setSheet.Range(setVal("cell_OldShortcutKey") & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & setSheet.Range(setVal("cell_ShortcutFuncName") & line), ShortcutKey:=""
     End If
   Next
   
   For line = 3 To endLine
-    If setSheet.Range("I" & line) <> "" Then
-      Application.MacroOptions Macro:="Menu." & setSheet.Range("G" & line), ShortcutKey:=setSheet.Range("I" & line)
+    If setSheet.Range(setVal("cell_ShortcutKey") & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & setSheet.Range(setVal("cell_ShortcutFuncName") & line), ShortcutKey:=setSheet.Range(setVal("cell_ShortcutKey") & line)
     End If
   Next
   'インデントのショートカット
   Application.OnKey "%{LEFT}", "Menu.M_インデント減"
   Application.OnKey "%{RIGHT}", "Menu.M_インデント増"
-  Application.OnKey "%{F1}", "WBS_Option.表示_標準"
-  Application.OnKey "%{F2}", "WBS_Option.表示_ガントチャート"
+  Application.OnKey "%{F1}", "Menu.M_タスク表示_標準"
+  Application.OnKey "%{F2}", "Menu.M_タスク表示_チームプランナー"
   
-  If setVal("debugMode") <> "develop" Then
-    Application.OnKey "^v", "Menu.M_貼り付け"
-  End If
+
+End Sub
+
+Sub M_ショートカット設定解除()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  
+  Call init.setting
+  endLine = Cells(Rows.count, 7).End(xlUp).row
+  
+  '設定を解除
+  For line = 3 To endLine
+    If setSheet.Range("J" & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & setSheet.Range("H" & line), ShortcutKey:=""
+    End If
+  Next
+  
+  'インデントのショートカット
+  Application.OnKey "%{LEFT}", ""
+  Application.OnKey "%{RIGHT}", ""
+  Application.OnKey "%{F1}", ""
+  Application.OnKey "%{F2}", ""
+  Application.OnKey "^v", ""
 
 End Sub
 
@@ -70,6 +89,16 @@ Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
   Call Library.endScript(True)
 End Sub
 
+
+Sub M_列入替え()
+  Call init.setting
+  
+  Call Library.startScript
+  Call Check.項目列チェック
+  Call init.setting(True)
+  
+  Call Library.endScript(True)
+End Sub
 
 Sub M_カレンダー生成()
 
@@ -142,11 +171,6 @@ End Sub
 Sub M_スケール()
 Attribute M_スケール.VB_ProcData.VB_Invoke_Func = " \n14"
 End Sub
-
-
-Function M_貼り付け()
-  Selection.PasteSpecial Paste:=xlPasteAllExceptBorders, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
-End Function
 
 
 '**************************************************************************************************
@@ -291,7 +315,21 @@ Sub M_タスク表示_チームプランナー()
 End Sub
 
 
+Sub M_タスクにスクロール()
+  Call Library.startScript
+  Call init.setting
+  
+  Call WBS_Option.タスクにスクロール
+  Call Library.endScript
+End Sub
 
+Sub M_マイルストーンに追加()
+  Call Library.startScript
+  Call init.setting
+  
+  Call WBS_Option.マイルストーンに追加
+  Call Library.endScript
+End Sub
 '**************************************************************************************************
 ' * ガントチャート
 ' *

@@ -143,7 +143,7 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function タスク名フィルター(filterName As String)
+Function タスク名フィルター(filterNames As String)
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
 
 '  On Error GoTo catchError
@@ -160,11 +160,18 @@ Function タスク名フィルター(filterName As String)
   For line = 6 To endLine
     Call ProgressBar.showCount("タスク名フィルター", line, endLine, "")
     
-    If Range(setVal("cell_TaskArea") & line) Like "*" & filterName & "*" Then
-    Else
-      Rows(line & ":" & line).EntireRow.Hidden = True
-    End If
+    For Each filterName In Split(filterNames, "<>")
+      Range(setVal("cell_TaskArea") & line).Select
+      If Range(setVal("cell_TaskArea") & line) Like "*" & filterName & "*" Then
+        Rows(line & ":" & line).EntireRow.Hidden = False
+        Exit For
+      Else
+        Rows(line & ":" & line).EntireRow.Hidden = True
+      End If
+    Next
   Next
+  
+  
   Call ProgressBar.showEnd
   Call Library.endScript
   Exit Function
@@ -273,7 +280,7 @@ Function taskLink()
       Loop
       Range(setVal("cell_PlanEnd") & targetCell.row) = newEndDay
       
-      Range(setVal("cell_Info") & targetCell.row) = "変"
+      Range(setVal("cell_Info") & targetCell.row) = setVal("TaskChange_Change")
     End If
     oldLine = targetCell.row
   Next

@@ -328,6 +328,7 @@ Private Sub run_Click()
     .Add item:=setLightning.Value, Key:="setLightning"
     .Add item:=setDispProgress100.Value, Key:="setDispProgress100"
     .Add item:=CompanyHoliday.Value, Key:="CompanyHoliday"
+    .Add item:=dataExtract.Value, Key:="dataExtract"
     
     'スタイル関連
     .Add item:=lineColor.BackColor, Key:="lineColor"

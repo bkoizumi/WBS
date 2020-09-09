@@ -244,7 +244,7 @@ Function 行書式コピー(startLine As Long, endLine As Long)
         End If
       End If
       
-      If Range(setVal("cell_Info") & line) <> "複" Then
+      If Range(setVal("cell_Info") & line) <> setVal("TaskChange_Multi") Then
         Range("A" & line) = cell_LineInfo
         cell_LineInfo = cell_LineInfo + 1
       Else

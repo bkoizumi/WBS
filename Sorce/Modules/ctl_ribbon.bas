@@ -114,6 +114,11 @@ Function dispOption(control As IRibbonControl)
   Call menu.M_オプション画面表示
 End Function
 
+'列入替え----------------------------------------------------------------------------------------
+Function changeColumn(control As IRibbonControl)
+  Call menu.M_列入替え
+End Function
+
 '全データ削除--------------------------------------------------------------------------------------
 Function clearAll(control As IRibbonControl)
   Call menu.M_全データ削除
@@ -202,12 +207,15 @@ Function viewTeamsPlanner(control As IRibbonControl)
   Call menu.M_タスク表示_チームプランナー
 End Function
 
-Function viewSetting(control As IRibbonControl)
-  Call menu.M_タスク表示_設定
+'タスクにスクロール----------------------------------------------------------------------------------------
+Function scrollTask(control As IRibbonControl)
+  Call menu.M_タスクにスクロール
 End Function
 
-
-
+'マイルストーンに追加----------------------------------------------------------------------------------------
+Function addMilestone(control As IRibbonControl)
+  Call menu.M_マイルストーンに追加
+End Function
 
 
 

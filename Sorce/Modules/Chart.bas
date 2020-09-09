@@ -494,10 +494,10 @@ Function changeShapes()
   
   If ActiveSheet.Name = TeamsPlannerSheetName Then
     If Range(setVal("cell_Info") & changeShapesName) = "" Then
-      Range(setVal("cell_Info") & changeShapesName) = "•Ï"
-    ElseIf Range(setVal("cell_Info") & changeShapesName) Like "*•Ï*" Then
+      Range(setVal("cell_Info") & changeShapesName) = setVal("TaskChange_Change")
+    ElseIf Range(setVal("cell_Info") & changeShapesName) Like "*" & setVal("TaskChange_Change") & "*" Then
     Else
-      Range(setVal("cell_Info") & changeShapesName) = Range(setVal("cell_Info") & changeShapesName) & ",•Ï"
+      Range(setVal("cell_Info") & changeShapesName) = Range(setVal("cell_Info") & changeShapesName) & "," & setVal("TaskChange_Change")
     End If
   End If
   

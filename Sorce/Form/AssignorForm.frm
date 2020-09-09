@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AssignorForm 
-   Caption         =   "íSìñé“"
+   Caption         =   "íSìñé“ëIë"
    ClientHeight    =   5205
    ClientLeft      =   120
    ClientTop       =   465
@@ -148,14 +148,18 @@ Private Sub run_Click()
   
   Call Library.startScript
   line = ActiveCell.row + 1
-  
-  Do While Range(setVal("cell_Info") & line) = "ï°"
+  ActiveCellLine = ActiveCell.row
+    
+  Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
     line = line + 1
   Loop
-  Rows(ActiveCell.row + 1 & ":" & line - 1).Delete Shift:=xlUp
   
-  ActiveCell.Value = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
-  Range(setVal("cell_TaskAllocation") & ActiveCell.row) = Library.TEXTJOIN(",", True, _
+  If line > ActiveCellLine + 1 Then
+    Rows(ActiveCellLine + 1 & ":" & line - 1).Delete Shift:=xlUp
+  End If
+  
+  Range(setVal("cell_Assign") & ActiveCellLine) = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
+  Range(setVal("cell_TaskAllocation") & ActiveCellLine) = Library.TEXTJOIN(",", True, _
                                                           Assignor01.Text & "<>" & taskAllocation01.Text, _
                                                           Assignor02.Text & "<>" & taskAllocation02.Text, _
                                                           Assignor03.Text & "<>" & taskAllocation03.Text, _
@@ -164,11 +168,10 @@ Private Sub run_Click()
                                                           )
     
   Range(setVal("cell_Info") & ActiveCell.row) = "Å{"
-  ActiveCellLine = ActiveCell.row
-  
+
   
   line = ActiveCellLine + 1
-  If Assignor01.Text <> "" And Range(setVal("cell_Info") & line) <> "ï°" Then
+  If Assignor01.Text <> "" And Range(setVal("cell_Info") & line) <> setVal("TaskChange_Multi") Then
     Rows(line & ":" & line).Insert Shift:=xlDown
   End If
   If Assignor01.Text <> "" Then
@@ -178,7 +181,7 @@ Private Sub run_Click()
     
     Range("A" & line) = Range("A" & ActiveCellLine).Value
     Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = "ï°"
+    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-1]C"
     
@@ -190,7 +193,7 @@ Private Sub run_Click()
     Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
   End If
   
-  If Assignor02.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "ï°" Then
+  If Assignor02.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor02.Text <> "" Then
@@ -202,7 +205,7 @@ Private Sub run_Click()
     
     Range("A" & line) = Range("A" & ActiveCellLine).Value
     Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = "ï°"
+    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-2]C"
     
@@ -214,7 +217,7 @@ Private Sub run_Click()
     Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
   End If
   
-  If Assignor03.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "ï°" Then
+  If Assignor03.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor03.Text <> "" Then
@@ -226,7 +229,7 @@ Private Sub run_Click()
     
     Range("A" & line) = Range("A" & ActiveCellLine).Value
     Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = "ï°"
+    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-3]C"
     
@@ -238,7 +241,7 @@ Private Sub run_Click()
     Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
   End If
   
-  If Assignor04.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "ï°" Then
+  If Assignor04.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor04.Text <> "" Then
@@ -250,7 +253,7 @@ Private Sub run_Click()
     
     Range("A" & line) = Range("A" & ActiveCellLine).Value
     Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = "ï°"
+    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-4]C"
     
@@ -262,7 +265,7 @@ Private Sub run_Click()
     Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
   End If
   
-  If Assignor05.Text <> "" And Range(setVal("cell_Info") & line + 1) <> "ï°" Then
+  If Assignor05.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor05.Text <> "" Then
@@ -274,7 +277,7 @@ Private Sub run_Click()
     
     Range("A" & line) = Range("A" & ActiveCellLine).Value
     Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = "ï°"
+    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-5]C"
     
@@ -291,10 +294,10 @@ Private Sub run_Click()
   
   Rows(ActiveCellLine + 1 & ":" & line).EntireRow.Hidden = True
   
-  
+  Range(setVal("cell_Assign") & ActiveCellLine).Select
   
   Unload Me
-  Call Library.endScript(True)
+  Call Library.endScript
 End Sub
 
 '**************************************************************************************************

@@ -185,7 +185,7 @@ End Function
 Function オプション画面表示()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   Dim images As Variant, tmpObjChart As Variant
-  Dim CompanyHolidayList As String
+  Dim CompanyHolidayList As String, dataExtractList As String
   
 '  On Error GoTo catchError
   
@@ -384,6 +384,18 @@ Function オプション画面表示()
     Next
     .CompanyHoliday.Text = CompanyHolidayList
     
+    '抽出タスク
+    For line = 3 To setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row
+      If setSheet.Range(setVal("cell_DataExtract") & line) <> "" Then
+        If dataExtractList = "" Then
+          dataExtractList = setSheet.Range(setVal("cell_DataExtract") & line)
+        Else
+          dataExtractList = dataExtractList & vbNewLine & setSheet.Range(setVal("cell_DataExtract") & line)
+        End If
+      End If
+    Next
+    .dataExtract.Text = dataExtractList
+    
     
     '表示設定
     .view_Plan.Value = setVal("view_Plan")
@@ -427,7 +439,7 @@ End Function
 Function オプション設定値格納()
 
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
-  Dim CompanyHoliday As Variant
+  Dim CompanyHoliday As Variant, dataExtract As Variant
 
   On Error Resume Next
   Call Library.startScript
@@ -454,8 +466,15 @@ Function オプション設定値格納()
   For Each CompanyHoliday In Split(getVal("CompanyHoliday"), vbNewLine)
     setSheet.Range(setVal("cell_CompanyHoliday") & line) = CompanyHoliday
     line = line + 1
-  Next CompanyHoliday
+  Next
 
+  '抽出タスクの設定
+  line = 3
+  setSheet.Range(setVal("cell_DataExtract") & "3:" & setVal("cell_DataExtract") & Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row).ClearContents
+  For Each dataExtract In Split(getVal("dataExtract"), vbNewLine)
+    setSheet.Range(setVal("cell_DataExtract") & line) = dataExtract
+    line = line + 1
+  Next
 
 
   '担当者
@@ -516,23 +535,23 @@ Function 表示列設定()
   mainSheet.Select
 
 
-  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = getVal("view_Plan")
-  Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = getVal("view_Assign")
-  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).EntireColumn.Hidden = getVal("view_Progress")
+  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = setVal("view_Plan")
+  Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = setVal("view_Assign")
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).EntireColumn.Hidden = setVal("view_Progress")
   
   
-  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = getVal("view_Achievement")
-  Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = getVal("view_Task")
-  Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = getVal("view_TaskInfo")
+  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = setVal("view_Achievement")
+  Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = setVal("view_Task")
+  Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).EntireColumn.Hidden = setVal("view_TaskInfo")
   
-  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = getVal("view_WorkLoad")
+  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).EntireColumn.Hidden = setVal("view_WorkLoad")
   
-  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = getVal("view_LateOrEarly")
-  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = getVal("view_Note")
+  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).EntireColumn.Hidden = setVal("view_LateOrEarly")
+  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).EntireColumn.Hidden = setVal("view_Note")
 
 
-  Columns(setVal("cell_LineInfo") & ":" & setVal("cell_LineInfo")).EntireColumn.Hidden = getVal("view_LineInfo")
-  Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).EntireColumn.Hidden = getVal("view_TaskAllocation")
+  Columns(setVal("cell_LineInfo") & ":" & setVal("cell_LineInfo")).EntireColumn.Hidden = setVal("view_LineInfo")
+  Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).EntireColumn.Hidden = setVal("view_TaskAllocation")
 
 
 
@@ -563,7 +582,7 @@ Function viewNormal()
   
   'チームプランナーで変更した予定日を格納
   For line = 6 To endLine
-    If TeamsPlannerSheet.Range(("C") & line) Like "*変*" Then
+    If TeamsPlannerSheet.Range(("C") & line) Like "*" & setVal("TaskChange_Change") & "*" Then
       rowLine = TeamsPlannerSheet.Range(("D") & line) + 5
       
       mainSheet.Range(setVal("cell_PlanStart") & rowLine) = TeamsPlannerSheet.Range(("G") & line)
@@ -732,8 +751,6 @@ Function setTaskLevel()
   Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
   Set taskLevelRange = Nothing
 
-  Range("D" & line).Select
-
 
   Exit Function
 'エラー発生時=====================================================================================
@@ -750,7 +767,13 @@ End Function
 Function 担当者の複数選択()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   
-  AssignorForm.Show vbModeless
+  With AssignorForm
+    .StartUpPosition = 0
+    .top = Application.top + (ActiveWindow.Width / 8)
+    .Left = Application.Left + (ActiveWindow.Height / 8)
+  .Show vbModeless
+  End With
+  
 
   Exit Function
 'エラー発生時=====================================================================================
@@ -775,7 +798,7 @@ Function 複数の担当者行を非表示()
     For line = 6 To endLine
       If Range(setVal("cell_Info") & line) = "－" Then
         Range(setVal("cell_Info") & line) = "＋"
-      ElseIf Range(setVal("cell_Info") & line) = "複" Then
+      ElseIf Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi") Then
         Rows(line & ":" & line).EntireRow.Hidden = True
       End If
     Next
@@ -818,6 +841,53 @@ End Function
 
 
 
+'**************************************************************************************************
+' * タスクにスクロール
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function タスクにスクロール()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  On Error GoTo catchError
+
+  targetColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & ActiveCell.row))
+
+  Application.Goto Reference:=Range(targetColumn & 6), Scroll:=True
+'  Range(targetColumn & ActiveCell.row).Select
 
 
+
+
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
+
+
+
+'**************************************************************************************************
+' * マイルストーンに追加
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function マイルストーンに追加()
+  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  On Error GoTo catchError
+
+  targetColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & ActiveCell.row))
+
+  Application.Goto Reference:=Range(targetColumn & 6), Scroll:=True
+'  Range(targetColumn & ActiveCell.row).Select
+
+
+
+
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
+End Function
 

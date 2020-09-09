@@ -116,6 +116,9 @@ End Sub
 
 '処理実行
 Private Sub run_Click()
+  Dim filterName As String
+  Dim endLine As Long
+  
   Select Case True
     Case memberList.Enabled = True
       Call Task.担当者フィルター(FilterForm.memberList.Value)
@@ -123,7 +126,18 @@ Private Sub run_Click()
     Case taskLeveList.Enabled = True
     
     Case taskNameList.Enabled = True
-      Call Task.タスク名フィルター(FilterForm.taskNameList.Value)
+      With FilterForm.taskNameList
+        For i = 0 To .ListCount - 1
+            If .Selected(i) = True Then
+              If filterName = "" Then
+                filterName = .list(i)
+              Else
+                filterName = filterName & "<>" & .list(i)
+              End If
+            End If
+        Next i
+      End With
+      Call Task.タスク名フィルター(filterName)
     
     
     Case Else

@@ -22,14 +22,15 @@ End Sub
 
 Private Sub Worksheet_Change(ByVal Target As Range)
   Dim selectCells As String
-
+  Dim line As Long, ActiveCellLine As Long
 
   On Error GoTo catchError
   
+  Call Library.startScript
+  Call init.setting
   selectCells = Selection.Address(False, False)
   selectCells = Replace(selectCells, ":", "")
 
-  Call init.setting
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
   
@@ -43,7 +44,17 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   
   '担当者を複数選択でないとき
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) Then
+    ActiveCellLine = ActiveCell.row
+    line = ActiveCellLine + 1
+      
+    Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+      line = line + 1
+    Loop
+    If line > ActiveCellLine + 1 Then
+      Rows(ActiveCellLine + 1 & ":" & line - 1).Delete Shift:=xlUp
+    End If
     Range(setVal("cell_TaskAllocation") & Target.row) = ""
+    Range(setVal("cell_Info") & Target.row) = ""
     
     
   ElseIf Intersect(Target, Columns("C:R")) Is Nothing Then
@@ -56,8 +67,8 @@ Private Sub Worksheet_Change(ByVal Target As Range)
       Exit Sub
     End If
   End If
-  
     
+  Call Library.endScript
 
   Exit Sub
 'エラー発生時=====================================================================================
@@ -75,7 +86,7 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   ElseIf Cells(Target.row, Target.Column) = "＋" Then
     Call Library.startScript
     line = Target.row + 1
-    Do While Range(setVal("cell_Info") & line) = "複"
+    Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
       line = line + 1
     Loop
     
@@ -86,7 +97,7 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   ElseIf Cells(Target.row, Target.Column) = "－" Then
     Call Library.startScript
     line = Target.row + 1
-    Do While Range(setVal("cell_Info") & line) = "複"
+    Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
       line = line + 1
     Loop
     
@@ -123,8 +134,8 @@ Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
         Case menu01.Caption Like "切り取り*"
         Case menu01.Caption Like "コピー*"
         Case menu01.Caption Like "数式と値のクリア*"
-        Case menu01.Caption Like "セルの書式設定*"
-'        Case menu01.Caption Like "貼り付け*"
+        Case menu01.Caption Like "貼り付け*"
+'        Case menu01.Caption Like "セルの書式設定*"
 '        Case menu01.Caption Like "挿入*"
 '        Case menu01.Caption Like "削除*"
 '        Case menu01.Caption Like "コメントの*"

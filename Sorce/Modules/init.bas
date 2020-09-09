@@ -15,8 +15,6 @@ Public TeamsPlannerSheet As Worksheet
 'ÉOÉçÅ[ÉoÉãïœêî----------------------------------
 Public Const thisAppName = "Excel for Work Breakdown Structure"
 
-
-
 Public setVal As Collection
 Public getVal As Collection
 Public memberColor As Object
@@ -60,7 +58,6 @@ End Function
 '***********************************************************************************************************************************************
 Function setting(Optional reCheckFlg As Boolean)
   Dim line As Long
-  
   
   On Error GoTo catchError
 
