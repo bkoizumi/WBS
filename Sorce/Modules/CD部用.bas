@@ -32,21 +32,21 @@ Function データコピー(filePath As String)
     targetEndLine = Cells(Rows.count, 2).End(xlUp).row - 1
     For line = 6 To targetEndLine
     
-      Call Library.showDebugForm("ファイルインポート", "　" & targetCalSheet.Range("B" & line))
-      Call ProgressBar.showCount(Dir(filePath), line, targetEndLine, targetCalSheet.Range("B" & line))
+      Call Library.showDebugForm("ファイルインポート", "　" & targetCalSheet.Range(setVal("cell_LevelInfo") & line))
+      Call ProgressBar.showCount(Dir(filePath), line, targetEndLine, targetCalSheet.Range(setVal("cell_LevelInfo") & line))
       
-      If targetCalSheet.Range("B" & line) Like "<*" Then
+      If targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "<*" Then
         Call Library.showDebugForm("ファイルインポート", "　　タスク名設定")
-        targetCalSheet.Range("B" & line).Copy
+        targetCalSheet.Range(setVal("cell_LevelInfo") & line).Copy
         mainSheet.Range(setVal("cell_Info") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         mainSheet.Range(setVal("cell_Info") & endLine).InsertIndent 2
       
         targetCalSheet.Range(setVal("cell_Info") & line & ":D" & line).Copy
         mainSheet.Range(setVal("cell_PlanStart") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
       
-      ElseIf targetCalSheet.Range("B" & line) <> "" Then
+      ElseIf targetCalSheet.Range(setVal("cell_LevelInfo") & line) <> "" Then
         Call Library.showDebugForm("ファイルインポート", "　　工程設定")
-        targetCalSheet.Range("B" & line).Copy
+        targetCalSheet.Range(setVal("cell_LevelInfo") & line).Copy
         mainSheet.Range(setVal("cell_Info") & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         mainSheet.Range(setVal("cell_Info") & endLine).InsertIndent 1
         
@@ -59,23 +59,23 @@ Function データコピー(filePath As String)
       End If
       
       '要員設定
-      If targetCalSheet.Range("B" & line) Like "<TCI>*" Then
+      If targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "<TCI>*" Then
         Call Library.showDebugForm("ファイルインポート", "　　要員設定")
         Select Case True
-          Case targetCalSheet.Range("B" & line) Like "*構成案*"
+          Case targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "*構成案*"
             mainSheet.Range(setVal("cell_Assign") & endLine) = "[TBD]PL"
-          Case targetCalSheet.Range("B" & line) Like "*デザイン*"
+          Case targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "*デザイン*"
             mainSheet.Range(setVal("cell_Assign") & endLine) = "[TBD]De"
-          Case targetCalSheet.Range("B" & line) Like "*コーディング*"
+          Case targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "*コーディング*"
             mainSheet.Range(setVal("cell_Assign") & endLine) = "[TBD]HT"
-          Case targetCalSheet.Range("B" & line) Like "*公開*"
+          Case targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "*公開*"
             mainSheet.Range(setVal("cell_Assign") & endLine) = "公開"
           
           
           Case Else
             mainSheet.Range(setVal("cell_Assign") & endLine) = "TBD"
         End Select
-      ElseIf targetCalSheet.Range("B" & line) Like "<御社>*" Then
+      ElseIf targetCalSheet.Range(setVal("cell_LevelInfo") & line) Like "<御社>*" Then
         Call Library.showDebugForm("ファイルインポート", "　　要員設定")
         mainSheet.Range(setVal("cell_Assign") & endLine) = "○社A様"
       End If
@@ -83,7 +83,7 @@ Function データコピー(filePath As String)
     Next
   
     Set taskLevelRange = Range(setVal("cell_TaskArea") & endLine)
-    Range("B" & endLine).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+    Range("B" & endLine).Formula = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlA1, RowAbsolute:=False, ColumnAbsolute:=False) & ")"
     Set taskLevelRange = Nothing
   
   End If

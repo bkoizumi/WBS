@@ -146,23 +146,28 @@ End Function
 Function タスク名フィルター(filterNames As String)
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
 
-'  On Error GoTo catchError
+  On Error GoTo catchError
+  Call Library.showDebugForm("タスク名フィルター", "開始")
 
   Unload FilterForm
   Call Library.startScript
-  Call ProgressBar.showStart
   Call init.setting
   
   mainSheet.Select
+  
+  '非表示行を全て表示
   Cells.EntireRow.Hidden = False
+  
   endLine = Cells(Rows.count, 1).End(xlUp).row
   
   For line = 6 To endLine
-    Call ProgressBar.showCount("タスク名フィルター", line, endLine, "")
-    
+    DoEvents
     For Each filterName In Split(filterNames, "<>")
-      Range(setVal("cell_TaskArea") & line).Select
-      If Range(setVal("cell_TaskArea") & line) Like "*" & filterName & "*" Then
+      DoEvents
+      
+      If Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi") Then
+        Rows(line & ":" & line).EntireRow.Hidden = True
+      ElseIf Range(setVal("cell_TaskArea") & line) Like "*" & filterName & "*" Then
         Rows(line & ":" & line).EntireRow.Hidden = False
         Exit For
       Else
@@ -172,7 +177,6 @@ Function タスク名フィルター(filterNames As String)
   Next
   
   
-  Call ProgressBar.showEnd
   Call Library.endScript
   Exit Function
 'エラー発生時=====================================================================================
@@ -280,7 +284,7 @@ Function taskLink()
       Loop
       Range(setVal("cell_PlanEnd") & targetCell.row) = newEndDay
       
-      Range(setVal("cell_Info") & targetCell.row) = setVal("TaskChange_Change")
+      Range(setVal("cell_Info") & targetCell.row) = setVal("TaskInfoStr_Change")
     End If
     oldLine = targetCell.row
   Next
@@ -323,13 +327,13 @@ End Function
 
 
 '**************************************************************************************************
-' * xxxxxxxxxx
+' * タスクの挿入
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function rTaskInsert()
+Function タスクの挿入()
   Dim taskLevelRange As Range
-  On Error GoTo catchError
+'  On Error GoTo catchError
   
   Call Library.startScript
   Rows("4:4").Copy
@@ -339,12 +343,17 @@ Function rTaskInsert()
   Range(setVal("cell_Info") & Selection.row & ":XFD" & Selection.row).ClearContents
   Range(setVal("cell_Info") & Selection.row & ":XFD" & Selection.row).ClearComments
   
-  Range("A" & Selection.row).FormulaR1C1 = "=ROW()-5"
- 
+  Range("A" & Selection.row) = Range("A" & Selection.row - 1) + 1
+  
+  
   Set taskLevelRange = Range(setVal("cell_TaskArea") & Selection.row)
-  Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+  Range(setVal("cell_LevelInfo") & Selection.row).Formula = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlA1, RowAbsolute:=False, ColumnAbsolute:=False) & ")"
   Set taskLevelRange = Nothing
 
+  
+  Range(setVal("cell_LineInfo") & Selection.row).FormulaR1C1 = "=ROW()-5"
+ 
+  Call WBS_Option.行番号再設定
   Call Library.endScript(True)
 
   Exit Function
@@ -355,11 +364,11 @@ End Function
 
 
 '**************************************************************************************************
-' * xxxxxxxxxx
+' * タスクの削除
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function rTaskDell()
+Function タスクの削除()
   Dim selectedCells As Range
 
 '  On Error GoTo catchError
@@ -369,6 +378,7 @@ Function rTaskDell()
 
 
   Rows(Selection(1).row & ":" & Selection(Selection.count).row).Delete Shift:=xlUp
+  Call WBS_Option.行番号再設定
 
   Call Library.endScript(True)
 
@@ -377,7 +387,6 @@ Function rTaskDell()
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
-
 
 
 

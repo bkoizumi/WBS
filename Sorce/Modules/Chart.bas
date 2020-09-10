@@ -30,11 +30,13 @@ Function ガントチャート生成()
       Call 実績線設定(line)
     End If
     
-    'イナズマ線生成------------------------------
-      Call イナズマ線設定(line)
-    If setVal("setLightning") = True Then
+    'タイムラインへの追加------------------------------------
+    If (mainSheet.Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_TimeLine")) Then
+      Call タイムラインに追加(line)
     End If
     
+    'イナズマ線生成------------------------------
+    Call イナズマ線設定(line)
   Next
   For line = 6 To endLine
     Call タスクのリンク設定(line)
@@ -61,7 +63,7 @@ Function ガントチャート削除()
   endLine = Cells(Rows.count, 1).End(xlUp).row
   endColLine = Cells(4, Columns.count).End(xlToLeft).Column
   
-  Set rng = Range(Cells(6, Library.getColumnNo(setVal("calendarStartCol"))), Cells(endLine, endColLine))
+  Set rng = Range(Cells(5, Library.getColumnNo(setVal("calendarStartCol"))), Cells(endLine, endColLine))
   
   For Each shp In ActiveSheet.Shapes
     If Not Intersect(Range(shp.TopLeftCell, shp.BottomRightCell), rng) Is Nothing Then
@@ -126,9 +128,8 @@ Function 計画線設定(line As Long)
         .Name = "タスク_" & line
         .Fill.ForeColor.RGB = RGB(Red, Green, Blue)
         .Fill.Transparency = 0.6
-        .TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
-        .TextFrame.Characters.Font.Size = 12
-        .TextFrame2.TextRange.Font.Bold = msoTrue
+'        .TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
+'        .TextFrame.Characters.Font.Size = 12
         .TextFrame2.WordWrap = msoFalse
         .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
         .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
@@ -138,9 +139,15 @@ Function 計画線設定(line As Long)
         .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
         .TextFrame2.TextRange.Font.Name = "メイリオ"
         .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+        .TextFrame2.TextRange.Font.Size = 12
+        .TextFrame2.TextRange.Font.Bold = msoTrue
       End With
     End With
     Set ProcessShape = Nothing
+    ActiveSheet.Shapes.Range(Array("タスク_" & line)).Select
+    Selection.Formula = "=" & Range(setVal("cell_TaskArea") & line).Address(False, False)
+    Selection.ShapeRange.TextFrame2.TextRange.Font.Size = 12
+    Selection.ShapeRange.TextFrame2.TextRange.Font.Bold = msoTrue
   
   Else
     With Range(startColumn & line & ":" & endColumn & line)
@@ -151,20 +158,25 @@ Function 計画線設定(line As Long)
         .Fill.ForeColor.RGB = RGB(Red, Green, Blue)
         .Fill.Transparency = 0.6
         
+        '.TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
+        .TextFrame.Characters.Font.Size = 9
+        .TextFrame2.TextRange.Font.Bold = msoTrue
+        .TextFrame2.WordWrap = msoFalse
+        .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
+        .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
+        .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignCenter
+        .TextFrame2.VerticalAnchor = msoAnchorMiddle
+        .TextFrame2.TextRange.Font.NameComplexScript = "メイリオ"
+        .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
+        .TextFrame2.TextRange.Font.Name = "メイリオ"
+        .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+        .TextFrame2.TextRange.Font.Size = 9
+    
         If setVal("viewGant_TaskName") = True Then
-          .TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
-          .TextFrame.Characters.Font.Size = 9
-          .TextFrame2.TextRange.Font.Bold = msoTrue
-          .TextFrame2.WordWrap = msoFalse
-          .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
-          .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
-          .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignCenter
-          .TextFrame2.VerticalAnchor = msoAnchorMiddle
-          .TextFrame2.TextRange.Font.NameComplexScript = "メイリオ"
-          .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
-          .TextFrame2.TextRange.Font.Name = "メイリオ"
-          .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+          ActiveSheet.Shapes.Range(Array("タスク_" & line)).Select
+          Selection.Formula = "=" & Range(setVal("cell_TaskArea") & line).Address(False, False)
         End If
+        
         .OnAction = "beforeChangeShapes"
       End With
     End With
@@ -182,24 +194,25 @@ Function 計画線設定(line As Long)
           .Name = "担当者_" & line
           .Fill.ForeColor.RGB = RGB(255, 255, 255)
           .Fill.Transparency = 0
-          .TextFrame.Characters.Text = Range(setVal("cell_Assign") & line)
+          '.TextFrame.Characters.Text = Range(setVal("cell_Assign") & line)
           .TextFrame.Characters.Font.Size = 9
           .TextFrame2.TextRange.Font.Bold = msoTrue
           .TextFrame2.WordWrap = msoFalse
           .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
           .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
-          .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignCenter
+          .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignLeft
           .TextFrame2.VerticalAnchor = msoAnchorMiddle
           .TextFrame2.TextRange.Font.NameComplexScript = "メイリオ"
           .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
           .TextFrame2.TextRange.Font.Name = "メイリオ"
           .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+          .TextFrame2.TextRange.Font.Size = 9
         End With
       End With
       Set ProcessShape = Nothing
+      ActiveSheet.Shapes.Range(Array("担当者_" & line)).Select
+      Selection.Formula = "=" & Range(setVal("cell_Assign") & line).Address(False, False)
     End If
-
-
   End If
 End Function
 
@@ -287,10 +300,8 @@ Function イナズマ線設定(line As Long)
     Call Library.showNotice(50)
     setVal("setLightning") = False
     Range("setLightning") = False
-'    Exit Function
   End If
-  
-  Call Library.showDebugForm("イナズマ線設定", Range(setVal("cell_Info") & line))
+'  Call Library.showDebugForm("イナズマ線設定", Range(setVal("cell_Info") & line))
   
   baseColumn = WBS_Option.日付セル検索(setVal("baseDay"))
   
@@ -311,12 +322,7 @@ Function イナズマ線設定(line As Long)
   Else
     endColumn = baseColumn
   End If
-'  If IsEmpty(Range(setVal("cell_Progress") & line)) Then
-'    progress = -1
-'  Else
-'    progress = Range(setVal("cell_Progress") & line).Value
-'  End If
-  
+    
   'Shapeを配置するための基準となるセル
   Set rngStart = Range(startColumn & line)
   Set rngEnd = Range(endColumn & line)
@@ -337,8 +343,6 @@ Function イナズマ線設定(line As Long)
     Exit Function
   End If
   
-  
-  
   '遅早工数の値
   If Range(setVal("cell_LateOrEarly") & line) = 0 Or Range(setVal("cell_LateOrEarly") & line) = "" Then
     BX = rngBase.Left + rngBase.Width
@@ -357,15 +361,10 @@ Function イナズマ線設定(line As Long)
     
     Set rngChkDay = Range(chkDayColumn & line)
     
-    
-    
     BX = rngBase.Left + rngBase.Width
     BY = rngBase.top
     EX = rngChkDay.Left + rngChkDay.Width
     EY = rngBase.top + (rngBase.Height / 2)
-    
-    
-    
     
     With ActiveSheet.Shapes.AddLine(BX, BY, EX, EY).line
       .Weight = 2
@@ -383,9 +382,92 @@ Function イナズマ線設定(line As Long)
       .Style = msoLineSolid
       .ForeColor.RGB = RGB(Red, Green, Blue)
     End With
-  
-
   End If
+  
+End Function
+
+
+'**************************************************************************************************
+' * タイムラインに追加
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function タイムラインに追加(line As Long)
+  Dim ShapeTopStart As Long, count As Long
+  Dim shp As Shape
+  Dim rng As Range
+
+'  On Error GoTo catchError
+  
+  Call init.setting
+  
+  startColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & line))
+  endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
+
+
+  If Library.chkShapeName("タイムライン_" & line) Then
+    ActiveSheet.Shapes("タイムライン_" & line).Delete
+  End If
+  
+  On Error Resume Next
+  count = 0
+  Range(startColumn & "5:" & endColumn & 5).Select
+  For Each shp In ActiveSheet.Shapes
+    Set rng = Range(shp.TopLeftCell, shp.BottomRightCell)
+    If Not (Intersect(rng, Selection) Is Nothing) Then
+      count = count + 1
+    End If
+  Next
+  If count <> 0 Then
+    ShapeTopStart = 10 * count
+  Else
+    ShapeTopStart = 0
+  End If
+  On Error GoTo 0
+
+
+
+  'タイムライン行の幅を広げる
+  If count >= 3 Then
+    Rows("5:5").RowHeight = Rows("5:5").RowHeight + 10
+  End If
+  
+  
+  With Range(startColumn & "5:" & endColumn & 5)
+    Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRoundedRectangle, Left:=.Left, top:=.top + ShapeTopStart, Width:=.Width, Height:=10)
+    
+    With ProcessShape
+      .Name = "タイムライン_" & line
+      .Fill.ForeColor.RGB = RGB(102, 102, 255)
+      .Fill.Transparency = 0.6
+      .TextFrame2.WordWrap = msoFalse
+      .TextFrame.HorizontalOverflow = xlOartHorizontalOverflowOverflow
+      .TextFrame.VerticalOverflow = xlOartHorizontalOverflowOverflow
+      .TextFrame2.TextRange.ParagraphFormat.Alignment = msoAlignCenter
+      .TextFrame2.VerticalAnchor = msoAnchorMiddle
+      .TextFrame2.TextRange.Font.NameComplexScript = "メイリオ"
+      .TextFrame2.TextRange.Font.NameFarEast = "メイリオ"
+      .TextFrame2.TextRange.Font.Name = "メイリオ"
+      .TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+      .TextFrame2.TextRange.Font.Size = 9
+    End With
+  End With
+  ActiveSheet.Shapes.Range(Array("タイムライン_" & line)).Select
+  Selection.Formula = "=" & Range(setVal("cell_TaskArea") & line).Address(False, False)
+  
+  If Range(setVal("cell_Info") & line) = "" Then
+    Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_TimeLine")
+  ElseIf Range(setVal("cell_Info") & line) Like "*" & setVal("TaskInfoStr_TimeLine") & "*" Then
+  Else
+    Range(setVal("cell_Info") & line) = Range(setVal("cell_Info") & line) & "," & setVal("TaskInfoStr_TimeLine")
+  End If
+
+
+
+  Exit Function
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
 
 
@@ -452,8 +534,9 @@ Function changeShapes()
   Dim newStartDay As Date, newEndDay As Date
   Dim HollydayName As String
   
-  Call init.setting
-
+  Call Library.showDebugForm("Chartから予定日を操作", "処理開始")
+  
+  
   With ActiveSheet.Shapes(changeShapesName)
     .ScaleWidth 0.9792388451, msoFalse, msoScaleFromBottomRight
     .ScaleWidth 0.9792388451, msoFalse, msoScaleFromTopLeft
@@ -494,10 +577,10 @@ Function changeShapes()
   
   If ActiveSheet.Name = TeamsPlannerSheetName Then
     If Range(setVal("cell_Info") & changeShapesName) = "" Then
-      Range(setVal("cell_Info") & changeShapesName) = setVal("TaskChange_Change")
-    ElseIf Range(setVal("cell_Info") & changeShapesName) Like "*" & setVal("TaskChange_Change") & "*" Then
+      Range(setVal("cell_Info") & changeShapesName) = setVal("TaskInfoStr_Change")
+    ElseIf Range(setVal("cell_Info") & changeShapesName) Like "*" & setVal("TaskInfoStr_Change") & "*" Then
     Else
-      Range(setVal("cell_Info") & changeShapesName) = Range(setVal("cell_Info") & changeShapesName) & "," & setVal("TaskChange_Change")
+      Range(setVal("cell_Info") & changeShapesName) = Range(setVal("cell_Info") & changeShapesName) & "," & setVal("TaskInfoStr_Change")
     End If
   End If
   
@@ -510,6 +593,7 @@ Function changeShapes()
   
   changeShapesName = ""
 
+  Call Library.showDebugForm("Chartから予定日を操作", "処理終了")
 End Function
 
 

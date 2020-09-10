@@ -35,10 +35,10 @@ End Type
 ' 64ビット版判定
 #If VBA7 Then
 ' ■GetDC(API)
-Private Declare PtrSafe Function GetDC Lib "User32.dll" (ByVal hWnd As LongPtr) As LongPtr
+Private Declare PtrSafe Function GetDC Lib "User32.dll" (ByVal hwnd As LongPtr) As LongPtr
 ' ■ReleaseDC(API)
 Private Declare PtrSafe Function ReleaseDC Lib "User32.dll" _
-    (ByVal hWnd As LongPtr, ByVal hdc As LongPtr) As Long
+    (ByVal hwnd As LongPtr, ByVal hdc As LongPtr) As Long
 ' ■GetDeviceCaps(API)
 Private Declare PtrSafe Function GetDeviceCaps Lib "gdi32.dll" _
     (ByVal hdc As LongPtr, ByVal nIndex As Long) As Long
@@ -53,9 +53,9 @@ Private Declare PtrSafe Function SystemParametersInfo Lib "User32.dll" _
     ByVal fuWinIni As Long) As Long
 #Else
 ' ■GetDC(API)
-Private Declare Function GetDC Lib "User32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function GetDC Lib "User32.dll" (ByVal hwnd As Long) As Long
 ' ■ReleaseDC(API)
-Private Declare Function ReleaseDC Lib "User32.dll" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function ReleaseDC Lib "User32.dll" (ByVal hwnd As Long, ByVal hdc As Long) As Long
 ' ■GetDeviceCaps(API)
 Private Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hdc As Long, ByVal nIndex As Long) As Long
 ' ■GetSystemMetrics(API)
@@ -377,7 +377,7 @@ Private Function FP_GetDPI(ByVal nFlag As Long) As Long
 #Else
     Dim lngHdc As Long                                              ' ウィンドウハンドルのDC
 #End If
-    lngHdc = GetDC(Application.hWnd)
+    lngHdc = GetDC(Application.hwnd)
     FP_GetDPI = GetDeviceCaps(lngHdc, nFlag)
     Call ReleaseDC(&H0, lngHdc)
 End Function

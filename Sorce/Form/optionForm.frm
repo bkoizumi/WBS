@@ -35,11 +35,11 @@ Private Const g_cnsAddTop2 As Long = 25                         ' Top調整値(フレ
 #If Win64 Then
   Private Declare PtrSafe Function GetAsyncKeyState Lib "User32.dll" (ByVal vKey As Long) As Integer
   Private Declare PtrSafe Function GetForegroundWindow Lib "user32" () As LongPtr
-  Private Declare PtrSafe Function SetWindowPos Lib "user32" (ByVal hWnd As LongPtr, ByVal hWndInsertAfter As LongPtr, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+  Private Declare PtrSafe Function SetWindowPos Lib "user32" (ByVal hwnd As LongPtr, ByVal hWndInsertAfter As LongPtr, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 #Else
   Private Declare Function GetAsyncKeyState Lib "User32.dll" (ByVal vKey As Long) As Integer
   Private Declare Function GetForegroundWindow Lib "user32" () As Long
-  Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+  Private Declare Function SetWindowPos Lib "user32" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 #End If
 
 
@@ -51,6 +51,10 @@ Public KeyPressFlg As Boolean
 
 
 
+
+Private Sub optionKey_Change()
+
+End Sub
 
 'Private Sub UserForm_Activate()
 '    Call SetWindowPos(GetForegroundWindow, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE)
@@ -343,6 +347,18 @@ Private Sub run_Click()
     .Add item:=lineColor_TaskLevel1.BackColor, Key:="lineColor_TaskLevel1"
     .Add item:=lineColor_TaskLevel2.BackColor, Key:="lineColor_TaskLevel2"
     .Add item:=lineColor_TaskLevel3.BackColor, Key:="lineColor_TaskLevel3"
+
+    'ショートカットキー設定
+    .Add item:=optionKey.Text, Key:="optionKey"
+    .Add item:=centerKey.Text, Key:="centerKey"
+    .Add item:=filterKey.Text, Key:="filterKey"
+    .Add item:=clearFilterKey.Text, Key:="clearFilterKey"
+    .Add item:=taskCheckKey.Text, Key:="taskCheckKey"
+    .Add item:=makeGanttKey.Text, Key:="makeGanttKey"
+    .Add item:=clearGanttKey.Text, Key:="clearGanttKey"
+    .Add item:=dispAllKey.Text, Key:="dispAllKey"
+    .Add item:=taskControlKey.Text, Key:="taskControlKey"
+    .Add item:=ScaleKey.Text, Key:="ScaleKey"
 
     '担当者
     .Add item:=Assign01.Text, Key:="Assign01"

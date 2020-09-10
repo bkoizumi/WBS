@@ -53,8 +53,8 @@
           <button id="T_B013" size="normal" onAction="ctl_ribbon.progress_100"  supertip="選択したタスクを100%完了とする" imageMso="_100PercentComplete" />
         </box>
         <separator id="T_Bsprt02" />
-        <button id="T_B014" size="large" label="タスクへスクロール"   onAction="ctl_ribbon.scrollTask"    supertip="選択したタスクにスクロールします"                 imageMso="SelectedTaskGoTo" />
-        <button id="T_B015" size="large" label="マイルストーンに追加" onAction="ctl_ribbon.addMilestone"  supertip="選択したタスクをマイルストーンに追加します"       imageMso="AddExistingTasksToTimeline" />
+        <button id="T_B014" size="large" label="タスクへスクロール" onAction="ctl_ribbon.scrollTask"  supertip="選択したタスクにスクロールします"         imageMso="SelectedTaskGoTo" />
+        <button id="T_B015" size="large" label="タイムラインに追加" onAction="ctl_ribbon.addTimeLine" supertip="選択したタスクをタイムラインに追加します" imageMso="AddExistingTasksToTimeline" />
       </group >
 
       <group id="Chart" label="ガントチャート">

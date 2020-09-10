@@ -15,10 +15,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 #If Win64 Then
   Private Declare PtrSafe Function GetForegroundWindow Lib "user32" () As LongPtr
-  Private Declare PtrSafe Function SetWindowPos Lib "user32" (ByVal hWnd As LongPtr, ByVal hWndInsertAfter As LongPtr, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+  Private Declare PtrSafe Function SetWindowPos Lib "user32" (ByVal hwnd As LongPtr, ByVal hWndInsertAfter As LongPtr, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 #Else
   Private Declare Function GetForegroundWindow Lib "user32" () As Long
-  Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+  Private Declare Function SetWindowPos Lib "user32" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 #End If
 Private Const HWND_TOPMOST As Long = -1
 Private Const SWP_NOSIZE As Long = &H1&
@@ -144,22 +144,22 @@ End Sub
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Private Sub run_Click()
-  Dim line As Long, ActiveCellLine As Long
+  Dim line As Long, activeCellLine As Long
   
   Call Library.startScript
   line = ActiveCell.row + 1
-  ActiveCellLine = ActiveCell.row
+  activeCellLine = ActiveCell.row
     
-  Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+  Do While Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
     line = line + 1
   Loop
   
-  If line > ActiveCellLine + 1 Then
-    Rows(ActiveCellLine + 1 & ":" & line - 1).Delete Shift:=xlUp
+  If line > activeCellLine + 1 Then
+    Rows(activeCellLine + 1 & ":" & line - 1).Delete Shift:=xlUp
   End If
   
-  Range(setVal("cell_Assign") & ActiveCellLine) = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
-  Range(setVal("cell_TaskAllocation") & ActiveCellLine) = Library.TEXTJOIN(",", True, _
+  Range(setVal("cell_Assign") & activeCellLine) = Library.TEXTJOIN(",", True, Assignor01.Text, Assignor02.Text, Assignor03.Text, Assignor04.Text, Assignor05.Text)
+  Range(setVal("cell_TaskAllocation") & activeCellLine) = Library.TEXTJOIN(",", True, _
                                                           Assignor01.Text & "<>" & taskAllocation01.Text, _
                                                           Assignor02.Text & "<>" & taskAllocation02.Text, _
                                                           Assignor03.Text & "<>" & taskAllocation03.Text, _
@@ -170,8 +170,8 @@ Private Sub run_Click()
   Range(setVal("cell_Info") & ActiveCell.row) = "＋"
 
   
-  line = ActiveCellLine + 1
-  If Assignor01.Text <> "" And Range(setVal("cell_Info") & line) <> setVal("TaskChange_Multi") Then
+  line = activeCellLine + 1
+  If Assignor01.Text <> "" And Range(setVal("cell_Info") & line) <> setVal("TaskInfoStr_Multi") Then
     Rows(line & ":" & line).Insert Shift:=xlDown
   End If
   If Assignor01.Text <> "" Then
@@ -179,9 +179,9 @@ Private Sub run_Click()
     Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     
-    Range("A" & line) = Range("A" & ActiveCellLine).Value
-    Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Range("A" & line) = Range("A" & activeCellLine).Value
+    Range(setVal("cell_LevelInfo") & line) = Range("B" & activeCellLine).Value
+    Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-1]C"
     
@@ -189,11 +189,11 @@ Private Sub run_Click()
     Range(setVal("cell_TaskAllocation") & line) = taskAllocation01.Text
     Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-1]C"
     Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-1]C"
-    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
-    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & activeCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & activeCellLine)
   End If
   
-  If Assignor02.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
+  If Assignor02.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskInfoStr_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor02.Text <> "" Then
@@ -203,9 +203,9 @@ Private Sub run_Click()
     Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     
-    Range("A" & line) = Range("A" & ActiveCellLine).Value
-    Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Range("A" & line) = Range("A" & activeCellLine).Value
+    Range(setVal("cell_LevelInfo") & line) = Range("B" & activeCellLine).Value
+    Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-2]C"
     
@@ -213,11 +213,11 @@ Private Sub run_Click()
     Range(setVal("cell_TaskAllocation") & line) = taskAllocation02.Text
     Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-2]C"
     Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-2]C"
-    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
-    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & activeCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & activeCellLine)
   End If
   
-  If Assignor03.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
+  If Assignor03.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskInfoStr_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor03.Text <> "" Then
@@ -227,9 +227,9 @@ Private Sub run_Click()
     Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     
-    Range("A" & line) = Range("A" & ActiveCellLine).Value
-    Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Range("A" & line) = Range("A" & activeCellLine).Value
+    Range(setVal("cell_LevelInfo") & line) = Range("B" & activeCellLine).Value
+    Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-3]C"
     
@@ -237,11 +237,11 @@ Private Sub run_Click()
     Range(setVal("cell_TaskAllocation") & line) = taskAllocation03.Text
     Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-3]C"
     Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-3]C"
-    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
-    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & activeCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & activeCellLine)
   End If
   
-  If Assignor04.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
+  If Assignor04.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskInfoStr_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor04.Text <> "" Then
@@ -251,9 +251,9 @@ Private Sub run_Click()
     Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     
-    Range("A" & line) = Range("A" & ActiveCellLine).Value
-    Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Range("A" & line) = Range("A" & activeCellLine).Value
+    Range(setVal("cell_LevelInfo") & line) = Range("B" & activeCellLine).Value
+    Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-4]C"
     
@@ -261,11 +261,11 @@ Private Sub run_Click()
     Range(setVal("cell_TaskAllocation") & line) = taskAllocation04.Text
     Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-4]C"
     Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-4]C"
-    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
-    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & activeCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & activeCellLine)
   End If
   
-  If Assignor05.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskChange_Multi") Then
+  If Assignor05.Text <> "" And Range(setVal("cell_Info") & line + 1) <> setVal("TaskInfoStr_Multi") Then
     Rows(line + 1 & ":" & line + 1).Insert Shift:=xlDown
   End If
   If Assignor05.Text <> "" Then
@@ -275,9 +275,9 @@ Private Sub run_Click()
     Rows(line & ":" & line).PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     
-    Range("A" & line) = Range("A" & ActiveCellLine).Value
-    Range("B" & line) = Range("B" & ActiveCellLine).Value
-    Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Range("A" & line) = Range("A" & activeCellLine).Value
+    Range(setVal("cell_LevelInfo") & line) = Range("B" & activeCellLine).Value
+    Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
     Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
     Range(setVal("cell_TaskArea") & line).FormulaR1C1 = "=R[-5]C"
     
@@ -285,16 +285,16 @@ Private Sub run_Click()
     Range(setVal("cell_TaskAllocation") & line) = taskAllocation05.Text
     Range(setVal("cell_PlanStart") & line).FormulaR1C1 = "=R[-5]C"
     Range(setVal("cell_PlanEnd") & line).FormulaR1C1 = "=R[-5]C"
-    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & ActiveCellLine)
-    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & ActiveCellLine)
+    Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_TaskInfoP") & activeCellLine)
+    Range(setVal("cell_TaskInfoC") & line) = Range(setVal("cell_TaskInfoC") & activeCellLine)
   End If
 
   Call WBS_Option.タスクレベルの設定
   Call Chart.ガントチャート生成
   
-  Rows(ActiveCellLine + 1 & ":" & line).EntireRow.Hidden = True
+  Rows(activeCellLine + 1 & ":" & line).EntireRow.Hidden = True
   
-  Range(setVal("cell_Assign") & ActiveCellLine).Select
+  Range(setVal("cell_Assign") & activeCellLine).Select
   
   Unload Me
   Call Library.endScript

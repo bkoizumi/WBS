@@ -60,14 +60,14 @@ Function setting(Optional reCheckFlg As Boolean)
   Dim line As Long
   
   On Error GoTo catchError
-
+  
   If logFile <> "" And setVal("debugMode") = setSheet.Range("B3") And reCheckFlg <> True Then
     Exit Function
-    Set setVal = Nothing
   End If
 
 Label_reset:
-  
+  Call Library.showDebugForm("setting", CStr(reCheckFlg))
+
   'ブックの設定
   Set ThisBook = ThisWorkbook
   ThisBook.Activate
@@ -115,7 +115,7 @@ Label_reset:
   'ショートカットキーの設定追加
   With setVal
     For line = 3 To setSheet.Cells(Rows.count, 7).End(xlUp).row
-      .Add item:=setSheet.Range("I" & line), Key:=setSheet.Range("H" & line)
+      .Add item:=setSheet.Range(setVal("cell_ShortcutKey") & line), Key:=setSheet.Range(setVal("cell_ShortcutFuncName") & line)
     Next
   End With
   
@@ -210,11 +210,22 @@ Function 名前定義()
     End If
   Next
   
+  'VBA用の設定
   For line = 3 To setSheet.Range("B5")
     If setSheet.Range("A" & line) <> "" Then
-      setSheet.Range("B" & line).Name = setSheet.Range("A" & line)
+      setSheet.Range(setVal("cell_LevelInfo") & line).Name = setSheet.Range("A" & line)
     End If
   Next
+  
+  'ショートカットキーの設定
+  endLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_ShortcutFuncName"))).End(xlUp).row
+  For line = 3 To endLine
+    If setSheet.Range(setVal("cell_ShortcutFuncName") & line) <> "" Then
+      setSheet.Range(setVal("cell_ShortcutKey") & line).Name = setSheet.Range(setVal("cell_ShortcutFuncName") & line)
+    End If
+  Next
+  
+  
   endLine = setSheet.Cells(Rows.count, 11).End(xlUp).row
   setSheet.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & endLine).Name = "担当者"
 
@@ -239,7 +250,7 @@ Function noDispSheet()
   Call init.setting
   Worksheets("Help").Visible = xlSheetVeryHidden
   Worksheets("Tmp").Visible = xlSheetVeryHidden
-  Worksheets("Notice").Visible = xlSheetVeryHidden
+'  Worksheets("Notice").Visible = xlSheetVeryHidden
 '  Worksheets("設定").Visible = xlSheetVeryHidden
   
   Worksheets(mainSheetName).Select

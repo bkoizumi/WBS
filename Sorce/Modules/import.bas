@@ -94,7 +94,7 @@ Function データコピー(filePath As String)
     With targetSetVal
       For line = 3 To targetBook.Sheets("設定").Cells(Rows.count, 1).End(xlUp).row
         If targetBook.Sheets("設定").Range("A" & line) <> "" Then
-         .Add item:=targetBook.Sheets("設定").Range("B" & line), Key:=targetBook.Sheets("設定").Range("A" & line)
+         .Add item:=targetBook.Sheets("設定").Range(setVal("cell_LevelInfo") & line), Key:=targetBook.Sheets("設定").Range("A" & line)
         End If
       Next
     End With
@@ -212,7 +212,7 @@ Function データコピー(filePath As String)
   Call Library.showDebugForm(Dir(filePath), prgbarMeg)
   For line = endLine To tmpEndLine
     Call ProgressBar.showCount(Dir(filePath), line, tmpEndLine, "レベルの再設定")
-    targetLevel = mainSheet.Range("B" & line)
+    targetLevel = mainSheet.Range(setVal("cell_LevelInfo") & line)
     If targetLevel <> 0 Then
       mainSheet.Range(setVal("cell_Info") & line).InsertIndent targetLevel
     End If
@@ -220,7 +220,7 @@ Function データコピー(filePath As String)
     mainSheet.Range("A" & line).FormulaR1C1 = "=ROW()-5"
     
     Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
-    Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+    Range(setVal("cell_LevelInfo") & line).Formula = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlA1, RowAbsolute:=False, ColumnAbsolute:=False) & ")"
     Set taskLevelRange = Nothing
   Next
   

@@ -189,25 +189,7 @@ Function オプション画面表示()
   
 '  On Error GoTo catchError
   
-  Call Library.startScript
-  'シート内の画像をファイルとして保存する
-'  For Each images In setSheet.Shapes
-'    If images.Name = "msoLineSingle" Or images.Name = "msoLineThinThin" Then
-'      Set tmpObjChart = setSheet.ChartObjects.Add(0, 0, images.Width, images.Height).Chart
-'
-'      images.CopyPicture
-'      For Each zu In setSheet.ChartObjects
-'       cname = zu.Name
-'      Next
-'      setSheet.ChartObjects(cname).Activate
-'      ActiveChart.Paste
-'      tmpObjChart.Export FileName:=ThisWorkbook.Path & "\" & images.Name & ".jpg", filterName:="JPG"
-'      tmpObjChart.Parent.Delete
-'      Set tmpObjChart = Nothing
-'    End If
-'  Next
   mainSheet.Select
-  Call Library.endScript
   
   With optionForm
     .StartUpPosition = 0
@@ -224,17 +206,7 @@ Function オプション画面表示()
     
     .setLightning.Value = setVal("setLightning")
     .setDispProgress100.Value = setVal("setDispProgress100")
-
-'    'ガントチャートの線形画像サンプルの読み込み
-'    .ganttChartLineTypeImg1.Picture = LoadPicture(ThisWorkbook.Path & "\" & "msoLineSingle.jpg")
-'    .ganttChartLineTypeImg2.Picture = LoadPicture(ThisWorkbook.Path & "\" & "msoLineThinThin.jpg")
-    
-'    If setVal("ganttChartLineType") = "Type1" Then
-'      .ganttChartLineType1.Value = True
-'    ElseIf setVal("ganttChartLineType") = "Type2" Then
-'      .ganttChartLineType2.Value = True
-'    End If
-    
+        
     'スタイル関連
     .lineColor.BackColor = setVal("lineColor")
     .SaturdayColor.BackColor = setVal("SaturdayColor")
@@ -413,15 +385,8 @@ Function オプション画面表示()
     
     .viewGant_TaskName.Value = setVal("viewGant_TaskName")
     .viewGant_Assignor.Value = setVal("viewGant_Assignor")
-    
-    
+  
   End With
-  
-'  Kill ThisWorkbook.Path & "\" & "msoLineSingle.jpg"
-'  Kill ThisWorkbook.Path & "\" & "msoLineThinThin.jpg"
-  
-  
-  'optionForm.Show vbModeless
   optionForm.Show
 
   Exit Function
@@ -442,28 +407,37 @@ Function オプション設定値格納()
   Dim CompanyHoliday As Variant, dataExtract As Variant
 
   On Error Resume Next
-  Call Library.startScript
   
   setSheet.Select
   For line = 3 To setSheet.Range("B5")
+    DoEvents
     Select Case setSheet.Range("A" & line)
       Case "baseDay"
         If getVal(setSheet.Range("A" & line)) = Format(Now, "yyyy/mm/dd") Then
-          setSheet.Range("B" & line).FormulaR1C1 = "=TODAY()"
+          setSheet.Range(setVal("cell_LevelInfo") & line).FormulaR1C1 = "=TODAY()"
         Else
-          setSheet.Range("B" & line) = getVal(setSheet.Range("A" & line))
+          setSheet.Range(setVal("cell_LevelInfo") & line) = getVal(setSheet.Range("A" & line))
         End If
       
       Case ""
       Case Else
-        setSheet.Range("B" & line) = getVal(setSheet.Range("A" & line))
+        setSheet.Range(setVal("cell_LevelInfo") & line) = getVal(setSheet.Range("A" & line))
     End Select
+  Next
+  
+  'ショートカットキーの設定
+  endLine = Cells(Rows.count, Library.getColumnNo(setVal("cell_ShortcutFuncName"))).End(xlUp).row
+  For line = 3 To endLine
+    DoEvents
+    Range(Range(setVal("cell_ShortcutFuncName") & line)).Select
+    Range(Range(setVal("cell_ShortcutFuncName") & line)) = getVal(Range(setVal("cell_ShortcutFuncName") & line))
   Next
   
   '会社指定休日の設定
   line = 3
   setSheet.Range(setVal("cell_CompanyHoliday") & "3:" & setVal("cell_CompanyHoliday") & Cells(Rows.count, Library.getColumnNo(setVal("cell_CompanyHoliday"))).End(xlUp).row).ClearContents
   For Each CompanyHoliday In Split(getVal("CompanyHoliday"), vbNewLine)
+    DoEvents
     setSheet.Range(setVal("cell_CompanyHoliday") & line) = CompanyHoliday
     line = line + 1
   Next
@@ -472,6 +446,7 @@ Function オプション設定値格納()
   line = 3
   setSheet.Range(setVal("cell_DataExtract") & "3:" & setVal("cell_DataExtract") & Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row).ClearContents
   For Each dataExtract In Split(getVal("dataExtract"), vbNewLine)
+    DoEvents
     setSheet.Range(setVal("cell_DataExtract") & line) = dataExtract
     line = line + 1
   Next
@@ -480,6 +455,7 @@ Function オプション設定値格納()
   '担当者
   setSheet.Range(setVal("cell_AssignorList") & "4:" & setVal("cell_AssignorList") & Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row).Clear
   For line = 4 To 38
+    DoEvents
     setSheet.Range(setVal("cell_AssignorList") & line) = getVal("Assign" & Format(line - 3, "00"))
     setSheet.Range(setVal("cell_AssignorList") & line).Interior.Color = getVal("AssignColor" & Format(line - 3, "00"))
     
@@ -488,7 +464,7 @@ Function オプション設定値格納()
   Next
   setSheet.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & 38).Select
   Call 罫線.囲み罫線
-  
+  Call menu.M_ショートカット設定
   
   Application.Goto Reference:=Range("A1"), Scroll:=True
   mainSheet.Select
@@ -496,7 +472,8 @@ Function オプション設定値格納()
   Call Chart.ガントチャート生成
   Call WBS_Option.表示列設定
   
-  Call Library.endScript
+  Set getVal = Nothing
+  
 End Function
 
 
@@ -528,17 +505,12 @@ Function 表示列設定()
   Dim line As Long, endLine As Long
   Dim viewLineName As Variant
   
-'  On Error GoTo catchError
-  If setVal("debugMode") = "develop" Then
-    Exit Function
-  End If
+  On Error GoTo catchError
   mainSheet.Select
-
-
+  
   Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).EntireColumn.Hidden = setVal("view_Plan")
   Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).EntireColumn.Hidden = setVal("view_Assign")
   Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).EntireColumn.Hidden = setVal("view_Progress")
-  
   
   Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).EntireColumn.Hidden = setVal("view_Achievement")
   Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).EntireColumn.Hidden = setVal("view_Task")
@@ -553,10 +525,6 @@ Function 表示列設定()
   Columns(setVal("cell_LineInfo") & ":" & setVal("cell_LineInfo")).EntireColumn.Hidden = setVal("view_LineInfo")
   Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).EntireColumn.Hidden = setVal("view_TaskAllocation")
 
-
-
-  Application.Goto Reference:=Range("A6"), Scroll:=True
-  
 Exit Function
 'エラー発生時=====================================================================================
 catchError:
@@ -582,7 +550,7 @@ Function viewNormal()
   
   'チームプランナーで変更した予定日を格納
   For line = 6 To endLine
-    If TeamsPlannerSheet.Range(("C") & line) Like "*" & setVal("TaskChange_Change") & "*" Then
+    If TeamsPlannerSheet.Range(("C") & line) Like "*" & setVal("TaskInfoStr_Change") & "*" Then
       rowLine = TeamsPlannerSheet.Range(("D") & line) + 5
       
       mainSheet.Range(setVal("cell_PlanStart") & rowLine) = TeamsPlannerSheet.Range(("G") & line)
@@ -748,7 +716,7 @@ Function setTaskLevel()
   line = 6
   
   Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
-  Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+  Range(setVal("cell_LevelInfo") & line).Formula = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlA1, RowAbsolute:=False, ColumnAbsolute:=False) & ")"
   Set taskLevelRange = Nothing
 
 
@@ -792,17 +760,15 @@ End Function
 Function 複数の担当者行を非表示()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   
-    Call Library.startScript
-    endLine = Cells(Rows.count, 1).End(xlUp).row
-     
-    For line = 6 To endLine
-      If Range(setVal("cell_Info") & line) = "－" Then
-        Range(setVal("cell_Info") & line) = "＋"
-      ElseIf Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi") Then
-        Rows(line & ":" & line).EntireRow.Hidden = True
-      End If
-    Next
-    Call Library.endScript
+  endLine = Cells(Rows.count, 1).End(xlUp).row
+   
+  For line = 6 To endLine
+    If Range(setVal("cell_Info") & line) = "－" Then
+      Range(setVal("cell_Info") & line) = "＋"
+    ElseIf Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi") Then
+      Rows(line & ":" & line).EntireRow.Hidden = True
+    End If
+  Next
 
   Exit Function
 'エラー発生時=====================================================================================
@@ -847,13 +813,15 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function タスクにスクロール()
-  Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  Dim line As Long, activeCellLine As Long
   On Error GoTo catchError
 
-  targetColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & ActiveCell.row))
+  activeCellLine = ActiveCell.row
+  
+  targetColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & activeCellLine) - 1)
 
   Application.Goto Reference:=Range(targetColumn & 6), Scroll:=True
-'  Range(targetColumn & ActiveCell.row).Select
+  Range(targetColumn & ActiveCell.row).Select
 
 
 
@@ -867,27 +835,33 @@ End Function
 
 
 
+
+
 '**************************************************************************************************
-' * マイルストーンに追加
+' * 行番号再設定
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function マイルストーンに追加()
+Function 行番号再設定()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
+  
   On Error GoTo catchError
 
-  targetColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & ActiveCell.row))
-
-  Application.Goto Reference:=Range(targetColumn & 6), Scroll:=True
-'  Range(targetColumn & ActiveCell.row).Select
-
-
-
-
-
+  Call init.setting
+  endLine = Cells(Rows.count, 1).End(xlUp).row
+  
+  For line = 6 To endLine
+    If line = 6 Then
+      Range("A" & line) = 1
+    ElseIf Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi") Then
+      Range("A" & line) = Range("A" & line - 1)
+    Else
+      Range("A" & line) = Range("A" & line - 1) + 1
+    End If
+  Next
+  
   Exit Function
 'エラー発生時=====================================================================================
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
-

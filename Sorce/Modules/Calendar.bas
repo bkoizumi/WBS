@@ -8,54 +8,50 @@ Attribute VB_Name = "Calendar"
 '**************************************************************************************************
 Function 書式設定()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
-
-'  Call init.setting
-'  mainSheet.Select
   
   Columns("A:A").ColumnWidth = 4
   Columns(setVal("cell_LevelInfo") & ":" & setVal("cell_LineInfo")).ColumnWidth = 3
+    
+  '作業項目
+  Columns(setVal("cell_TaskArea") & ":" & setVal("cell_TaskArea")).ColumnWidth = 40
   
-
-    '作業項目
-    Columns(setVal("cell_TaskArea") & ":" & setVal("cell_TaskArea")).ColumnWidth = 40
-    
-    '予定日
-    Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).ColumnWidth = 6
-    Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).NumberFormatLocal = "m/d;@"
-    
-    '担当者
-    Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).ColumnWidth = 10
-    
-    'タスク配分
-    Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).ColumnWidth = 10
-    
-    '先行タスク
-    Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).ColumnWidth = 10
-    
-    '実績日
-    Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).ColumnWidth = 6
-    Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).NumberFormatLocal = "m/d;@"
-    
-    '進捗率
-    Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).ColumnWidth = 6
-    Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).NumberFormatLocal = "0_ ;[赤]-0 "
-    
-    'タスク情報
-    Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).ColumnWidth = 8
-    Columns(setVal("cell_TaskInfoC") & ":" & setVal("cell_WorkLoadA")).NumberFormatLocal = "@"
-    
-    
-    '作業工数
-    Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).ColumnWidth = 7
-    Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).NumberFormatLocal = "0.0_ ;[赤]-0.0 "
-    
-    
-    '遅早工数
-    Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).ColumnWidth = 10
-    Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).NumberFormatLocal = "0.00_ ;[赤]-0.00 "
-    
-    '備考
-    Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).ColumnWidth = 40
+  '予定日
+  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).ColumnWidth = 6
+  Columns(setVal("cell_PlanStart") & ":" & setVal("cell_PlanEnd")).NumberFormatLocal = "m/d;@"
+  
+  '担当者
+  Columns(setVal("cell_Assign") & ":" & setVal("cell_Assign")).ColumnWidth = 10
+  
+  'タスク配分
+  Columns(setVal("cell_TaskAllocation") & ":" & setVal("cell_TaskAllocation")).ColumnWidth = 10
+  
+  '先行タスク
+  Columns(setVal("cell_Task") & ":" & setVal("cell_Task")).ColumnWidth = 10
+  
+  '実績日
+  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).ColumnWidth = 6
+  Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).NumberFormatLocal = "m/d;@"
+  
+  '進捗率
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).ColumnWidth = 6
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).NumberFormatLocal = "0_ ;[赤]-0 "
+  
+  'タスク情報
+  Columns(setVal("cell_TaskInfoP") & ":" & setVal("cell_TaskInfoC")).ColumnWidth = 8
+  Columns(setVal("cell_TaskInfoC") & ":" & setVal("cell_WorkLoadA")).NumberFormatLocal = "@"
+  
+  
+  '作業工数
+  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).ColumnWidth = 7
+  Columns(setVal("cell_WorkLoadP") & ":" & setVal("cell_WorkLoadA")).NumberFormatLocal = "0.0_ ;[赤]-0.0 "
+  
+  
+  '遅早工数
+  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).ColumnWidth = 10
+  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).NumberFormatLocal = "0.00_ ;[赤]-0.00 "
+  
+  '備考
+  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).ColumnWidth = 40
 
   
   'カレンダー部分
@@ -84,7 +80,7 @@ Function clearCalendar()
   Call init.setting
   Columns(setVal("calendarStartCol") & ":XFD").Delete Shift:=xlToLeft
   Range("I5:" & setVal("cell_Note") & 5).ClearContents
-  setSheet.Range("O3:P" & setSheet.Cells(Rows.count, 15).End(xlUp).row + 1).ClearContents
+  setSheet.Range(setVal("cell_HolidayListDay") & "3:" & setVal("cell_HolidayListName") & setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_HolidayListDay"))).End(xlUp).row + 1).ClearContents
   
   
   Application.Goto Reference:=Range("A6"), Scroll:=True
@@ -103,11 +99,11 @@ Function makeCalendar()
   Dim HollydayName As String
   
   
-  Call clearCalendar
   Call WBS_Option.選択シート確認
+  Call clearCalendar
   
   today = setVal("startDay")
-  line = Range(setVal("calendarStartCol") & "1").Column
+  line = Range(setVal("calendarStartCol") & 1).Column
   
   Do While today <= setVal("endDay")
     Cells(4, line) = today
@@ -118,10 +114,10 @@ Function makeCalendar()
       Range(Cells(3, line), Cells(4, line)).Select
       Call 罫線.月初
 
-    ElseIf DateSerial(Format(today, "yyyy"), Format(today, "m") + 1, 1) - 1 = today Then
+    ElseIf DateSerial(Format(today, "yyyy"), Format(today, "m") + 1, 1) - 1 = today Or today = setVal("endDay") Then
       Cells(4, line).Select
       Call 罫線.月末
-      Cells(3, line - 1).Select
+      Cells(3, line).Select
       Range(Selection, Selection.End(xlToLeft)).Merge
 
     Else
@@ -153,7 +149,7 @@ Function makeCalendar()
         End If
         
         '期間中の休日リスト設定
-        endRowLine = setSheet.Cells(Rows.count, 15).End(xlUp).row + 1
+        endRowLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_HolidayListDay"))).End(xlUp).row + 1
         setSheet.Range(setVal("cell_HolidayListDay") & endRowLine) = today
         setSheet.Range(setVal("cell_HolidayListName") & endRowLine) = HollydayName
     End Select
@@ -173,7 +169,6 @@ Function makeCalendar()
   Range(Cells(4, Library.getColumnNo(setVal("calendarStartCol"))), Cells(4, line - 1)).Select
   Call Library.resetComment
     
-  Cells(3, line - 1).Select
   Range(Selection, Selection.End(xlToLeft)).Merge
   Range(Cells(3, line - 1), Cells(6, line - 1)).Select
   Call 罫線.最終日
@@ -187,7 +182,7 @@ Function makeCalendar()
   Call 罫線.横線
 
   endLine = Cells(Rows.count, Library.getColumnNo(setVal("cell_LineInfo"))).End(xlUp).row
-  If endLine = 5 And Range(setVal("cell_TaskArea") & 6) = "" Then
+  If endLine < 6 And Range(setVal("cell_TaskArea") & 6) = "" Then
     endLine = 25
   End If
   Rows("6:" & endLine).Select
@@ -238,13 +233,13 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   If ActiveSheet.Name = mainSheetName Then
     For line = 6 To endLine
       If Range(setVal("cell_TaskArea") & line) <> "" Then
-        taskLevel = Range("B" & line) - 1
+        taskLevel = Range(setVal("cell_LevelInfo") & line) - 1
         If taskLevel > 0 Then
           Range(setVal("cell_TaskArea") & line).InsertIndent taskLevel
         End If
       End If
       
-      If Range(setVal("cell_Info") & line) <> setVal("TaskChange_Multi") Then
+      If Range(setVal("cell_Info") & line) <> setVal("TaskInfoStr_Multi") Then
         Range("A" & line) = cell_LineInfo
         cell_LineInfo = cell_LineInfo + 1
       Else
@@ -253,43 +248,26 @@ Function 行書式コピー(startLine As Long, endLine As Long)
       
       Range(setVal("cell_LineInfo") & line).FormulaR1C1 = "=ROW()-5"
       Set taskLevelRange = Range(setVal("cell_TaskArea") & line)
-      Range("B" & line).FormulaR1C1 = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlR1C1) & ")"
+      Range(setVal("cell_LevelInfo") & line).Formula = "=getIndentLevel(" & taskLevelRange.Address(ReferenceStyle:=xlA1, RowAbsolute:=False, ColumnAbsolute:=False) & ")"
       Set taskLevelRange = Nothing
     Next
   End If
   
   With Range(setVal("cell_Assign") & startLine & ":" & setVal("cell_Assign") & endLine).Validation
-        .Delete
-        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-        xlBetween, Formula1:="=担当者"
-        .IgnoreBlank = True
-        .InCellDropdown = True
-        .InputTitle = ""
-        .ErrorTitle = ""
-        .InputMessage = ""
-        .ErrorMessage = ""
-        .IMEMode = xlIMEModeNoControl
-        .ShowInput = True
-        .ShowError = False
-    End With
-      
-      
-      
-      
-'      .Delete
-'      .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-'      xlBetween, Formula1:="=担当者"
-'      .IgnoreBlank = True
-'      .InCellDropdown = True
-'      .InputTitle = ""
-'      .ErrorTitle = ""
-'      .InputMessage = ""
-'      .ErrorMessage = ""
-'      .IMEMode = xlIMEModeNoControl
-'      .ShowInput = True
-'      .ShowError = True
-'  End With
-  
+    .Delete
+    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+    xlBetween, Formula1:="=担当者"
+    .IgnoreBlank = True
+    .InCellDropdown = True
+    .InputTitle = ""
+    .ErrorTitle = ""
+    .InputMessage = ""
+    .ErrorMessage = ""
+    .IMEMode = xlIMEModeNoControl
+    .ShowInput = True
+    .ShowError = False
+  End With
+
   With Range(setVal("cell_TaskArea") & startLine & ":" & setVal("cell_TaskArea") & endLine).Validation
     .Delete
     .Add Type:=xlValidateInputOnly, AlertStyle:=xlValidAlertStop, Operator _

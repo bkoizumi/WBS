@@ -18,13 +18,13 @@ Attribute VB_Name = "Library"
 #If VBA7 And Win64 Then
   Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
   Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As LongPtr)
-  Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hWnd As LongPtr) As Long
+  Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
   Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
   Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 #Else
   Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
   Private Declare Sub Sleep Lib "kernel32" (ByVal ms As Long)
-  Declare Function OpenClipboard Lib "user32" (ByVal hWnd As Long) As Long
+  Declare Function OpenClipboard Lib "user32" (ByVal hwnd As Long) As Long
   Declare Function CloseClipboard Lib "user32" () As Long
   Declare Function EmptyClipboard Lib "user32" () As Long
 #End If
@@ -107,6 +107,9 @@ End Function
 '**************************************************************************************************
 Function startScript()
 
+  Call Library.showDebugForm("startScript", "")
+
+
   'アクティブセルの取得
   If TypeName(Selection) = "Range" Then
     SelectionCell = Selection.Address
@@ -139,6 +142,9 @@ End Function
 '**************************************************************************************************
 Function endScript(Optional flg As Boolean = False)
 
+  Call Library.showDebugForm("endScript", CStr(flg))
+
+  
   'マクロ動作でシートやウィンドウが切り替わるのを見せないようにします
   Application.ScreenUpdating = True
 
@@ -194,6 +200,29 @@ Function chkSheetName(sheetName) As Boolean
   chkSheetName = Result
 
 End Function
+
+
+'**************************************************************************************************
+' * オートシェイプの存在確認
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function chkShapeName(ShapeName As String) As Boolean
+
+  Dim objShp As Shape
+  Dim Result As Boolean
+
+  Result = False
+  For Each objShp In ActiveSheet.Shapes
+    If objShp.Name = ShapeName Then
+      Result = True
+      Exit For
+    End If
+  Next
+  chkShapeName = Result
+
+End Function
+
 
 
 '**************************************************************************************************
@@ -806,7 +835,6 @@ Public Function getIndentLevel(targetRange As Range)
   Dim thisTargetSheet As Worksheet
   
   Application.Volatile
-  getIndentLevel = ""
 
   If targetRange = "" Then
     getIndentLevel = ""
@@ -1192,15 +1220,17 @@ Function showDebugForm(meg1 As String, Optional meg2 As String)
   Dim runTime As Date
   Dim StartUpPosition As Long
   
+  On Error GoTo catchError
+  
   runTime = Format(Now(), "yyyy/mm/dd hh:nn:ss")
   
   If setVal("debugMode") = "none" Then
     Exit Function
   End If
 
-  If meg1 <> "" And Len(meg1) < 10 Then
+  If meg1 <> "" And Len(meg1) < 15 Then
     
-    meg1 = meg1 & String(10 - Len(meg1), "　")
+    meg1 = meg1 & String(15 - Len(meg1), "　")
   End If
   
   Select Case setVal("debugMode")
@@ -1211,7 +1241,7 @@ Function showDebugForm(meg1 As String, Optional meg2 As String)
       GoTo label_end
     Case "form"
       GoTo label_showForm
-    Case "all"
+    Case "all", "develop"
       If meg1 <> "" Then
         Call outputLog(runTime & vbTab & meg1 & vbTab & meg2)
       End If
@@ -1238,9 +1268,9 @@ label_showForm:
   End If
   
   If (debugForm.Visible = True) Then
-  debugForm.StartUpPosition = 0
+    debugForm.StartUpPosition = 0
   Else
-  debugForm.StartUpPosition = 1
+    debugForm.StartUpPosition = 1
   End If
   debugForm.Show vbModeless
 
@@ -1248,6 +1278,11 @@ label_showForm:
 label_end:
 
   DoEvents
+  Exit Function
+  
+'エラー発生時=====================================================================================
+catchError:
+  Exit Function
 End Function
 
 '**************************************************************************************************
@@ -1273,9 +1308,7 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
     message = Replace(message, "%%", process)
   End If
 
-  If setVal("debugMode") = "speak" Or setVal("debugMode") = "all" Then
-    Application.Speech.Speak Text:=message, SpeakAsync:=True, SpeakXML:=True
-  End If
+  Application.Speech.Speak Text:="エラーが発生しました", SpeakAsync:=True, SpeakXML:=True
   
   Select Case code
     Case 0 To 399

@@ -112,7 +112,7 @@ Function データ移行()
 
   'レベルの再設定
   For line = 6 To endLine
-    Range("B" & line) = Cells(line, getColumnNo(setVal("cell_TaskArea"))).IndentLevel + 1
+    Range(setVal("cell_LevelInfo") & line) = Cells(line, getColumnNo(setVal("cell_TaskArea"))).IndentLevel + 1
   Next
 
   Call Library.endScript(True)

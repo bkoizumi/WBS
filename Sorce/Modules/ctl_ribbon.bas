@@ -111,22 +111,30 @@ End Function
 
 'オプション----------------------------------------------------------------------------------------
 Function dispOption(control As IRibbonControl)
+  Call Library.showDebugForm("オプション画面表示", "処理開始")
   Call menu.M_オプション画面表示
+  Call Library.showDebugForm("オプション画面表示", "処理終了")
 End Function
 
 '列入替え----------------------------------------------------------------------------------------
 Function changeColumn(control As IRibbonControl)
+  Call Library.showDebugForm("列入替え", "処理開始")
   Call menu.M_列入替え
+  Call Library.showDebugForm("列入替え", "処理終了")
 End Function
 
 '全データ削除--------------------------------------------------------------------------------------
 Function clearAll(control As IRibbonControl)
+  Call Library.showDebugForm("全データ削除", "処理開始")
   Call menu.M_全データ削除
+  Call Library.showDebugForm("全データ削除", "処理終了")
 End Function
 
 '生成----------------------------------------------------------------------------------------------
 Function makeCalendar(control As IRibbonControl)
+  Call Library.showDebugForm("カレンダー生成", "処理開始")
   Call menu.M_カレンダー生成
+  Call Library.showDebugForm("カレンダー生成", "処理完了")
 End Function
 
 '全画面表示----------------------------------------------------------------------------------------
@@ -142,22 +150,34 @@ End Function
 '**************************************************************************************************
 'タスクリスト確認----------------------------------------------------------------------------------
 Function chkTaskList(control As IRibbonControl)
+  
+  Call Library.showDebugForm("タスクリスト確認", "処理開始")
   Call menu.M_タスクチェック
+  Call Library.showDebugForm("タスクリスト確認", "処理終了")
+  
 End Function
 
 'フィルター----------------------------------------------------------------------------------------
 Function setFilter(control As IRibbonControl)
+  Call Library.showDebugForm("フィルター", "処理開始")
   Call menu.M_フィルター
+  Call Library.showDebugForm("フィルター", "処理終了")
+  
 End Function
 
 'すべて表示----------------------------------------------------------------------------------------
 Function dispAllList(control As IRibbonControl)
+  Call Library.showDebugForm("すべて表示", "処理開始")
   Call menu.M_すべて表示
+  Call Library.showDebugForm("すべて表示", "処理終了")
 End Function
 
 '進捗コピー----------------------------------------------------------------------------------------
 Function copyProgress(control As IRibbonControl)
+  Call Library.showDebugForm("進捗コピー", "処理開始")
   Call menu.M_進捗コピー
+  Call Library.showDebugForm("進捗コピー", "処理終了")
+  
 End Function
 
 'インデント----------------------------------------------------------------------------------------
@@ -209,12 +229,16 @@ End Function
 
 'タスクにスクロール----------------------------------------------------------------------------------------
 Function scrollTask(control As IRibbonControl)
+  
+  Call Library.showDebugForm("タスクにスクロール", "処理開始")
   Call menu.M_タスクにスクロール
+  Call Library.showDebugForm("タスクにスクロール", "処理終了")
+  
 End Function
 
-'マイルストーンに追加----------------------------------------------------------------------------------------
-Function addMilestone(control As IRibbonControl)
-  Call menu.M_マイルストーンに追加
+'タイムラインに追加----------------------------------------------------------------------------------------
+Function addTimeLine(control As IRibbonControl)
+  Call menu.M_タイムラインに追加
 End Function
 
 
@@ -233,7 +257,11 @@ End Function
 
 '生成----------------------------------------------------------------------------------------------
 Function makeChart(control As IRibbonControl)
+  
+  Call Library.showDebugForm("ガントチャート生成", "処理開始")
   Call menu.M_ガントチャート生成
+  Call Library.showDebugForm("ガントチャート生成", "処理終了")
+  
 End Function
 
 'センター----------------------------------------------------------------------------------------------

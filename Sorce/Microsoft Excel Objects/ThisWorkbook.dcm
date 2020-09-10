@@ -34,8 +34,10 @@ Private Sub Workbook_Open()
 
   On Error GoTo catchError
   
-  Call Library.startScript
+  Call Library.showDebugForm("Workbook_Open", "処理開始")
+
   Call init.setting(True)
+  Call Library.startScript
   
   Call Check.項目列チェック
   Call menu.M_ショートカット設定
@@ -49,14 +51,8 @@ Private Sub Workbook_Open()
   End If
   
   mainSheet.Select
-  
-  
-  
-'  ActiveWindow.SplitColumn = 8
-'  ActiveWindow.SplitRow = 5
-  
-  
   Call Library.endScript
+  Call Library.showDebugForm("Workbook_Open", "処理終了")
 
 
   Exit Sub

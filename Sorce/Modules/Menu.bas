@@ -24,18 +24,19 @@ End Sub
 
 
 
+'**************************************************************************************************
+' * ショートカット設定
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
 Sub M_ショートカット設定()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   
-  Call init.setting
+  Call init.setting(True)
   endLine = Cells(Rows.count, 7).End(xlUp).row
   
   '設定を解除
-  For line = 3 To endLine
-    If setSheet.Range(setVal("cell_OldShortcutKey") & line) <> "" Then
-      Application.MacroOptions Macro:="Menu." & setSheet.Range(setVal("cell_ShortcutFuncName") & line), ShortcutKey:=""
-    End If
-  Next
+  Call M_ショートカット設定解除
   
   For line = 3 To endLine
     If setSheet.Range(setVal("cell_ShortcutKey") & line) <> "" Then
@@ -47,9 +48,8 @@ Sub M_ショートカット設定()
   Application.OnKey "%{RIGHT}", "Menu.M_インデント増"
   Application.OnKey "%{F1}", "Menu.M_タスク表示_標準"
   Application.OnKey "%{F2}", "Menu.M_タスク表示_チームプランナー"
-  
-
 End Sub
+
 
 Sub M_ショートカット設定解除()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
@@ -69,23 +69,49 @@ Sub M_ショートカット設定解除()
   Application.OnKey "%{RIGHT}", ""
   Application.OnKey "%{F1}", ""
   Application.OnKey "%{F2}", ""
-  Application.OnKey "^v", ""
-
 End Sub
+
+Sub optionKey()
+Attribute optionKey.VB_ProcData.VB_Invoke_Func = "O\n14"
+  Call M_オプション画面表示
+End Sub
+Sub centerKey()
+End Sub
+Sub filterKey()
+End Sub
+Sub clearFilterKey()
+End Sub
+Sub taskCheckKey()
+Attribute taskCheckKey.VB_ProcData.VB_Invoke_Func = "C\n14"
+End Sub
+Sub makeGanttKey()
+Attribute makeGanttKey.VB_ProcData.VB_Invoke_Func = "t\n14"
+End Sub
+Sub clearGanttKey()
+Attribute clearGanttKey.VB_ProcData.VB_Invoke_Func = "D\n14"
+End Sub
+Sub dispAllKey()
+End Sub
+Sub taskControlKey()
+End Sub
+Sub ScaleKey()
+End Sub
+
+
+
+
+
+
 
 
 Sub M_オプション画面表示()
 Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
-  Call init.setting(True)
   
   Call Library.startScript
-  endLine = setSheet.Cells(Rows.count, 7).End(xlUp).row
-  setSheet.Range("I3:I" & endLine).Copy
-  setSheet.Range("J3:J" & endLine).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
-  Application.CutCopyMode = False
+  Call init.setting(True)
+  
   Call WBS_Option.オプション画面表示
   
-  setSheet.Range("J3:J" & endLine).ClearContents
   Call Library.endScript(True)
 End Sub
 
@@ -103,23 +129,18 @@ End Sub
 Sub M_カレンダー生成()
 
   Call init.setting(True)
-  
-  
   Call Library.startScript
-'  Call ProgressBar.showStart
-  Rows("6:" & Rows.count).EntireRow.Hidden = False
   
-  Call Library.showDebugForm("カレンダー生成", "処理開始")
+  '全ての行列を表示
+  Cells.EntireColumn.Hidden = False
+  Cells.EntireRow.Hidden = False
+  
   Call Calendar.makeCalendar
   
   Call WBS_Option.複数の担当者行を非表示
-  Call Library.showDebugForm("カレンダー生成", "処理完了")
-  
-  
   Call WBS_Option.表示列設定
-'  Call ProgressBar.showEnd
+  
   Call Library.endScript
-
 End Sub
 
 
@@ -181,19 +202,18 @@ End Sub
 Sub M_タスクチェック()
 Attribute M_タスクチェック.VB_ProcData.VB_Invoke_Func = "C\n14"
 
+
   Call init.setting
   mainSheet.Select
   
-  Application.CalculateFull
   Call Library.startScript
   Call ProgressBar.showStart
   
-  Call Library.showDebugForm("タスクチェック", "処理開始")
   Call Check.タスクリスト確認
   
-  Call Library.showDebugForm("タスクチェック", "処理完了")
   Call ProgressBar.showEnd
   Call Library.endScript(True)
+
 End Sub
 
 
@@ -210,12 +230,13 @@ Attribute M_フィルター.VB_ProcData.VB_Invoke_Func = " \n14"
   FilterForm.Show
 End Sub
 
+
 Sub M_すべて表示()
 Attribute M_すべて表示.VB_ProcData.VB_Invoke_Func = " \n14"
   Call Library.startScript
   Rows("6:" & Rows.count).EntireRow.Hidden = False
+  
   Call WBS_Option.複数の担当者行を非表示
-
   Call Library.endScript
 End Sub
 
@@ -275,10 +296,10 @@ Sub M_タスクのリンク解除()
   Call Task.taskUnlink
 End Sub
 Sub M_タスクの挿入()
-  Call Task.rTaskInsert
+  Call Task.タスクの挿入
 End Sub
 Sub M_タスクの削除()
-  Call Task.rTaskDell
+  Call Task.タスクの削除
 End Sub
 
 '表示モード----------------------------------------------------------------------------------------
@@ -323,12 +344,12 @@ Sub M_タスクにスクロール()
   Call Library.endScript
 End Sub
 
-Sub M_マイルストーンに追加()
+Sub M_タイムラインに追加()
   Call Library.startScript
   Call init.setting
   
-  Call WBS_Option.マイルストーンに追加
-  Call Library.endScript
+  Call Chart.タイムラインに追加(ActiveCell.row)
+  Call Library.endScript(True)
 End Sub
 '**************************************************************************************************
 ' * ガントチャート
@@ -366,12 +387,10 @@ Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
   
   Call Library.startScript
   Call ProgressBar.showStart
-  Call Library.showDebugForm("ガントチャート生成", "処理開始")
   
   Call Check.タスクリスト確認
   Call Chart.ガントチャート生成
   
-  Call Library.showDebugForm("ガントチャート生成", "処理完了")
   Call ProgressBar.showEnd
   Call Library.endScript(True)
   Application.EnableEvents = True

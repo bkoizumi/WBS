@@ -22,71 +22,81 @@ End Sub
 
 Private Sub Worksheet_Change(ByVal Target As Range)
   Dim selectCells As String
-  Dim line As Long, ActiveCellLine As Long
+  Dim line As Long, activeCellLine As Long
 
   On Error GoTo catchError
   
-  Call Library.startScript
   Call init.setting
   selectCells = Selection.Address(False, False)
-  selectCells = Replace(selectCells, ":", "")
+
 
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
   
-  ElseIf IsNumeric(selectCells) Then
+  ElseIf selectCells Like "*:*" Then
     Exit Sub
   
   
   '担当者を複数選択するとき
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) And Target.Value = "複数選択" Then
+    Call Library.startScript
     Call WBS_Option.担当者の複数選択
+    Call Library.endScript
   
   '担当者を複数選択でないとき
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) Then
-    ActiveCellLine = ActiveCell.row
-    line = ActiveCellLine + 1
+    Call Library.startScript
+    
+    activeCellLine = ActiveCell.row
+    line = activeCellLine + 1
       
-    Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Do While Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi")
       line = line + 1
     Loop
-    If line > ActiveCellLine + 1 Then
-      Rows(ActiveCellLine + 1 & ":" & line - 1).Delete Shift:=xlUp
+    If line > activeCellLine + 1 Then
+      Rows(activeCellLine + 1 & ":" & line - 1).Delete Shift:=xlUp
     End If
     Range(setVal("cell_TaskAllocation") & Target.row) = ""
     Range(setVal("cell_Info") & Target.row) = ""
     
-    
+    Call Library.endScript
   ElseIf Intersect(Target, Columns("C:R")) Is Nothing Then
     Exit Sub
   Else
     If Range("A" & Target.row) = "" And Cells(Target.row, Target.Column) <> "" Then
+      Call Library.startScript
+      
       Call Calendar.行書式コピー(Target.row, Target.row)
       'Range(setVal("cell_PlanStart") & Target.row).Select
       Cells(Target.row, Target.Column).Select
+      
+      Call Library.endScript
       Exit Sub
     End If
   End If
     
-  Call Library.endScript
-
+  
   Exit Sub
+
 'エラー発生時=====================================================================================
 catchError:
-  Call Library.endScript
-
+  Call Library.showNotice(Err.Number, Err.Description, True)
 End Sub
+
+
 
 Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   Dim line As Long
   
   Call init.setting
   If changeShapesName <> "" Then
+    Call Library.startScript
     Call Chart.changeShapes
+    Call Library.endScript(True)
   ElseIf Cells(Target.row, Target.Column) = "＋" Then
     Call Library.startScript
     line = Target.row + 1
-    Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Do While Range(setVal("cell_Info") & line) Like "*" & setVal("TaskInfoStr_Multi") & "*"
       line = line + 1
     Loop
     
@@ -97,7 +107,7 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   ElseIf Cells(Target.row, Target.Column) = "－" Then
     Call Library.startScript
     line = Target.row + 1
-    Do While Range(setVal("cell_Info") & line) = setVal("TaskChange_Multi")
+    Do While Range(setVal("cell_Info") & line) Like "*" & setVal("TaskInfoStr_Multi") & "*"
       line = line + 1
     Loop
     
@@ -107,6 +117,11 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
     Call Library.endScript
   End If
   
+  Exit Sub
+
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.showNotice(Err.Number, Err.Description, True)
 End Sub
 
 
@@ -148,6 +163,12 @@ Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
       
 
   
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タスクにスクロール"
+      .OnAction = "menu.M_タスクにスクロール"
+  End With
+  
   With Application.CommandBars("Cell").Controls.Add(temporary:=True)
       .BeginGroup = True
       .Caption = "タスクのレベル上げ"
@@ -161,11 +182,6 @@ Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
       .OnAction = "menu.M_インデント減"
   End With
 
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
-      .Caption = "貼り付け"
-      .FaceId = 22
-      .OnAction = "menu.M_貼り付け"
-  End With
   With Application.CommandBars("Cell").Controls.Add(temporary:=True)
       .BeginGroup = True
       .Caption = "タスクの挿入"
