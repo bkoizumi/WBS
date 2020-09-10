@@ -1308,7 +1308,7 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
     message = Replace(message, "%%", process)
   End If
 
-  Application.Speech.Speak Text:="ÉGÉâÅ[Ç™î≠ê∂ÇµÇ‹ÇµÇΩ", SpeakAsync:=True, SpeakXML:=True
+  Application.Speech.Speak Text:=message, SpeakAsync:=True, SpeakXML:=True
   
   Select Case code
     Case 0 To 399

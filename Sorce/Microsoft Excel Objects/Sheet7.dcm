@@ -14,3 +14,15 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 
   
 End Sub
+
+'**************************************************************************************************
+' * 右クリックメニュー
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
+  
+'  Call WBS_Option.右クリックメニュー(Target, Cancel)
+  
+End Sub
+

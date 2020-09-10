@@ -13,3 +13,16 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+'**************************************************************************************************
+' * ƒLƒƒƒ“ƒZƒ‹
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Private Sub Cancel_Click()
+
+  Unload Me
+End Sub
+
+
+

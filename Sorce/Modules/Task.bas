@@ -52,7 +52,8 @@ Function ’S“–Ò’Šo(memberList As Collection)
     .Add item:="H’ö", Key:=str(count)
   End With
   count = count + 1
-
+  NoAssignorFlg = False
+  
   For line = 6 To endLine
     assignor = mainSheet.Range(setVal("cell_Assign") & line).Value
     If assignor <> "" Then
@@ -62,6 +63,13 @@ Function ’S“–Ò’Šo(memberList As Collection)
           End With
           count = count + 1
         End If
+    
+    ElseIf assignor = "" And NoAssignorFlg = False Then
+      With memberList
+        .Add item:="–¢Š„‚è“–‚Ä", Key:=str(count)
+      End With
+      count = count + 1
+      NoAssignorFlg = True
     End If
   Next
 

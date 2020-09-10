@@ -1,4 +1,82 @@
 Attribute VB_Name = "WBS_Option"
+
+'**************************************************************************************************
+' * 右クリックメニュー
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function 右クリックメニュー(Target As Range, Cancel As Boolean)
+  Dim menu01 As CommandBarControl
+  
+  Call init.setting
+  If setVal("debugMode") = "develop" Then
+    Exit Function
+  End If
+  
+  '標準状態にリセット
+  Application.CommandBars("Cell").Reset
+
+  If setVal("debugMode") <> "develop" Then
+    '右クリックメニューをクリア
+    For Each menu01 In Application.CommandBars("Cell").Controls
+      'Debug.Print menu01.Caption
+      Select Case True
+        Case menu01.Caption Like "切り取り*"
+        Case menu01.Caption Like "コピー*"
+        Case menu01.Caption Like "数式と値のクリア*"
+        Case menu01.Caption Like "貼り付け*"
+'        Case menu01.Caption Like "セルの書式設定*"
+'        Case menu01.Caption Like "挿入*"
+'        Case menu01.Caption Like "削除*"
+'        Case menu01.Caption Like "コメントの*"
+        Case Else
+          menu01.Visible = False
+      End Select
+    Next
+  End If
+  
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タスクにスクロール"
+      .OnAction = "menu.M_タスクにスクロール"
+  End With
+  
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タイムラインに追加"
+      .OnAction = "menu.M_タイムラインに追加"
+  End With
+  
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .BeginGroup = True
+      .Caption = "タスクのレベル上げ"
+      .FaceId = 3161
+      .OnAction = "menu.M_インデント増"
+  End With
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タスクのレベル下げ"
+      .FaceId = 3162
+      .OnAction = "menu.M_インデント減"
+  End With
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .BeginGroup = True
+      .Caption = "タスクの挿入"
+      .OnAction = "menu.M_タスクの挿入"
+  End With
+
+  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+      .Caption = "タスクの削除"
+      .OnAction = "menu.M_タスクの削除"
+  End With
+
+
+  Application.CommandBars("Cell").ShowPopup
+  Application.CommandBars("Cell").Reset
+  Cancel = True
+End Function
+
+
+
 ' *************************************************************************************************
 ' * カレンダー関連関数
 ' *
@@ -124,7 +202,12 @@ Function setLineColor()
     setVal("lineColorFlg") = False
   Else
     'タスクエリア
-    targetArea = "A6:" & setVal("calendarStartCol") & endLine
+    If ActiveSheet.Name = mainSheetName Then
+      targetArea = "A6:" & setVal("calendarStartCol") & endLine
+    ElseIf ActiveSheet.Name = TeamsPlannerSheetName Then
+      targetArea = "F6:" & setVal("calendarStartCol") & endLine
+    End If
+    
     Call Library.setLineColor(targetArea, False, setVal("lineColor"))
     
     'カレンダーエリア
@@ -537,7 +620,7 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function viewNormal()
+Function タスク表示_標準()
   Dim line As Long, endLine As Long, rowLine As Long, endColLine As Long
   
   
@@ -614,11 +697,11 @@ End Function
 
 
 '**************************************************************************************************
-' * xxxxxxxxxx
+' * タスク表示_チームプランナー
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function viewTeamsPlanner()
+Function タスク表示_チームプランナー()
 '  On Error GoTo catchError
   
   
@@ -791,6 +874,11 @@ Function タスクレベルの設定()
     endLine = Cells(Rows.count, 1).End(xlUp).row
     For line = 6 To endLine
       If Range(setVal("cell_TaskArea") & line) <> "" Then
+        If Range(setVal("cell_LevelInfo") & line) = "" Then
+          Range(setVal("cell_LevelInfo") & line) = Library.getIndentLevel(Range(setVal("cell_TaskArea") & line))
+        End If
+        
+        
         taskLevel = Range(setVal("cell_LevelInfo") & line) - 1
         If taskLevel > 0 Then
           If Range(setVal("cell_TaskArea") & line).IndentLevel <> 0 Then
@@ -855,6 +943,9 @@ Function 行番号再設定()
       Range("A" & line) = 1
     ElseIf Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_Multi") Then
       Range("A" & line) = Range("A" & line - 1)
+    
+    ElseIf Range(setVal("cell_TaskArea") & line) = "" Then
+      Range("A" & line) = ""
     Else
       Range("A" & line) = Range("A" & line - 1) + 1
     End If

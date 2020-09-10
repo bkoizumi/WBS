@@ -297,11 +297,14 @@ Function イナズマ線設定(line As Long)
   Dim Red As Long, Green As Long, Blue As Long
   
   If Not (setVal("startDay") <= setVal("baseDay") And setVal("baseDay") <= setVal("endDay")) Then
-    Call Library.showNotice(50)
-    setVal("setLightning") = False
-    Range("setLightning") = False
+    If setVal("setLightning") = True Then
+      Call Library.showNotice(50)
+      setVal("setLightning") = False
+      Range("setLightning") = False
+    End If
+    Exit Function
+    
   End If
-'  Call Library.showDebugForm("イナズマ線設定", Range(setVal("cell_Info") & line))
   
   baseColumn = WBS_Option.日付セル検索(setVal("baseDay"))
   

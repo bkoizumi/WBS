@@ -151,7 +151,7 @@ End Sub
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Sub M_選択行色付切替()
+Sub M_行ハイライト()
   Call Library.startScript
   Call WBS_Option.setLineColor
   Call Library.endScript(True)
@@ -313,7 +313,10 @@ Sub M_タスク表示_標準()
   End If
   
   Call init.setting(True)
-  Call WBS_Option.viewNormal
+  Call WBS_Option.タスク表示_標準
+  Call WBS_Option.setLineColor
+  
+  Application.Goto Reference:=Range("A6"), Scroll:=True
   Call Library.endScript
 
 End Sub
@@ -323,6 +326,7 @@ Sub M_タスク表示_タスク()
   Call init.setting(True)
   
   Call WBS_Option.viewTask
+  Call WBS_Option.setLineColor
   
   Call Library.endScript
 End Sub
@@ -331,7 +335,11 @@ Sub M_タスク表示_チームプランナー()
   Call Library.startScript
   Call init.setting(True)
   
-  Call WBS_Option.viewTeamsPlanner
+  Call WBS_Option.タスク表示_チームプランナー
+  Call WBS_Option.setLineColor
+  
+  Application.Goto Reference:=Range("A6"), Scroll:=True
+  
   Call Library.endScript
 End Sub
 
