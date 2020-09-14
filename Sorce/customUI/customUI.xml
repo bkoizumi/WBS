@@ -68,9 +68,9 @@
           <menuSeparator id="I_S001" title="バイナリ形式のファイルをインポート"/>
           <button id="I_B001" label="Excel" onAction="ctl_ribbon.importExcel"     description="Excelファイルをインポート"  imageMso="ImportWorkbook" />
           <menuSeparator id="I_S002" title="テキスト形式のファイルをインポート"/>
-          <button id="I_B002" label="CSV" onAction="ctl_ribbon.importCsv" description="CSVファイルをインポート"  imageMso="ImportTextFile" />
+          <button id="I_B002" label="CSV" onAction="ctl_ribbon.importCsv" description="CSVファイルをインポート"  imageMso="ImportTextFile"  enabled="false" />
         </menu>
-        <menu id="E_M001" label="エクスポート&#xD;&#xA;" size="large" itemSize="large"  supertip="ファイルをエクスポート"  imageMso="CalendarToolExportAllAppointments" >
+        <menu id="E_M001" label="エクスポート&#xD;&#xA;" size="large" itemSize="large"  supertip="ファイルをエクスポート"  imageMso="CalendarToolExportAllAppointments"  enabled="false">
           <menuSeparator id="E_S001" title="バイナリ形式のファイルをエクスポート"/>
           <button id="E_B001" label="Excel" onAction="ctl_ribbon.importExcel"     description="Excelファイルをエクスポート"  imageMso="ExportExcel" />
           <menuSeparator id="E_S002" title="テキスト形式のファイルをエクスポート"/>

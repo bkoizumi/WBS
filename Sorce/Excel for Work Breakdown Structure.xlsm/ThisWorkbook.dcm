@@ -1,0 +1,68 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "ThisWorkbook"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+'Private Sub Workbook_Activate()
+'  Call init.setting
+'  If setVal("baseDay") = Date Then
+'    Application.StatusBar = "基準日:" & setVal("baseDay") & "[今日]"
+'  Else
+'    Application.StatusBar = "基準日:" & setVal("baseDay")
+'  End If
+'End Sub
+
+'Private Sub Workbook_Deactivate()
+'  Application.StatusBar = False
+'End Sub
+
+
+
+
+Private Sub Workbook_SheetSelectionChange(ByVal Sh As Object, ByVal Target As Range)
+  If ThisWorkbook.Worksheets("設定").Range("lineColorFlg") = True Then
+    Application.ScreenUpdating = True
+  End If
+End Sub
+
+
+Private Sub Workbook_Open()
+
+  On Error GoTo catchError
+  
+  Call Library.showDebugForm("Workbook_Open", "処理開始")
+
+  Call init.setting(True)
+  Call Library.startScript
+  
+  Call Check.項目列チェック
+  Call menu.M_ショートカット設定
+  
+  If setVal("debugMode") <> "develop" Then
+    'helpSheet.Visible = xlSheetVeryHidden
+    tmpSheet.Visible = xlSheetVeryHidden
+    noticeCodeSheet.Visible = xlSheetVeryHidden
+    TeamsPlannerSheet.Visible = xlSheetVeryHidden
+    'setSheet.Visible = xlSheetVeryHidden
+  End If
+  
+  mainSheet.Select
+  Call Library.endScript
+  Call Library.showDebugForm("Workbook_Open", "処理終了")
+
+
+  Exit Sub
+'エラー発生時=====================================================================================
+catchError:
+  Call Library.endScript
+End Sub
+
+
+
+
+
+

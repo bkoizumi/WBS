@@ -6,12 +6,15 @@
 
 ### 動作環境
 Windows 10 x64  
-Microsoft Office 2016 x86  
-.Net Framework 2.0.50727  
+Microsoft Excel 2016 x86  
 
 
 
+### リボンメニュー
+<img src="./Docs/ribbonUI.png" width="80%">
 
+
+### 利用方法
 
 
 
