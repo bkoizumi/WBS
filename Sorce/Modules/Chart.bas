@@ -26,7 +26,7 @@ Function ガントチャート生成()
     End If
 
     '実績線生成------------------------------------
-    If Not (mainSheet.Range(setVal("cell_AchievementStart") & line) = "") Then
+    If mainSheet.Range(setVal("cell_Progress") & line) >= 0 Then
       Call 実績線設定(line)
     End If
     
@@ -155,7 +155,8 @@ Function 計画線設定(line As Long)
   
   Else
     With Range(startColumn & line & ":" & endColumn & line)
-      Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRectangle, Left:=.Left, top:=.top + 5, Width:=.Width, Height:=10)
+      'Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRectangle, Left:=.Left, top:=.top + 5, Width:=.Width, Height:=10)
+      Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRectangle, Left:=.Left, top:=.top, Width:=.Width, Height:=.Height)
       
       With ProcessShape
         .Name = "タスク_" & line
@@ -231,56 +232,68 @@ Function 実績線設定(line As Long)
   Dim rngStart As Range, rngEnd As Range
   Dim BX As Single, BY As Single, EX As Single, EY As Single
   Dim lColorValue As Long, Red As Long, Green As Long, Blue As Long
+  Dim ProcessShape As Shape
+  Dim shapesWith As Long
+  
 '    lColorValue = setSheet.Range(setVal("cell_ProgressEnd") & line).Interior.Color
   
-  startColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementStart") & line))
+'  Call Library.showDebugForm("実績線設定", Range(setVal("cell_TaskArea") & line))
+'  Call Library.showDebugForm("実績線設定", "　開始日:" & Range(setVal("cell_AchievementStart") & line))
+'  Call Library.showDebugForm("実績線設定", "　終了日:" & Range(setVal("cell_AchievementEnd") & line))
+'  Call Library.showDebugForm("実績線設定", "　進捗　:" & Range(setVal("cell_Progress") & line))
   
-  Call Library.showDebugForm("実績線設定", Range(setVal("cell_TaskArea") & line))
-  Call Library.showDebugForm("実績線設定", "　開始日:" & Range(setVal("cell_AchievementStart") & line))
-  Call Library.showDebugForm("実績線設定", "　終了日:" & Range(setVal("cell_AchievementEnd") & line))
-  Call Library.showDebugForm("実績線設定", "　進捗　:" & Range(setVal("cell_Progress") & line))
-  
+  If Range(setVal("cell_AchievementStart") & line) = "" Then
+    startColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & line))
+  Else
+    startColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementStart") & line))
+  End If
   
   If Range(setVal("cell_AchievementEnd") & line) = "" Then
-    endColumn = WBS_Option.日付セル検索(Date)
-    
+    endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
+  
+  '進捗が100%のとき
   ElseIf Range(setVal("cell_Progress") & line) = 100 Then
-    If Range(setVal("cell_PlanEnd") & line) < Range(setVal("cell_AchievementEnd") & line) Then
-      endColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementEnd") & line))
-    Else
+    If Range(setVal("cell_AchievementEnd") & line) < Range(setVal("cell_PlanEnd") & line) Then
       endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
+    Else
+      endColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementEnd") & line))
     End If
+  
   Else
     endColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementEnd") & line))
   End If
+
   
   
   Call Library.getRGB(setVal("lineColor_Achievement"), Red, Green, Blue)
-  
 
-  'Shapeを配置するための基準となるセル
-  Set rngStart = Range(startColumn & line)
-  Set rngEnd = Range(endColumn & line)
   
-  'セルのLeft、Top、Widthプロパティを利用して位置決め
-  BX = rngStart.Left
-  BY = rngStart.top + (rngStart.Height / 2) + 1
-  EX = rngEnd.Left + rngEnd.Width
-  EY = rngEnd.top + (rngEnd.Height / 2) + 1
-  
-  
-  With ActiveSheet.Shapes.AddLine(BX, BY, EX, EY).line
-    If Range(setVal("cell_Assign") & line) = "工程" Or Range(setVal("cell_Assign") & line) = "工程" Then
-      ActiveSheet.Shapes.Range(Array("タスク_" & line)).Select
-      Selection.ShapeRange.ZOrder msoBringToFront
-      .Weight = 8
+  With Range(startColumn & line & ":" & endColumn & line)
+    .Select
+    
+    If Range(setVal("cell_Progress") & line) = "" Or Range(setVal("cell_Progress") & line) = 0 Then
+      shapesWith = 0
     Else
-      .Weight = 4
+      shapesWith = .Width * (Range(setVal("cell_Progress") & line) / 100)
     End If
-  .Style = msoLineSolid
-  .ForeColor.RGB = RGB(Red, Green, Blue)
+    
+    If Range(setVal("cell_Assign") & line) = "工程" Or Range(setVal("cell_Assign") & line) = "工程" Then
+      Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapePentagon, Left:=.Left, top:=.top + 5, Width:=shapesWith, Height:=10)
+    Else
+      Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRectangle, Left:=.Left, top:=.top + 5, Width:=shapesWith, Height:=10)
+    End If
+    
+    With ProcessShape
+      .Name = "実績_" & line
+      .Fill.ForeColor.RGB = RGB(Red, Green, Blue)
+      .Fill.Transparency = 0.6
+    End With
+  End With
+  Set ProcessShape = Nothing
+    
+    
+    
 
- End With
 
 End Function
 
@@ -310,10 +323,85 @@ Function イナズマ線設定(line As Long)
     
   End If
   
-  baseColumn = WBS_Option.日付セル検索(setVal("baseDay"))
-  
   'イナズマ線の色取得
   Call Library.getRGB(setVal("lineColor_Lightning"), Red, Green, Blue)
+  
+  baseColumn = WBS_Option.日付セル検索(setVal("baseDay"))
+  
+  'タイムライン上に引く
+  If line = 6 Then
+    Set rngBase = Range(baseColumn & 5)
+    
+    '直線コネクタ生成
+    ActiveSheet.Shapes.AddConnector(msoConnectorStraight, rngBase.Left + 10, rngBase.top, rngBase.Left + 10, rngBase.top + rngBase.Height).Select
+    With Selection
+      .Name = "イナズマ線B_5"
+      .ShapeRange.line.Weight = 3
+      .ShapeRange.line.ForeColor.RGB = RGB(Red, Green, Blue)
+      .ShapeRange.line.Transparency = 0.6
+    End With
+
+    Set ProcessShape = Nothing
+  End If
+  
+  Set rngBase = Range(baseColumn & line)
+  
+  
+  
+  
+  'イナズマ線を引かない場合は、基準日のみ引く
+  If setVal("setLightning") = False Or Range(setVal("cell_Progress") & line) = "" Or Range(setVal("cell_LateOrEarly") & line) = 0 Then
+    
+    '直線コネクタ生成
+    ActiveSheet.Shapes.AddConnector(msoConnectorStraight, rngBase.Left + 10, rngBase.top, rngBase.Left + 10, rngBase.top + rngBase.Height).Select
+    With Selection
+      .Name = "イナズマ線B_" & line
+      .ShapeRange.line.Weight = 3
+      .ShapeRange.line.ForeColor.RGB = RGB(Red, Green, Blue)
+      .ShapeRange.line.Transparency = 0.6
+    End With
+
+    Set ProcessShape = Nothing
+    Exit Function
+  
+  '進捗が0%以上の場合は、イナズマ線を引く
+  ElseIf Range(setVal("cell_Progress") & line) >= 0 Then
+    ActiveSheet.Shapes.AddConnector(msoConnectorStraight, rngBase.Left + 10, rngBase.top, rngBase.Left + 10, rngBase.top + rngBase.Height).Select
+    With Selection
+      .Name = "イナズマ線S_" & line
+      .ShapeRange.line.Weight = 3
+      .ShapeRange.line.ForeColor.RGB = RGB(Red, Green, Blue)
+      .ShapeRange.line.Transparency = 0.6
+    End With
+    Selection.ShapeRange.ConnectorFormat.EndConnect ActiveSheet.Shapes("実績_" & line), 4
+  
+    ActiveSheet.Shapes.AddConnector(msoConnectorStraight, rngBase.Left + 10, rngBase.top, rngBase.Left + 10, rngBase.top + rngBase.Height).Select
+    With Selection
+      .Name = "イナズマ線S_" & line
+      .ShapeRange.line.Weight = 3
+      .ShapeRange.line.ForeColor.RGB = RGB(Red, Green, Blue)
+      .ShapeRange.line.Transparency = 0.6
+    End With
+    Selection.ShapeRange.ConnectorFormat.BeginConnect ActiveSheet.Shapes("実績_" & line), 4
+    
+    
+'
+'      startTask = "タスク_" & tmpLine
+'      thisTask = "タスク_" & line
+'
+'    ActiveSheet.Shapes.AddConnector(msoConnectorStraight, 1153.2352755906, 9.7059055118, 1206.1764566929, 30).Select
+'    Selection.ShapeRange.line.EndArrowheadStyle = msoArrowheadTriangle
+'
+'    Selection.ShapeRange.ConnectorFormat.EndConnect ActiveSheet.Shapes(thisTask), 2
+'    Selection.Name = "イナズマ線_" & line
+  
+      
+  End If
+Exit Function
+
+
+
+
 
   If Range(setVal("cell_PlanStart") & line) <> "" Then
     startColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & line))
@@ -333,22 +421,7 @@ Function イナズマ線設定(line As Long)
   'Shapeを配置するための基準となるセル
   Set rngStart = Range(startColumn & line)
   Set rngEnd = Range(endColumn & line)
-  Set rngBase = Range(baseColumn & line)
-  
-  'イナズマ線を引かない場合は、基準日のみ引く
-  If setVal("setLightning") = False Then
-    BX = rngBase.Left + rngBase.Width
-    BY = rngBase.top
-    EX = rngBase.Left + rngBase.Width
-    EY = rngBase.top + rngBase.Height
-    
-    With ActiveSheet.Shapes.AddLine(BX, BY, EX, EY).line
-      .Weight = 2
-      .Style = msoLineSolid
-      .ForeColor.RGB = RGB(Red, Green, Blue)
-    End With
-    Exit Function
-  End If
+
   
   '遅早工数の値
   If Range(setVal("cell_LateOrEarly") & line) = 0 Or Range(setVal("cell_LateOrEarly") & line) = "" Then

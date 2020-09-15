@@ -100,11 +100,11 @@ Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
   
   Call WBS_Option.オプション画面表示
   
-  Call M_カレンダー生成
+  Call M_カレンダー生成(True)
   Call M_ガントチャート生成
   Call WBS_Option.表示列設定
   
-  
+  Call ProgressBar.showEnd
   Call Library.endScript(True)
 End Sub
 
@@ -119,10 +119,14 @@ Sub M_列入替え()
   Call Library.endScript(True)
 End Sub
 
-Sub M_カレンダー生成()
+Sub M_カレンダー生成(Optional flg As Boolean = False)
 
   Call init.setting(True)
   Call Library.startScript
+  
+  If flg = False Then
+    Call ProgressBar.showStart
+  End If
   
   '全ての行列を表示
   Cells.EntireColumn.Hidden = False
@@ -133,6 +137,9 @@ Sub M_カレンダー生成()
   Call WBS_Option.複数の担当者行を非表示
   Call WBS_Option.表示列設定
   
+  If flg = False Then
+    Call ProgressBar.showEnd
+  End If
   Call Library.endScript
 End Sub
 

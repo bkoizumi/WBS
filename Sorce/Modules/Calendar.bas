@@ -107,6 +107,7 @@ Function makeCalendar()
   
   Do While today <= setVal("endDay")
     Cells(4, line) = today
+    Call ProgressBar.showCount("ƒJƒŒƒ“ƒ_[¶¬", 0, 100, Cells(4, line))
     
     If Format(today, "d") = 1 Or line = Library.getColumnNo(setVal("calendarStartCol")) Then
       Cells(3, line) = today

@@ -504,9 +504,11 @@ Function オプション設定値格納()
 
   On Error Resume Next
   
+  Call ProgressBar.showStart
   setSheet.Select
   For line = 3 To setSheet.Range("B5")
-    DoEvents
+    Call ProgressBar.showCount("オプション設定値格納", line, setSheet.Range("B5"), setSheet.Range("A" & line))
+    
     Select Case setSheet.Range("A" & line)
       Case "baseDay"
         If getVal(setSheet.Range("A" & line)) = Format(Now, "yyyy/mm/dd") Then
@@ -524,7 +526,8 @@ Function オプション設定値格納()
   'ショートカットキーの設定
   endLine = Cells(Rows.count, Library.getColumnNo(setVal("cell_ShortcutFuncName"))).End(xlUp).row
   For line = 3 To endLine
-    DoEvents
+    Call ProgressBar.showCount("オプション設定値格納", line, setSheet.Range("B5"), "ショートカットキー設定")
+    
     Range(Range(setVal("cell_ShortcutFuncName") & line)).Select
     Range(Range(setVal("cell_ShortcutFuncName") & line)) = getVal(Range(setVal("cell_ShortcutFuncName") & line))
   Next
@@ -542,7 +545,8 @@ Function オプション設定値格納()
   line = 3
   setSheet.Range(setVal("cell_DataExtract") & "3:" & setVal("cell_DataExtract") & Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row).ClearContents
   For Each dataExtract In Split(getVal("dataExtract"), vbNewLine)
-    DoEvents
+    Call ProgressBar.showCount("オプション設定値格納", line, 100, "抽出タスクの設定")
+    
     setSheet.Range(setVal("cell_DataExtract") & line) = dataExtract
     line = line + 1
   Next
@@ -551,7 +555,8 @@ Function オプション設定値格納()
   '担当者
   setSheet.Range(setVal("cell_AssignorList") & "4:" & setVal("cell_AssignorList") & Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row).Clear
   For line = 4 To 38
-    DoEvents
+    Call ProgressBar.showCount("オプション設定値格納", line, 38, "担当者の設定")
+    
     setSheet.Range(setVal("cell_AssignorList") & line) = getVal("Assign" & Format(line - 3, "00"))
     setSheet.Range(setVal("cell_AssignorList") & line).Interior.Color = getVal("AssignColor" & Format(line - 3, "00"))
     
