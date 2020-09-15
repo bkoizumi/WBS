@@ -110,14 +110,8 @@
 
 
   <backstage>
-    <tab id="tab1" label="進捗管理" visible="true">
+    <tab id="tab1" label="プロジェクト管理" visible="true">
       <firstColumn>
-        <group id="grp1" label="更新情報" visible="true">
-          <topItems>
-            <labelControl id="v104-01" label="Ver.1.04　休日をマクロで設定するように変更" />
-            <labelControl id="v104-02" label="        　土日祝を色付け、リボンメニュー対応" />
-          </topItems>
-        </group>
       </firstColumn>
 
       <secondColumn>
