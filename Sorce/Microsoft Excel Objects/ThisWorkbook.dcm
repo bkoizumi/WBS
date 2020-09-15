@@ -48,6 +48,7 @@ Private Sub Workbook_Open()
     noticeCodeSheet.Visible = xlSheetVeryHidden
     TeamsPlannerSheet.Visible = xlSheetVeryHidden
     'setSheet.Visible = xlSheetVeryHidden
+    Worksheets("ƒTƒ“ƒvƒ‹").Visible = xlSheetVeryHidden
   End If
   
   mainSheet.Select

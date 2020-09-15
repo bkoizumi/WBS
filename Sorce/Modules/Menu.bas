@@ -64,25 +64,34 @@ Attribute optionKey.VB_ProcData.VB_Invoke_Func = "O\n14"
   Call M_オプション画面表示
 End Sub
 Sub centerKey()
+  Call M_センター
 End Sub
 Sub filterKey()
+  Call M_フィルター
 End Sub
 Sub clearFilterKey()
+  Call M_すべて表示
 End Sub
 Sub taskCheckKey()
 Attribute taskCheckKey.VB_ProcData.VB_Invoke_Func = "C\n14"
+  Call M_タスクチェック
 End Sub
 Sub makeGanttKey()
 Attribute makeGanttKey.VB_ProcData.VB_Invoke_Func = "t\n14"
+  Call M_ガントチャート生成
 End Sub
 Sub clearGanttKey()
 Attribute clearGanttKey.VB_ProcData.VB_Invoke_Func = "D\n14"
+  Call M_ガントチャートクリア
 End Sub
 Sub dispAllKey()
+  Call M_すべて表示
 End Sub
 Sub taskControlKey()
+'  Call M_
 End Sub
 Sub ScaleKey()
+'  Call M_
 End Sub
 
 
