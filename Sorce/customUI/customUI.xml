@@ -136,7 +136,7 @@
             <labelControl id="grp3-302" label="　・当コンテンツは予告無しに変更・削除されることがあります。" />
             <labelControl id="grp3-303" label="　・このライセンスは予告なく改定される場合があります。" />
             <labelControl id="grp3-311" label="Copyright (C) 2020 B.Koizumi All Rights Reserved." />
-            <hyperlink    id="grp3-399" label="Excel-VBA" target="https://github.com/bkoizumi/VBA/tree/master/WBS" />
+            <hyperlink    id="grp3-399" label="Excel-VBA" target="https://github.com/bkoizumi/WBS/releases" />
           </topItems>
         </group>
       </secondColumn>
