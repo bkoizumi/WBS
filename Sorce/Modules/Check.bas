@@ -397,12 +397,12 @@ Label_nextFor:
   
   '親タスク情報
   Call Library.showDebugForm("タスクリスト確認", "親タスク情報の確認")
-  For line = endLine To 7 Step -1
+  For line = endLine To 6 Step -1
     If Range(setVal("cell_Assign") & line) = "工程" Then
       Range(setVal("cell_TaskInfoP") & line).Select
-      For lineP = line To 7 Step -1
-        Range(setVal("cell_TaskInfoP") & lineP).Select
+      For lineP = line - 1 To 6 Step -1
         If Range(setVal("cell_Assign") & lineP) = "工程" And (Range(setVal("cell_LevelInfo") & line) > Range(setVal("cell_LevelInfo") & lineP)) Then
+          Range(setVal("cell_TaskInfoP") & lineP).Select
           Range(setVal("cell_TaskInfoP") & line) = Range(setVal("cell_LevelInfo") & lineP).row
           Exit For
         End If
