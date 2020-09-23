@@ -251,7 +251,9 @@ Function タスクリスト確認()
   If Not (setVal("startDay") <= setVal("baseDay") And setVal("baseDay") <= setVal("endDay")) Then
     Call Library.showDebugForm("基準日がカレンダーの期間外に設定されています")
     ErrorMeg = ErrorMeg & "基準日がカレンダーの期間外に設定されています" & vbCrLf
-    errorFlg = True
+'    errorFlg = True
+    Call WBS_Option.エラー情報表示(ErrorMeg)
+    
   End If
   
   '予定日のチェック--------------------------------------------------------------------------------

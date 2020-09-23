@@ -465,8 +465,16 @@ Sub M_Excelインポート()
   
   Call Library.startScript
   Call Library.showDebugForm("ファイルインポート", "処理開始")
-  If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
-    Call WBS_Option.clearAll
+  
+  Call init.setting
+  endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row
+  
+  If endLine > 6 Then
+    If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
+      Call WBS_Option.clearAll
+    Else
+      Call WBS_Option.clearCalendar
+    End If
   Else
     Call WBS_Option.clearCalendar
   End If
