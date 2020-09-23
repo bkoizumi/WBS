@@ -238,6 +238,7 @@ Function êiíªó¶ê›íË(progress As Long)
   If Range(setVal("cell_TaskArea") & line) <> "" Then
     Range(setVal("cell_Progress") & line) = progress
   End If
+  
   Call Library.endScript(True)
   
   Exit Function

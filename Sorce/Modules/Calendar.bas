@@ -33,7 +33,7 @@ Function 書式設定()
   Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).NumberFormatLocal = "m/d;@"
   
   '進捗率
-  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).ColumnWidth = 6
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).ColumnWidth = 8
   Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).NumberFormatLocal = "0_ ;[赤]-0 "
   
   'タスク情報
@@ -107,7 +107,7 @@ Function makeCalendar()
   
   Do While today <= setVal("endDay")
     Cells(4, line) = today
-    Call ProgressBar.showCount("カレンダー生成", 0, 100, Cells(4, line))
+    Call ProgressBar.showCount("カレンダー生成", 0, 100, today)
     
     If Format(today, "d") = 1 Or line = Library.getColumnNo(setVal("calendarStartCol")) Then
       Cells(3, line) = today

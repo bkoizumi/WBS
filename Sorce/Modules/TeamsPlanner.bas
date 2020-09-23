@@ -28,7 +28,7 @@ Function データ移行()
         For line = 6 To endLine
           If mainSheet.Range(setVal("cell_Assign") & line) Like "*,*" Then
           
-          ElseIf mainSheet.Range(setVal("cell_Assign") & line) = assignor Then
+          ElseIf mainSheet.Range(setVal("cell_Assign") & line) = assignor Or mainSheet.Range(setVal("cell_Assign") & line) = "" Then
             TeamsPlannerSheet.Range("A" & rowLine) = mainSheet.Range("A" & line)
             TeamsPlannerSheet.Range("B" & rowLine) = mainSheet.Range(setVal("cell_LevelInfo") & line)
             

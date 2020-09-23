@@ -448,7 +448,7 @@ Label_nextFor:
       'i’»—¦‚Ìİ’è
       'ì‹Æ—\’è“ú‚ğŒo‰ß‚µ‚Ä‚¢‚é‚ªA–¢“ü—Í‚Ìê‡
       If Range(setVal("cell_Progress") & line) = "" And Range(setVal("cell_PlanStart") & line) < setVal("baseDay") Then
-        Range(setVal("cell_Progress") & line) = "=" & 0
+'        Range(setVal("cell_Progress") & line) = "=" & 0
       End If
       
       '’x‘H”‚ÌŒvZ--------------------------------------------------------------------------------

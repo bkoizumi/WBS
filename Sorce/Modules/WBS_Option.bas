@@ -722,7 +722,6 @@ Function タスク表示_チームプランナー()
 '  On Error GoTo catchError
   
   
-  mainSheet.Visible = xlSheetVeryHidden
   TeamsPlannerSheet.Visible = True
   
   Cells.EntireColumn.Hidden = False
@@ -732,6 +731,7 @@ Function タスク表示_チームプランナー()
     TeamsPlannerSheet.Columns("I:S").EntireColumn.Hidden = True
   End If
   
+  mainSheet.Visible = xlSheetVeryHidden
   Call Library.endScript
 
   Exit Function
@@ -923,10 +923,8 @@ Function タスクにスクロール()
   activeCellRowLine = ActiveCell.row
   activeCellColLine = ActiveCell.Column
   
-  targetColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & activeCellRowLine) - 1)
-
-  Application.Goto Reference:=Range(targetColumn & 6), Scroll:=True
-  Cells(activeCellRowLine, activeCellColLine).Select
+  targetColumn = Library.getColumnNo(WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & activeCellRowLine) - 1))
+  ActiveWindow.ScrollColumn = targetColumn
   
   Exit Function
 'エラー発生時=====================================================================================

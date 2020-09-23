@@ -1,8 +1,11 @@
 Attribute VB_Name = "ctl_ribbon"
 
-Private ribbonUI As IRibbonUI ' リボン
+Public ribbonUI As IRibbonUI ' リボン
 Private rbButton_Visible As Boolean ' ボタンの表示／非表示
 Private rbButton_Enabled As Boolean ' ボタンの有効／無効
+
+'トグルボタン------------------------------------
+Public PressT_B015 As Boolean
 
 
 '**************************************************************************************************
@@ -13,7 +16,6 @@ Private rbButton_Enabled As Boolean ' ボタンの有効／無効
 '読み込み時処理------------------------------------------------------------------------------------
 Function onLoad(ribbon As IRibbonUI)
   Set ribbonUI = ribbon
-  
   ribbonUI.ActivateTab ("WBSTab")
   
   'リボンの表示を更新する
@@ -24,6 +26,25 @@ End Function
 
 
 
+'トグルボタンにチェックを設定する
+Sub getPressed(control As IRibbonControl, ByRef returnedVal)
+  Select Case control.ID
+    Case "T_B015"
+      'タイムラインに追加
+      If Range(setVal("cell_Info") & ActiveCell.row) Like "" Then
+        returnedVal = True
+      Else
+        returnedVal = False
+      End If
+      
+      
+      
+    Case Else
+  End Select
+  
+  
+  
+End Sub
 
 
 
