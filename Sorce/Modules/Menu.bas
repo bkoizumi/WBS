@@ -483,7 +483,7 @@ Sub M_Excelインポート()
   
   Call import.ファイルインポート
   Call Calendar.書式設定
-  Call import.makeCalendar
+  Call import.カレンダー用日程取得
   
   If setVal("lineColorFlg") = "True" Then
     setVal("lineColorFlg") = False
@@ -493,10 +493,13 @@ Sub M_Excelインポート()
   
   
   Call ProgressBar.showEnd
-  Call Library.endScript(True)
+  Call Library.endScript
   
   Call WBS_Option.saveAndRefresh
   
+  Application.Goto Reference:=Range("A6"), Scroll:=True
+
+
   Err.Clear
   Call Library.showNotice(200, "インポート")
 End Sub

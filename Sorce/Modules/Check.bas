@@ -10,7 +10,7 @@ Function 項目列チェック()
   Dim defaultLine As Long
   
 '  Call init.setting
-  defaultLine = setSheet.Range("B5")
+  defaultLine = setSheet.Range("B4")
   startLine = 4
 
   setSheet.Range("A" & defaultLine & ":B100").ClearContents

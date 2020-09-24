@@ -37,37 +37,39 @@ Function 右クリックメニュー(Target As Range, Cancel As Boolean)
 
 
   
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
       .Caption = "タスクにスクロール"
       .OnAction = "menu.M_タスクにスクロール"
   End With
   
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
       .Caption = "タイムラインに追加"
       .OnAction = "menu.M_タイムラインに追加"
   End With
   
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
       .BeginGroup = True
       .Caption = "タスクのレベル上げ"
       .FaceId = 3161
       .OnAction = "menu.M_インデント増"
   End With
 
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
       .Caption = "タスクのレベル下げ"
       .FaceId = 3162
       .OnAction = "menu.M_インデント減"
   End With
 
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
       .BeginGroup = True
       .Caption = "タスクの挿入"
+      .FaceId = 296
       .OnAction = "menu.M_タスクの挿入"
   End With
 
-  With Application.CommandBars("Cell").Controls.Add(temporary:=True)
+  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
       .Caption = "タスクの削除"
+      .FaceId = 293
       .OnAction = "menu.M_タスクの削除"
   End With
 

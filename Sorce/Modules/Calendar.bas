@@ -62,10 +62,9 @@ Function 書式設定()
   End With
   
   Cells.RowHeight = 20
-  Rows("4:4").RowHeight = 20
   Rows("5:5").RowHeight = 35
-  Range("W3:XFD3").NumberFormatLocal = "m""月"""
-  Range("W4:XFD4").NumberFormatLocal = "d"
+  Range(setVal("calendarStartCol") & "3:XFD3").NumberFormatLocal = "m""月"""
+  Range(setVal("calendarStartCol") & "4:XFD4").NumberFormatLocal = "d"
 
 End Function
 
@@ -107,7 +106,7 @@ Function makeCalendar()
   
   Do While today <= setVal("endDay")
     Cells(4, line) = today
-    Call ProgressBar.showCount("カレンダー生成", 0, 100, today)
+    Call ProgressBar.showCount("カレンダー生成", 0, 100, "")
     
     If Format(today, "d") = 1 Or line = Library.getColumnNo(setVal("calendarStartCol")) Then
       Cells(3, line) = today

@@ -1,6 +1,7 @@
 Attribute VB_Name = "init"
 'ワークブック用変数------------------------------
 Public ThisBook As Workbook
+Public targetBook As Workbook
 
 'ワークシート用変数------------------------------
 Public noticeCodeSheet As Worksheet
@@ -9,8 +10,6 @@ Public setSheet As Worksheet
 Public tmpSheet As Worksheet
 Public mainSheet As Worksheet
 Public TeamsPlannerSheet As Worksheet
-
-
 
 'グローバル変数----------------------------------
 Public Const thisAppName = "Excel for Work Breakdown Structure"
@@ -211,7 +210,7 @@ Function 名前定義()
   Next
   
   'VBA用の設定
-  For line = 3 To setSheet.Range("B5")
+  For line = 3 To setSheet.Range("B4")
     If setSheet.Range("A" & line) <> "" Then
       setSheet.Range(setVal("cell_LevelInfo") & line).Name = setSheet.Range("A" & line)
     End If

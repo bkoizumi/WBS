@@ -1,6 +1,6 @@
 Attribute VB_Name = "import"
 'ワークブック用変数------------------------------
-Dim targetBook As Workbook
+
 
 'ワークシート用変数------------------------------
 'Dim masterSheet As Worksheet
@@ -42,10 +42,19 @@ Function ファイルインポート()
     Call Library.showDebugForm("ファイルインポート", "対象：" & Dir(filePath))
     Call ProgressBar.showCount("ファイルインポート", i + 1, UBound(filePaths) + 1, "対象：" & Dir(filePath))
     
-    If setVal("workMode") = "default" Then
+    '指定ファイルオープンし、シートの存在確認
+    Set targetBook = Workbooks.Open(FileName:=filePath, ReadOnly:=True)
+    Windows(targetBook.Name).WindowState = xlMinimized
+    Call Library.startScript
+    targetBook.Activate
+    
+    If Library.chkSheetName("メイン") = True Then
       Call データコピー(filePath)
-    ElseIf setVal("workMode") = "CD部用" Then
+    ElseIf Library.chkSheetName("calendar") = True Then
       Call CD部用.データコピー(filePath)
+    Else
+      Call Library.showNotice(405, "該当の", True)
+      End
     End If
   Next
 
@@ -80,11 +89,6 @@ Function データコピー(filePath As String)
   Set targetSetVal = New Collection
   prgbarCnt = 0
 
-  Set targetBook = Workbooks.Open(filePath, , True)
-  Call Library.startScript
-  targetBook.Activate
-  
-  
   Call ProgressBar.showCount("ファイルインポート", prgbarCnt, 100, "対象：" & Dir(filePath))
   
   If Library.chkSheetName("メイン") = True Then
@@ -117,7 +121,7 @@ Function データコピー(filePath As String)
     targetEndLine = targetBook.Worksheets(mainSheetName).Cells(Rows.count, 1).End(xlUp).row
     
     '#～タスク名をコピー
-    prgbarMeg = "A～C列コピー"
+    prgbarMeg = "タスク名列までをコピー"
     prgbarCnt = prgbarCnt + 1
     Call Library.showDebugForm(Dir(filePath), prgbarMeg)
     Call ProgressBar.showCount(Dir(filePath), prgbarCnt, 11, prgbarMeg)
@@ -219,7 +223,7 @@ Function データコピー(filePath As String)
   tmpEndLine = Cells(Rows.count, 1).End(xlUp).row
   
   'レベルの再設定
-  Call Library.showDebugForm(Dir(filePath), prgbarMeg)
+  Call Library.showDebugForm(Dir(filePath), "レベルの再設定")
   For line = endLine To tmpEndLine
     Call ProgressBar.showCount(Dir(filePath), line, tmpEndLine, "レベルの再設定")
     targetLevel = mainSheet.Range(setVal("cell_LevelInfo") & line) + 1
@@ -238,11 +242,11 @@ End Function
 
 
 '**************************************************************************************************
-' * xxxxxxxxxx
+' * カレンダー用日程取得
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-Function makeCalendar()
+Function カレンダー用日程取得()
   Dim line As Long, endLine As Long, tmpLine As Long
   Dim dataDirPath As String, filePath As String
   Dim workStartDay As Date, workEndDay As Date
@@ -271,15 +275,15 @@ Function makeCalendar()
   If workStartDay <> 0 Then
     Range("endDay") = workEndDay
   End If
-
+  
+  If workStartDay <= Date And Date <= workEndDay Then
+    Range("baseDay") = Date
+  End If
 
   Call Calendar.makeCalendar
   Application.CalculateFull
   Call Check.タスクリスト確認
   Call Chart.ガントチャート生成
-  Application.Goto Reference:=Range("A1"), Scroll:=True
-  
-  
   
   Exit Function
 'エラー発生時=====================================================================================

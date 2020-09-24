@@ -1,61 +1,65 @@
 {
+  "update.showReleaseNotes": false
+  ,"workbench.startupEditor": "none"
 
-  "update.showReleaseNotes": false,
-  "workbench.startupEditor": "newUntitledFile",
-  // ファイル設定----------------------------------------------------------------------------------
-  "files.autoGuessEncoding": true,
-  // "files.encoding": "shiftjis"  ,
-  "files.eol": "\r\n",
-  "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
-  "files.trimTrailingWhitespace": true,
-  "files.exclude": {
+  // ファイル設定----------------------------------------------------------------------------------------
+  ,"files.autoGuessEncoding": true
+  // ,"files.encoding": "shiftjis"
+  ,"files.eol": "\r\n"
+  ,"files.insertFinalNewline": true
+  ,"files.trimFinalNewlines": true
+  ,"files.trimTrailingWhitespace": true
+  ,"files.exclude": {
     "**/~$*.xlsm": true
-  },
+  }
 
+  // エディター設定---------------------------------------------------------------------------------------
+  ,"editor.cursorBlinking": "phase"
+  ,"editor.folding": true
+  ,"editor.fontFamily": "'Ricty Diminished with Fira Code','Meiryo UI'"
+  ,"editor.fontLigatures": true
+  ,"editor.fontSize": 15
+  ,"editor.links": true
+  ,"editor.mouseWheelScrollSensitivity": 5
+  ,"editor.mouseWheelZoom": true
+  ,"editor.renderIndentGuides": true
+  ,"editor.renderLineHighlight": "all"
+  ,"editor.tabSize": 2
+  ,"editor.trimAutoWhitespace": true
+  ,"editor.wordWrap": "off"
 
-  // エディター設定--------------------------------------------------------------------------------
-  "editor.mouseWheelZoom": true,
-  "editor.wordWrap": "off",
-  "editor.fontFamily": "'Ricty Diminished with Fira Code','Meiryo UI'",
-  "editor.fontLigatures": true,
-  "editor.fontSize": 15,
-  "editor.renderLineHighlight": "all",
-  "editor.cursorBlinking": "phase",
-  "editor.folding": true,
-  "editor.renderIndentGuides": true,
-  "editor.links": true,
-  "editor.tabSize" : 2,
-
-
-  // ターミナル------------------------------------------------------------------------------------
+  // ターミナル-----------------------------------------------------------------------------------------
   // "terminal.integrated.fontFamily": "'Roboto Mono'",  // フォント
   // "terminal.integrated.fontSize": 10,                 // フォントサイズ
 
 
-  "[Batch]": {
+  // 言語設定------------------------------------------------------------------------------------------
+  ,"[Batch]": {
     "files.encoding": "shiftjis",
-  },
-  "[Visual Basic]": {
+  }
+  ,"[Visual Basic]": {
     "files.encoding": "shiftjis",
-  },
-  "[ps1]": {
+  }
+  ,"[ps1]": {
     "files.encoding": "shiftjis"
-  },
-  "[xml]": {
+  }
+  ,"[xml]": {
     "files.encoding": "utf8"
-  },
-  "[python]": {
+    ,"editor.wordWrap": "off"
+  }
+  ,"[python]": {
     "files.encoding": "utf8"
-  },
-  "[CSV]": {
-    "files.encoding": "shiftjis",
-    "editor.wordWrap": "off"
-  },
-  "[markdown]": {
-    "files.encoding": "utf8",
-    "editor.wordWrap": "off",
-    "editor.tabSize" : 2,
-    "editor.trimAutoWhitespace":false
+  }
+  ,"[CSV]": {
+    "files.encoding": "shiftjis"
+    ,"editor.wordWrap": "off"
+  }
+  ,"[markdown]": {
+    "files.encoding": "utf8"
+    ,"editor.wordWrap": "off"
+    ,"editor.tabSize" : 2
+    ,"editor.trimAutoWhitespace":false
+    ,"editor.fontFamily": "Meiryo UI'"
+    ,"editor.fontLigatures": false
   },
 }
