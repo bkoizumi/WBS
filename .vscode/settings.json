@@ -59,7 +59,7 @@
     ,"editor.wordWrap": "off"
     ,"editor.tabSize" : 2
     ,"editor.trimAutoWhitespace":false
-    ,"editor.fontFamily": "Meiryo UI'"
+    ,"editor.fontFamily": "Meiryo UI"
     ,"editor.fontLigatures": false
   },
 }

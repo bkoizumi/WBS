@@ -12,7 +12,7 @@ Public mainSheet As Worksheet
 Public TeamsPlannerSheet As Worksheet
 
 'グローバル変数----------------------------------
-Public Const thisAppName = "Excel for Work Breakdown Structure"
+Public Const thisAppName = "Work Breakdown Structure for Excel"
 
 Public setVal As Collection
 Public getVal As Collection
@@ -22,6 +22,7 @@ Public mainSheetName As String
 Public TeamsPlannerSheetName As String
 
 'レジストリ登録用サブキー
+Public Const RegistryKey As String = "B.Koizumi"
 Public Const RegistrySubKey As String = "WBS"
 
 'ログファイル

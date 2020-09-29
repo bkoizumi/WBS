@@ -594,9 +594,9 @@ Function delRegistry(registryName As String)
   On Error Resume Next
   
   If registryName = "" Then
-    DeleteSetting "ExcelHelp", RegistrySubKey
+    DeleteSetting RegistryKey, RegistrySubKey
   Else
-    DeleteSetting "ExcelHelp", RegistrySubKey, registryName
+    DeleteSetting RegistryKey, RegistrySubKey, registryName
   End If
   
 End Function
@@ -859,7 +859,7 @@ End Function
 Function getRegistry(registryName As String)
   Dim regVal As String
 
-  regVal = GetSetting("ExcelHelp", RegistrySubKey, registryName)
+  regVal = GetSetting(RegistryKey, RegistrySubKey, registryName)
   getRegistry = regVal
 End Function
 
@@ -1595,7 +1595,7 @@ End Function
 Function setRegistry(registryName As String, setVal As Variant)
   
   If getRegistry(registryName) <> setVal Then
-    SaveSetting "ExcelHelp", RegistrySubKey, registryName, setVal
+    SaveSetting RegistryKey, RegistrySubKey, registryName, setVal
   End If
 End Function
 
