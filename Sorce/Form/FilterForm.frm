@@ -62,14 +62,14 @@ Private Sub UserForm_Initialize()
   End With
   
   With taskLeveList
-    For list = 1 To Application.WorksheetFunction.Max(Range("B6:B" & mainSheet.Cells(Rows.count, 2).End(xlUp).row))
+    For list = 1 To Application.WorksheetFunction.Max(Range("B6:B" & sheetMain.Cells(Rows.count, 2).End(xlUp).row))
       .AddItem list
     Next
   End With
   
   Call Task.タスク名抽出(col)
   With taskNameList
-    .RowSource = "設定!" & Range(setVal("cell_DataExtract") & "3:" & setVal("cell_DataExtract") & setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row).Address
+    .RowSource = "設定!" & Range(setVal("cell_DataExtract") & "3:" & setVal("cell_DataExtract") & sheetSetting.Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row).Address
   End With
   
   

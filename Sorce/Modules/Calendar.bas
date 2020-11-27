@@ -79,7 +79,7 @@ Function clearCalendar()
   Call init.setting
   Columns(setVal("calendarStartCol") & ":XFD").Delete Shift:=xlToLeft
   Range("I5:" & setVal("cell_Note") & 5).ClearContents
-  setSheet.Range(setVal("cell_HolidayListDay") & "3:" & setVal("cell_HolidayListName") & setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_HolidayListDay"))).End(xlUp).row + 1).ClearContents
+  sheetSetting.Range(setVal("cell_HolidayListDay") & "3:" & setVal("cell_HolidayListName") & sheetSetting.Cells(Rows.count, Library.getColumnNo(setVal("cell_HolidayListDay"))).End(xlUp).row + 1).ClearContents
   
   
   Application.Goto Reference:=Range("A6"), Scroll:=True
@@ -97,12 +97,14 @@ Function makeCalendar()
   Dim today As Date
   Dim HollydayName As String
   
-  
+  Call init.setting
   Call WBS_Option.選択シート確認
   Call clearCalendar
   
   today = setVal("startDay")
   line = Range(setVal("calendarStartCol") & 1).Column
+  Call Library.showDebugForm("カレンダー生成", "")
+  
   
   Do While today <= setVal("endDay")
     Cells(4, line) = today
@@ -125,7 +127,7 @@ Function makeCalendar()
       Call 罫線.月中
     End If
     
-    '休日の設定----------------------------------
+    '休日の設定==================================
     Call init.chkHollyday(today, HollydayName)
     Select Case HollydayName
       Case "Saturday"
@@ -149,9 +151,9 @@ Function makeCalendar()
         End If
         
         '期間中の休日リスト設定
-        endRowLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_HolidayListDay"))).End(xlUp).row + 1
-        setSheet.Range(setVal("cell_HolidayListDay") & endRowLine) = today
-        setSheet.Range(setVal("cell_HolidayListName") & endRowLine) = HollydayName
+        endRowLine = sheetSetting.Cells(Rows.count, Library.getColumnNo(setVal("cell_HolidayListDay"))).End(xlUp).row + 1
+        sheetSetting.Range(setVal("cell_HolidayListDay") & endRowLine) = today
+        sheetSetting.Range(setVal("cell_HolidayListName") & endRowLine) = HollydayName
     End Select
     
     '書式設定
@@ -173,7 +175,7 @@ Function makeCalendar()
   Range(Cells(3, line - 1), Cells(6, line - 1)).Select
   Call 罫線.最終日
   
-  Range(setVal("cell_Note") & "1:" & setVal("cell_Note") & 6).Select
+  Range(setVal("calendarStartCol") & "1:" & setVal("calendarStartCol") & 6).Select
   Call 罫線.二重線
   Range(Cells(4, Library.getColumnNo(setVal("calendarStartCol"))), Cells(4, line - 1)).Copy
   Range(Cells(5, Library.getColumnNo(setVal("calendarStartCol"))), Cells(6, line - 1)).Select
@@ -194,7 +196,7 @@ Function makeCalendar()
   Call 書式設定
   Call 行書式コピー(6, endLine)
   
-  If ActiveSheet.Name = mainSheetName Then
+  If ActiveSheet.Name = sheetMainName Then
     Call init.名前定義
   End If
 
@@ -230,7 +232,7 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   Application.CutCopyMode = False
   
   'タスクレベルの設定
-  If ActiveSheet.Name = mainSheetName Then
+  If ActiveSheet.Name = sheetMainName Then
     For line = 6 To endLine
       If Range(setVal("cell_TaskArea") & line) <> "" Then
         taskLevel = Range(setVal("cell_LevelInfo") & line) - 1
@@ -285,7 +287,7 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.endScript
 End Function

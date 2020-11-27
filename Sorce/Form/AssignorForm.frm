@@ -67,12 +67,12 @@ Private Sub UserForm_Initialize()
   
   
   
-  endLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row
+  endLine = sheetSetting.Cells(Rows.count, Library.getColumnNo(setVal("cell_AssignorList"))).End(xlUp).row
   
   For line = 4 To endLine
     With Assignor01
-      .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
-      If assignors("1") Like setSheet.Range(setVal("cell_AssignorList") & line) & "*" Then
+      .AddItem sheetSetting.Range(setVal("cell_AssignorList") & line)
+      If assignors("1") Like sheetSetting.Range(setVal("cell_AssignorList") & line) & "*" Then
         assignor01Default = line - 4
         tmp1 = Split(assignors("1"), "<>")
         taskAllocation01.Text = tmp1(1)
@@ -80,8 +80,8 @@ Private Sub UserForm_Initialize()
     End With
     
     With Assignor02
-      .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
-      If assignors("2") Like setSheet.Range(setVal("cell_AssignorList") & line) & "*" Then
+      .AddItem sheetSetting.Range(setVal("cell_AssignorList") & line)
+      If assignors("2") Like sheetSetting.Range(setVal("cell_AssignorList") & line) & "*" Then
         assignor02Default = line - 4
         tmp2 = Split(assignors("2"), "<>")
         taskAllocation02.Text = tmp2(1)
@@ -89,9 +89,9 @@ Private Sub UserForm_Initialize()
     
     End With
     With Assignor03
-      .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
+      .AddItem sheetSetting.Range(setVal("cell_AssignorList") & line)
       
-      If assignors("3") Like setSheet.Range(setVal("cell_AssignorList") & line) & "*" Then
+      If assignors("3") Like sheetSetting.Range(setVal("cell_AssignorList") & line) & "*" Then
         assignor03Default = line - 4
         tmp3 = Split(assignors("3"), "<>")
         taskAllocation03.Text = tmp3(1)
@@ -99,9 +99,9 @@ Private Sub UserForm_Initialize()
       
     End With
     With Assignor04
-      .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
+      .AddItem sheetSetting.Range(setVal("cell_AssignorList") & line)
       
-      If assignors("4") Like setSheet.Range(setVal("cell_AssignorList") & line) & "*" Then
+      If assignors("4") Like sheetSetting.Range(setVal("cell_AssignorList") & line) & "*" Then
         assignor04Default = line - 4
         tmp4 = Split(assignors("4"), "<>")
         taskAllocation04.Text = tmp4(1)
@@ -109,9 +109,9 @@ Private Sub UserForm_Initialize()
       
     End With
     With Assignor05
-      .AddItem setSheet.Range(setVal("cell_AssignorList") & line)
+      .AddItem sheetSetting.Range(setVal("cell_AssignorList") & line)
 
-      If assignors("5") Like setSheet.Range(setVal("cell_AssignorList") & line) & "*" Then
+      If assignors("5") Like sheetSetting.Range(setVal("cell_AssignorList") & line) & "*" Then
         assignor05Default = line - 4
         tmp5 = Split(assignors("5"), "<>")
         taskAllocation05.Text = tmp5(1)

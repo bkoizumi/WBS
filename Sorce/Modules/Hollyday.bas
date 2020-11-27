@@ -342,9 +342,9 @@ Public Function TokubetsunaKyujitsu(targetdate As Date, HollydayName As String) 
     
     
     '‰ïĞw’è‹x“ú‚Ìİ’è
-    endLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_CompanyHoliday"))).End(xlUp).row
+    endLine = sheetSetting.Cells(Rows.count, Library.getColumnNo(setVal("cell_CompanyHoliday"))).End(xlUp).row
     For line = 3 To endLine
-      If targetdate = setSheet.Range(setVal("cell_CompanyHoliday") & line) Then
+      If targetdate = sheetSetting.Range(setVal("cell_CompanyHoliday") & line) Then
           HollydayName = "‰ïĞw’è‹x“ú"
           TokubetsunaKyujitsu = True
       End If

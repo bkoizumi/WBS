@@ -6,8 +6,8 @@ Attribute VB_Name = "Menu"
 '**************************************************************************************************
 Sub M_Help()
   Call init.setting
-  helpSheet.Visible = True
-  helpSheet.Select
+  sheetHelp.Visible = True
+  sheetHelp.Select
 End Sub
 
 
@@ -27,8 +27,8 @@ Sub M_ショートカット設定()
   Call M_ショートカット設定解除
   
   For line = 3 To endLine
-    If setSheet.Range(setVal("cell_ShortcutKey") & line) <> "" Then
-      Application.MacroOptions Macro:="Menu." & setSheet.Range(setVal("cell_ShortcutFuncName") & line), ShortcutKey:=setSheet.Range(setVal("cell_ShortcutKey") & line)
+    If sheetSetting.Range(setVal("cell_ShortcutKey") & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & sheetSetting.Range(setVal("cell_ShortcutFuncName") & line), ShortcutKey:=sheetSetting.Range(setVal("cell_ShortcutKey") & line)
     End If
   Next
   'インデントのショートカット
@@ -47,8 +47,8 @@ Sub M_ショートカット設定解除()
   
   '設定を解除
   For line = 3 To endLine
-    If setSheet.Range("J" & line) <> "" Then
-      Application.MacroOptions Macro:="Menu." & setSheet.Range("H" & line), ShortcutKey:=""
+    If sheetSetting.Range("J" & line) <> "" Then
+      Application.MacroOptions Macro:="Menu." & sheetSetting.Range("H" & line), ShortcutKey:=""
     End If
   Next
   
@@ -131,9 +131,9 @@ End Sub
 Sub M_カレンダー生成(Optional flg As Boolean = False)
 
   Call init.setting(True)
-  Call Library.startScript
   
   If flg = False Then
+    Call Library.startScript
     Call ProgressBar.showStart
   End If
   
@@ -148,8 +148,8 @@ Sub M_カレンダー生成(Optional flg As Boolean = False)
   
   If flg = False Then
     Call ProgressBar.showEnd
+    Call Library.endScript
   End If
-  Call Library.endScript
 End Sub
 
 
@@ -167,7 +167,7 @@ Sub M_行ハイライト()
 End Sub
 
 
-'--------------------------------------
+'==================================================================================================
 Sub M_全データ削除()
   If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbNo Then
     End
@@ -213,7 +213,7 @@ Attribute M_タスクチェック.VB_ProcData.VB_Invoke_Func = "C\n14"
 
 
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
   
   Call Library.startScript
   Call ProgressBar.showStart
@@ -262,7 +262,7 @@ Sub M_インデント増()
   
   Call Library.startScript
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
    
   Set selectedCells = Selection
   
@@ -281,7 +281,7 @@ Sub M_インデント減()
   
   Call Library.startScript
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
    
   Set selectedCells = Selection
   
@@ -292,12 +292,12 @@ Sub M_インデント減()
 End Sub
 
 
-'進捗率設定----------------------------------------------------------------------------------------
+'進捗率設定========================================================================================
 Sub M_進捗率設定(progress As Long)
   Call Task.進捗率設定(progress)
 End Sub
 
-'タスクのリンク設定/解除---------------------------------------------------------------------------
+'タスクのリンク設定/解除===========================================================================
 Sub M_タスクのリンク設定()
   Call Library.startScript
   Call init.setting
@@ -334,25 +334,56 @@ Sub M_タスクの削除()
   Call Library.endScript(True)
 End Sub
 
-'表示モード----------------------------------------------------------------------------------------
+'表示モード========================================================================================
 Sub M_タスク表示_標準()
   Call Library.startScript
   
-  Call init.setting
-  If setVal("debugMode") <> "develop" Then
-    mainSheet.Visible = True
-    TeamsPlannerSheet.Visible = xlSheetVeryHidden
-  End If
-  
+  Range("viewMode") = "Normal"
   Call init.setting(True)
+  
+  sheetMain.Visible = True
+  sheetTeamsPlanner.Visible = True
+  
+  sheetMain.Select
+  Call Check.項目列チェック
+  
   Call WBS_Option.タスク表示_標準
   Call WBS_Option.setLineColor
   
   Application.Goto Reference:=Range("A6"), Scroll:=True
+  sheetTeamsPlanner.Visible = xlSheetVeryHidden
+  
   Call Library.endScript
 
 End Sub
 
+'==================================================================================================
+Sub M_タスク表示_チームプランナー()
+  Call Library.startScript
+  Call init.setting(True)
+  
+  sheetMain.Visible = True
+  sheetTeamsPlanner.Visible = True
+  
+  sheetMain.Select
+  Call Check.項目列チェック
+  
+  sheetTeamsPlanner.Select
+  Cells.EntireRow.Hidden = False
+  Cells.EntireColumn.Hidden = False
+  
+  
+  Call WBS_Option.タスク表示_チームプランナー
+  Call WBS_Option.setLineColor
+  
+  Application.Goto Reference:=Range("A6"), Scroll:=True
+  sheetSetting.Range("viewMode") = "TeamsPlanner"
+  
+  
+  Call Library.endScript
+End Sub
+
+'==================================================================================================
 Sub M_タスク表示_タスク()
   Call Library.startScript
   Call init.setting(True)
@@ -363,19 +394,8 @@ Sub M_タスク表示_タスク()
   Call Library.endScript
 End Sub
 
-Sub M_タスク表示_チームプランナー()
-  Call Library.startScript
-  Call init.setting(True)
-  
-  Call WBS_Option.タスク表示_チームプランナー
-  Call WBS_Option.setLineColor
-  
-  Application.Goto Reference:=Range("A6"), Scroll:=True
-  
-  Call Library.endScript
-End Sub
 
-
+'==================================================================================================
 Sub M_タスクにスクロール()
   Call Library.startScript
   Call init.setting
@@ -384,6 +404,7 @@ Sub M_タスクにスクロール()
   Call Library.endScript
 End Sub
 
+'==================================================================================================
 Sub M_タイムラインに追加()
   Call Library.startScript
   Call init.setting
@@ -391,12 +412,14 @@ Sub M_タイムラインに追加()
   Call Chart.タイムラインに追加(ActiveCell.row)
   Call Library.endScript(True)
 End Sub
+
+
 '**************************************************************************************************
 ' * ガントチャート
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'クリア--------------------------------------------------------------------------------------------
+'クリア===========================================================================================-
 Sub M_ガントチャートクリア()
 Attribute M_ガントチャートクリア.VB_ProcData.VB_Invoke_Func = "D\n14"
   Call Library.startScript
@@ -404,7 +427,7 @@ Attribute M_ガントチャートクリア.VB_ProcData.VB_Invoke_Func = "D\n14"
   Call Library.endScript
 End Sub
 
-'生成のみ------------------------------------------------------------------------------------------
+'生成のみ==========================================================================================
 Sub M_ガントチャート生成のみ()
 Attribute M_ガントチャート生成のみ.VB_ProcData.VB_Invoke_Func = "A\n14"
   Call init.setting
@@ -420,7 +443,7 @@ Attribute M_ガントチャート生成のみ.VB_ProcData.VB_Invoke_Func = "A\n14"
 End Sub
 
 
-'生成----------------------------------------------------------------------------------------------
+'生成==============================================================================================
 Sub M_ガントチャート生成()
 Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
   Call init.setting
@@ -428,7 +451,9 @@ Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
   Call Library.startScript
   Call ProgressBar.showStart
   
-  Call Check.タスクリスト確認
+  If Range("viewMode") = "Normal" Then
+    Call Check.タスクリスト確認
+  End If
   Call Chart.ガントチャート生成
   
   Call ProgressBar.showEnd
@@ -438,7 +463,7 @@ End Sub
 
 
 
-'センター----------------------------------------------------------------------------------------------
+'センター==============================================================================================
 Sub M_センター()
 Attribute M_センター.VB_ProcData.VB_Invoke_Func = " \n14"
 
@@ -451,32 +476,28 @@ Attribute M_センター.VB_ProcData.VB_Invoke_Func = " \n14"
   
   Call Library.showDebugForm("センターへ移動", "処理完了")
   Call ProgressBar.showEnd
-  Call Library.endScript
+  Call Library.endScript(True)
 End Sub
 
 
 '**************************************************************************************************
-' * import
+' * M_インポート
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'Excelファイル-------------------------------------------------------------------------------------
-Sub M_Excelインポート()
+'Excelファイル=====================================================================================
+Sub M_インポートExcel()
   
   Call Library.startScript
   Call Library.showDebugForm("ファイルインポート", "処理開始")
   
   Call init.setting
-  endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row
+  endLine = sheetMain.Cells(Rows.count, 1).End(xlUp).row
   
-  If endLine > 6 Then
-    If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
-      Call WBS_Option.clearAll
-    Else
-      Call WBS_Option.clearCalendar
-    End If
+  If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
+    deleteFlg = True
   Else
-    Call WBS_Option.clearCalendar
+    deleteFlg = False
   End If
   Call ProgressBar.showStart
   
@@ -491,6 +512,8 @@ Sub M_Excelインポート()
   Else
   End If
   
+  Call WBS_Option.表示列設定
+  Call M_画面再描写
   
   Call ProgressBar.showEnd
   Call Library.endScript
@@ -507,7 +530,14 @@ End Sub
 
 
 
+Sub M_画面再描写()
+  Dim zoomLevel As Integer
+  
+  zoomLevel = ActiveWindow.Zoom
+  ActiveWindow.Zoom = 100
+  ActiveWindow.Zoom = zoomLevel
 
+End Sub
 
 
 

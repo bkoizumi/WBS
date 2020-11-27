@@ -51,9 +51,9 @@ Sub ÅI“ú()
     .Weight = xlThin
   End With
 End Sub
-Sub “ñdü()
 
-  With Selection.Borders(xlEdgeRight)
+Sub “ñdü()
+  With Selection.Borders(xlEdgeLeft)
     .LineStyle = xlDouble
     .ColorIndex = 0
     .TintAndShade = 0

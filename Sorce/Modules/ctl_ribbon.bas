@@ -1,10 +1,16 @@
 Attribute VB_Name = "ctl_ribbon"
+#If VBA7 And Win64 Then
+  Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (pDest As Any, pSrc As Any, ByVal cbLen As LongPtr)
+#Else
+  Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (pDest As Any, pSrc As Any, ByVal cbLen As Long)
+#End If
 
-Public ribbonUI As IRibbonUI ' リボン
+
+Public ribbonUI As IRibbonUI        ' リボン
 Private rbButton_Visible As Boolean ' ボタンの表示／非表示
 Private rbButton_Enabled As Boolean ' ボタンの有効／無効
 
-'トグルボタン------------------------------------
+'トグルボタン
 Public PressT_B015 As Boolean
 
 
@@ -13,41 +19,73 @@ Public PressT_B015 As Boolean
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'読み込み時処理------------------------------------------------------------------------------------
+'読み込み時処理====================================================================================
 Function onLoad(ribbon As IRibbonUI)
   Set ribbonUI = ribbon
-  ribbonUI.ActivateTab ("WBSTab")
+  
+  Call init.setting(True)
+  Call Library.setRegistry(RegistryRibbonName, CStr(ObjPtr(ribbonUI)))
+  
+  ribbonUI.ActivateTab (RibbonTabName)
   
   'リボンの表示を更新する
   ribbonUI.Invalidate
-
-
 End Function
 
 
+'リボンタブアクティブ==============================================================================
+Function setRibbonTabActive()
+  Dim regVal As String
+  
+  regVal = Library.getRegistry(RegistryRibbonName)
+  If regVal = "" Then
+    Exit Function
+  End If
 
-'トグルボタンにチェックを設定する
+   If ribbonUI Is Nothing Then
+    #If VBA7 And Win64 Then
+      Set ribbonUI = GetRibbon(CLngPtr(regVal))
+    #Else
+      Set ribbonUI = GetRibbon(CLng(regVal))
+    #End If
+  End If
+  ribbonUI.ActivateTab (RibbonTabName)
+  ribbonUI.Invalidate
+End Function
+
+
+'--------------------------------------------------------------------------------------------------
+#If VBA7 And Win64 Then
+Function GetRibbon(ByVal lRibbonPointer As LongPtr) As Object
+  Dim p As LongPtr
+#Else
+Function GetRibbon(ByVal lRibbonPointer As Long) As Object
+  Dim p As Long
+#End If
+  Dim ribbonObj As Object
+  
+  MoveMemory ribbonObj, lRibbonPointer, LenB(lRibbonPointer)
+  Set GetRibbon = ribbonObj
+  p = 0: MoveMemory ribbonObj, p, LenB(p) '後始末
+End Function
+
+
+'トグルボタン制御==================================================================================
 Sub getPressed(control As IRibbonControl, ByRef returnedVal)
   Select Case control.ID
-    Case "T_B015"
-      'タイムラインに追加
+  
+    Case "T_B015"         'タイムラインに追加
       If Range(setVal("cell_Info") & ActiveCell.row) Like "" Then
         returnedVal = True
       Else
         returnedVal = False
       End If
-      
-      
-      
     Case Else
   End Select
-  
-  
-  
 End Sub
 
 
-
+'Label 設定========================================================================================
 Public Sub getLabel(control As IRibbonControl, ByRef setRibbonVal)
   setRibbonVal = getRibbonMenu(control.ID, 2)
 End Sub
@@ -61,15 +99,19 @@ Sub getonAction(control As IRibbonControl)
 End Sub
 
 
-'Supertipの動的表示
+'Supertip 設定=====================================================================================
 Public Sub getSupertip(control As IRibbonControl, ByRef setRibbonVal)
   setRibbonVal = getRibbonMenu(control.ID, 5)
 End Sub
 
+
+'Description 設定==================================================================================
 Public Sub getDescription(control As IRibbonControl, ByRef setRibbonVal)
   setRibbonVal = getRibbonMenu(control.ID, 6)
 End Sub
 
+
+'size 設定=========================================================================================
 Public Sub getsize(control As IRibbonControl, ByRef setRibbonVal)
   Dim getVal As String
   getVal = getRibbonMenu(control.ID, 4)
@@ -81,13 +123,11 @@ Public Sub getsize(control As IRibbonControl, ByRef setRibbonVal)
       setRibbonVal = 0
     Case Else
   End Select
-
-
 End Sub
 
-'Ribbonシートから内容を取得
-Function getRibbonMenu(menuId As String, offsetVal As Long)
 
+'Ribbonシートから内容を取得========================================================================
+Function getRibbonMenu(menuId As String, offsetVal As Long)
   Dim getString As String
   Dim FoundCell As Range
   Dim ribSheet As Worksheet
@@ -105,17 +145,21 @@ Function getRibbonMenu(menuId As String, offsetVal As Long)
 
 
   Exit Function
-'エラー発生時=====================================================================================
+
+'エラー発生時------------------------------------
 catchError:
   getRibbonMenu = "エラー"
 
 End Function
+
+
+
 '**************************************************************************************************
 ' * 共通
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'選択行色付切替------------------------------------------------------------------------------------
+'選択行色付切替====================================================================================
 Function setLineColor(control As IRibbonControl)
   Call menu.M_行ハイライト
 End Function
@@ -125,40 +169,40 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'Help----------------------------------------------------------------------------------------------
+'Help==============================================================================================
 Function Help(control As IRibbonControl)
   Call menu.M_Help
 End Function
 
-'オプション----------------------------------------------------------------------------------------
+'オプション========================================================================================
 Function dispOption(control As IRibbonControl)
   Call Library.showDebugForm("オプション画面表示", "処理開始")
   Call menu.M_オプション画面表示
   Call Library.showDebugForm("オプション画面表示", "処理終了")
 End Function
 
-'列入替え----------------------------------------------------------------------------------------
+'列入替え========================================================================================
 Function changeColumn(control As IRibbonControl)
   Call Library.showDebugForm("列入替え", "処理開始")
   Call menu.M_列入替え
   Call Library.showDebugForm("列入替え", "処理終了")
 End Function
 
-'全データ削除--------------------------------------------------------------------------------------
+'全データ削除=====================================================================================-
 Function clearAll(control As IRibbonControl)
   Call Library.showDebugForm("全データ削除", "処理開始")
   Call menu.M_全データ削除
   Call Library.showDebugForm("全データ削除", "処理終了")
 End Function
 
-'生成----------------------------------------------------------------------------------------------
+'生成==============================================================================================
 Function makeCalendar(control As IRibbonControl)
   Call Library.showDebugForm("カレンダー生成", "処理開始")
   Call menu.M_カレンダー生成
   Call Library.showDebugForm("カレンダー生成", "処理完了")
 End Function
 
-'全画面表示----------------------------------------------------------------------------------------
+'全画面表示========================================================================================
 Function DispFullScreen(control As IRibbonControl)
   Call menu.M_全画面
 End Function
@@ -169,39 +213,35 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'タスクリスト確認----------------------------------------------------------------------------------
+'タスクリスト確認==================================================================================
 Function chkTaskList(control As IRibbonControl)
-  
   Call Library.showDebugForm("タスクリスト確認", "処理開始")
   Call menu.M_タスクチェック
   Call Library.showDebugForm("タスクリスト確認", "処理終了")
-  
 End Function
 
-'フィルター----------------------------------------------------------------------------------------
+'フィルター========================================================================================
 Function setFilter(control As IRibbonControl)
   Call Library.showDebugForm("フィルター", "処理開始")
   Call menu.M_フィルター
   Call Library.showDebugForm("フィルター", "処理終了")
-  
 End Function
 
-'すべて表示----------------------------------------------------------------------------------------
+'すべて表示========================================================================================
 Function dispAllList(control As IRibbonControl)
   Call Library.showDebugForm("すべて表示", "処理開始")
   Call menu.M_すべて表示
   Call Library.showDebugForm("すべて表示", "処理終了")
 End Function
 
-'進捗コピー----------------------------------------------------------------------------------------
+'進捗コピー========================================================================================
 Function copyProgress(control As IRibbonControl)
   Call Library.showDebugForm("進捗コピー", "処理開始")
   Call menu.M_進捗コピー
   Call Library.showDebugForm("進捗コピー", "処理終了")
-  
 End Function
 
-'インデント----------------------------------------------------------------------------------------
+'インデント========================================================================================
 Function taskOutdent(control As IRibbonControl)
   Call menu.M_インデント増
 End Function
@@ -209,7 +249,7 @@ Function taskIndent(control As IRibbonControl)
   Call menu.M_インデント減
 End Function
 
-'進捗率設定----------------------------------------------------------------------------------------
+'進捗率設定========================================================================================
 Function progress_0(control As IRibbonControl)
   Call menu.M_進捗率設定(0)
 End Function
@@ -226,7 +266,7 @@ Function progress_100(control As IRibbonControl)
   Call menu.M_進捗率設定(100)
 End Function
 
-'タスクのリンク------------------------------------------------------------------------------------
+'タスクのリンク====================================================================================
 Function taskLink(control As IRibbonControl)
   Call menu.M_タスクのリンク設定
 End Function
@@ -235,7 +275,7 @@ Function taskUnlink(control As IRibbonControl)
 End Function
 
 
-'表示モード----------------------------------------------------------------------------------------
+'表示モード========================================================================================
 Function viewNormal(control As IRibbonControl)
   Call menu.M_タスク表示_標準
 End Function
@@ -248,7 +288,7 @@ Function viewTeamsPlanner(control As IRibbonControl)
   Call menu.M_タスク表示_チームプランナー
 End Function
 
-'タスクにスクロール----------------------------------------------------------------------------------------
+'タスクにスクロール========================================================================================
 Function scrollTask(control As IRibbonControl)
   
   Call Library.showDebugForm("タスクにスクロール", "処理開始")
@@ -257,13 +297,10 @@ Function scrollTask(control As IRibbonControl)
   
 End Function
 
-'タイムラインに追加----------------------------------------------------------------------------------------
+'タイムラインに追加========================================================================================
 Function addTimeLine(control As IRibbonControl)
   Call menu.M_タイムラインに追加
 End Function
-
-
-
 
 
 '**************************************************************************************************
@@ -271,30 +308,31 @@ End Function
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'クリア--------------------------------------------------------------------------------------------
+'クリア===========================================================================================-
 Function clearChart(control As IRibbonControl)
   Call menu.M_ガントチャートクリア
 End Function
 
-'生成----------------------------------------------------------------------------------------------
+'生成==============================================================================================
 Function makeChart(control As IRibbonControl)
-  
   Call Library.showDebugForm("ガントチャート生成", "処理開始")
   Call menu.M_ガントチャート生成
   Call Library.showDebugForm("ガントチャート生成", "処理終了")
-  
 End Function
 
-'センター----------------------------------------------------------------------------------------------
+'センター==============================================================================================
 Function setCenter(control As IRibbonControl)
   Call menu.M_センター
 End Function
+
+
 '**************************************************************************************************
 ' * import
 ' *
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
-'Excelファイル-------------------------------------------------------------------------------------
+'Excelファイル=====================================================================================
 Function importExcel(control As IRibbonControl)
-  Call menu.M_Excelインポート
+  Call menu.M_インポートExcel
 End Function
+

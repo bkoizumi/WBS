@@ -26,7 +26,11 @@ Public Sub showStart()
   'ダイアログへ表示
   With FProgress
     .StartUpPosition = 0
-    .top = Application.top + (ActiveWindow.Width / 4)
+    If ThisWorkbook.Worksheets("設定").Range("B3") = "develop" Then
+      .top = Application.top + 50
+    Else
+      .top = Application.top + (ActiveWindow.Width / 4)
+    End If
     .Left = Application.Left + (ActiveWindow.Height / 2)
     .Caption = myMsg1
     
@@ -116,8 +120,13 @@ Public Sub showCount(ProgressBarTitle As String, mypbProgCnt As Long, mypbSCount
     End With
   
   End If
+  If setVal("debugMode") = "develop" And myMsg1 <> "" Then
+    Call Library.showDebugForm(ProgressBarTitle, myMsg1)
+  End If
   
+
   DoEvents
+  
 End Sub
 
 

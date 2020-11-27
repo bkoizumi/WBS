@@ -11,7 +11,7 @@ Attribute VB_Name = "Library"
 ' Microsoft ActiveX Data Objects 2.8 Library
 ' UIAutomationClient
 
-' Windows APIの利用--------------------------------------------------------------------------------
+' Windows APIの利用===============================================================================-
 ' ディスプレイの解像度取得用
 ' Sleep関数の利用
 ' クリップボード関数の利用
@@ -42,9 +42,9 @@ Attribute VB_Name = "Library"
 
 
 
-'ワークブック用変数------------------------------
-'ワークシート用変数------------------------------
-'グローバル変数----------------------------------
+'ワークブック用変数==============================
+'ワークシート用変数==============================
+'グローバル変数==================================
 Public LibDAO As String
 Public LibADOX As String
 Public LibADO As String
@@ -95,7 +95,7 @@ Function errorHandle(funcName As String, ByRef objErr As Object)
 
   '音声認識発話
   Application.Speech.Speak Text:="エラーが発生しました", SpeakAsync:=True
-  message = Application.WorksheetFunction.VLookup(objErr.Number, noticeCodeSheet.Range("A2:B" & endLine), 2, False)
+  message = Application.WorksheetFunction.VLookup(objErr.Number, sheetNotice.Range("A2:B" & endLine), 2, False)
   
   Call MsgBox(message, vbCritical)
   Call endScript
@@ -111,8 +111,6 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function startScript()
-
-  Call Library.showDebugForm("startScript", "")
   
   'アクティブセルの取得
   If TypeName(Selection) = "Range" Then
@@ -146,8 +144,6 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function endScript(Optional flg As Boolean = False)
-
-  Call Library.showDebugForm("endScript", CStr(flg))
 
   '強制的に再計算させる
   Application.CalculateFull
@@ -701,7 +697,7 @@ Function getMachineInfo() As Object
   Set MachineInfo = CreateObject("Scripting.Dictionary")
   Set WshNetworkObject = CreateObject("WScript.Network")
 
-  ' OSのバージョン取得-----------------------------------------------------------------------------
+  ' OSのバージョン取得============================================================================-
   Select Case Application.OperatingSystem
 
     Case "Windows (64-bit) NT 6.01"
@@ -720,7 +716,7 @@ Function getMachineInfo() As Object
        MachineInfo.Add "OS", Application.OperatingSystem
   End Select
 
-  ' Excelのバージョン取得--------------------------------------------------------------------------
+  ' Excelのバージョン取得=========================================================================-
   Select Case Application.Version
     Case "16.0"
         MachineInfo.Add "Excel", "2016"
@@ -738,12 +734,12 @@ Function getMachineInfo() As Object
        MachineInfo.Add "Excel", Application.Version
   End Select
 
-  'PCの情報----------------------------------------------------------------------------------------
+  'PCの情報========================================================================================
   MachineInfo.Add "UserName", WshNetworkObject.UserName
   MachineInfo.Add "ComputerName", WshNetworkObject.ComputerName
   MachineInfo.Add "UserDomain", WshNetworkObject.UserDomain
 
-  '画面の解像度等取得------------------------------------------------------------------------------
+  '画面の解像度等取得==============================================================================
   MachineInfo.Add "monitors", getSystemMetrics(80)
   MachineInfo.Add "displayX", getSystemMetrics(0)
   MachineInfo.Add "displayY", getSystemMetrics(1)
@@ -1161,9 +1157,9 @@ Function getSheetList(ColumnName As String)
   Worksheets("設定").Range(ColumnName & "3").Select
   Call endScript
   Exit Function
-'--------------------------------------------------------------------------------------------------
+'=================================================================================================-
 'エラー発生時の処理
-'--------------------------------------------------------------------------------------------------
+'=================================================================================================-
 GetSheetListError:
 
   ' 画面描写制御終了
@@ -1221,11 +1217,11 @@ Function showDebugForm(meg1 As String, Optional meg2 As String)
     Exit Function
   End If
 
-  If meg1 <> "" And Len(meg1) < 15 Then
-    
-    meg1 = meg1 & String(15 - Len(meg1), "　")
+  If meg1 <> "" And LenB(meg1) < 30 Then
+    meg1 = meg1 & String(30 - LenB(meg1), " ")
   End If
   
+  DoEvents
   Select Case setVal("debugMode")
     Case "file"
       If meg1 <> "" Then
@@ -1234,12 +1230,22 @@ Function showDebugForm(meg1 As String, Optional meg2 As String)
       GoTo label_end
     Case "form"
       GoTo label_showForm
-    Case "all", "develop"
+      
+    Case "all"
       If meg1 <> "" Then
         Call outputLog(runTime & vbTab & meg1 & vbTab & meg2)
       End If
       GoTo label_showForm
       
+    Case "develop"
+      If meg1 <> "" Then
+        Call outputLog(runTime & vbTab & meg1 & vbTab & meg2)
+        'Debug.Print runTime & vbTab & meg1 & vbTab & meg2
+      End If
+      'GoTo label_showForm
+      GoTo label_end
+      
+    
     Case Else
       Exit Function
   End Select
@@ -1273,7 +1279,7 @@ label_end:
   DoEvents
   Exit Function
   
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Exit Function
 End Function
@@ -1293,14 +1299,14 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
   
   runTime = Format(Now(), "yyyy/mm/dd hh:nn:ss")
   
-  endLine = noticeCodeSheet.Cells(Rows.count, 1).End(xlUp).row
-  message = Application.WorksheetFunction.VLookup(code, noticeCodeSheet.Range("A2:B" & endLine), 2, False)
+  endLine = sheetNotice.Cells(Rows.count, 1).End(xlUp).row
+  message = Application.WorksheetFunction.VLookup(code, sheetNotice.Range("A2:B" & endLine), 2, False)
   
   If process <> "" Then
     message = Replace(message, "%%", process)
   End If
 
-  If debugMode = "speak" Or debugMode = "develop" Or debugMode = "all" Then
+  If setVal("debugMode") = "speak" Or setVal("debugMode") = "develop" Or setVal("debugMode") = "all" Then
     Application.Speech.Speak Text:=message, SpeakAsync:=True, SpeakXML:=True
   End If
   
@@ -1317,7 +1323,6 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
     Case Else
       Call MsgBox(message, vbCritical, thisAppName)
   End Select
-'  Stop
 
   '画面描写制御終了処理
   If runEndflg = True Then
@@ -1609,7 +1614,7 @@ Function setReferences(BookType As String)
 
   On Error GoTo Err_SetReferences:
 
-  'Microsoft Scripting Runtime (Windows Script Host / FileSystemObject)----------------------------
+  'Microsoft Scripting Runtime (Windows Script Host / FileSystemObject)============================
     LibScript = "C:\Windows\System32\scrrun.dll"
     If Dir(LibScript) <> "" Then
       ActiveWorkbook.VBProject.References.AddFromFile (LibScript)
@@ -1617,7 +1622,7 @@ Function setReferences(BookType As String)
       MsgBox ("Microsoft Scripting Runtimeを利用できません。" & vbLf & "利用できない機能があります")
     End If
     
-  'Microsoft ActiveX Data Objects Library 6.1 (ADO)------------------------------------------------
+  'Microsoft ActiveX Data Objects Library 6.1 (ADO)================================================
   If BookType = "DataBase" Then
     LibADO = "C:\Program Files\Common Files\System\Ado\msado15.dll"
     If Dir(LibADO) <> "" Then
@@ -1626,7 +1631,7 @@ Function setReferences(BookType As String)
       MsgBox ("Microsoft ActiveX Data Objectsを利用できません" & vbLf & "利用できない機能があります")
     End If
 
-  'Microsoft DAO 3.6 Objects Library (Database Access Object)--------------------------------------
+  'Microsoft DAO 3.6 Objects Library (Database Access Object)=====================================-
   LibDAO = "C:\Program Files\Common Files\Microsoft Shared\DAO\dao360.dll"
     If Dir(LibDAO) <> "" Then
       ActiveWorkbook.VBProject.References.AddFromFile (LibDAO)
@@ -1640,7 +1645,7 @@ Function setReferences(BookType As String)
     End If
   End If
 
-  'Microsoft DAO 3.6 Objects Library (Database Access Object)--------------------------------------
+  'Microsoft DAO 3.6 Objects Library (Database Access Object)=====================================-
   If BookType = "" Then
     LibDAO = "C:\Program Files\Common Files\Microsoft Shared\DAO\dao360.dll"
     If Dir(LibDAO) <> "" Then

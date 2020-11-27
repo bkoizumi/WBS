@@ -17,31 +17,32 @@ Function ガントチャート生成()
   Rows("6:" & Rows.count).EntireRow.Hidden = False
   
   Call ガントチャート削除
-  endLine = Cells(Rows.count, 2).End(xlUp).row
+  endLine = Cells(Rows.count, 1).End(xlUp).row
   
   For line = 6 To endLine
-    '計画線生成------------------------------------
-    If Not (mainSheet.Range(setVal("cell_PlanStart") & line) = "" Or mainSheet.Range(setVal("cell_PlanEnd") & line) = "") Then
+    '計画線生成
+    If Not (sheetMain.Range(setVal("cell_PlanStart") & line) = "" Or sheetMain.Range(setVal("cell_PlanEnd") & line) = "") Then
       Call 計画線設定(line)
     End If
 
-    '実績線生成------------------------------------
-    If mainSheet.Range(setVal("cell_Progress") & line) >= 0 Then
+    '実績線生成
+    If Range(setVal("cell_AchievementStart") & line) <> "" And Range(setVal("cell_AchievementEnd") & line) <> "" And sheetMain.Range(setVal("cell_Progress") & line) >= 0 Then
       Call 実績線設定(line)
     End If
     
-    'タイムラインへの追加------------------------------------
-    If (mainSheet.Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_TimeLine")) Then
+    'タイムラインへの追加
+    If (sheetMain.Range(setVal("cell_Info") & line) = setVal("TaskInfoStr_TimeLine")) Then
       Call タイムラインに追加(line)
     End If
     
-    'イナズマ線生成------------------------------
-    Call イナズマ線設定(line)
+    'イナズマ線生成
+    If setVal("workMode") <> "CD部" And setVal("setLightning") <> False Then
+      Call イナズマ線設定(line)
+    End If
     
-    '進捗が100%なら非表示------------------------------------
-    If setVal("setDispProgress100") = True And mainSheet.Range(setVal("cell_Progress") & line) = 100 Then
+    '進捗が100%なら非表示
+    If setVal("setDispProgress100") = True And sheetMain.Range(setVal("cell_Progress") & line) = 100 Then
       Rows(line & ":" & line).EntireRow.Hidden = True
-      
     End If
 
   Next
@@ -49,7 +50,7 @@ Function ガントチャート生成()
     Call タスクのリンク設定(line)
   Next
 
-  If ActiveSheet.Name = mainSheetName Then
+  If ActiveSheet.Name = sheetMainName Then
     Call WBS_Option.複数の担当者行を非表示
   End If
 
@@ -73,13 +74,11 @@ Function ガントチャート削除()
     If Not Intersect(Range(shp.TopLeftCell, shp.BottomRightCell), rng) Is Nothing Then
       If (shp.Name Like "Drop Down*") Or (shp.Name Like "Comment*") Then
       Else
-        'Debug.Print shp.Name
-        shp.Select
+'        shp.Select
         shp.Delete
       End If
     End If
   Next
-
 End Function
 
 
@@ -98,17 +97,7 @@ Function 計画線設定(line As Long)
   startColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & line))
   endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
   
-'  'Shapeを配置するための基準となるセル
-'  Set rngStart = mainSheet.Range(startColumn & line)
-'  Set rngEnd = mainSheet.Range(endColumn & line)
-'
-'  'セルのLeft、Top、Widthプロパティを利用して位置決め
-'  BX = rngStart.Left
-'  BY = rngStart.top + (rngStart.Height / 2)
-'  EX = rngEnd.Left + rngEnd.Width
-'  EY = rngEnd.top + (rngEnd.Height / 2)
-  
-  '担当者別の色設定------------------------------
+  '担当者別の色設定--------------------------------------------------------------------------------
   lColorValue = 0
   If Range(setVal("cell_Assign") & line) <> "" Then
     lColorValue = memberColor.item(Range(setVal("cell_Assign") & line).Value)
@@ -118,18 +107,18 @@ Function 計画線設定(line As Long)
   
   
   
-  If lColorValue <> 0 And ActiveSheet.Name = mainSheetName Then
+  If lColorValue <> 0 And ActiveSheet.Name = sheetMainName Then
     Call Library.getRGB(lColorValue, Red, Green, Blue)
   Else
     Call Library.getRGB(setVal("lineColor_Plan"), Red, Green, Blue)
   End If
 
-  If Range(setVal("cell_Assign") & line) = "工程" Or Range(setVal("cell_Assign") & line) = "工程" Then
+  If Range(setVal("cell_Assign") & line) = "工程" Then
     With Range(startColumn & line & ":" & endColumn & line)
       Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapePentagon, Left:=.Left, top:=.top, Width:=.Width, Height:=.Height)
-      
       With ProcessShape
         .Name = "タスク_" & line
+        
         .Fill.ForeColor.RGB = RGB(Red, Green, Blue)
         .Fill.Transparency = 0.6
 '        .TextFrame.Characters.Text = Range(setVal("cell_TaskArea") & line)
@@ -155,7 +144,7 @@ Function 計画線設定(line As Long)
   
   Else
     With Range(startColumn & line & ":" & endColumn & line)
-      'Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRectangle, Left:=.Left, top:=.top + 5, Width:=.Width, Height:=10)
+      .Select
       Set ProcessShape = ActiveSheet.Shapes.AddShape(Type:=msoShapeRectangle, Left:=.Left, top:=.top, Width:=.Width, Height:=.Height)
       
       With ProcessShape
@@ -235,21 +224,19 @@ Function 実績線設定(line As Long)
   Dim ProcessShape As Shape
   Dim shapesWith As Long
   
-'    lColorValue = setSheet.Range(setVal("cell_ProgressEnd") & line).Interior.Color
+'    lColorValue = sheetSetting.Range(setVal("cell_ProgressEnd") & line).Interior.Color
   
 '  Call Library.showDebugForm("実績線設定", Range(setVal("cell_TaskArea") & line))
 '  Call Library.showDebugForm("実績線設定", "　開始日:" & Range(setVal("cell_AchievementStart") & line))
 '  Call Library.showDebugForm("実績線設定", "　終了日:" & Range(setVal("cell_AchievementEnd") & line))
 '  Call Library.showDebugForm("実績線設定", "　進捗　:" & Range(setVal("cell_Progress") & line))
   
-  If Range(setVal("cell_AchievementStart") & line) = "" Then
-    startColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanStart") & line))
-  Else
+  If Range(setVal("cell_AchievementStart") & line) <> "" Then
     startColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementStart") & line))
   End If
   
   If Range(setVal("cell_AchievementEnd") & line) = "" Then
-    endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
+'    endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
   
   '進捗が100%のとき
   ElseIf Range(setVal("cell_Progress") & line) = 100 Then
@@ -545,7 +532,7 @@ Function タイムラインに追加(line As Long)
 
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
@@ -560,23 +547,23 @@ Function センター()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   Dim baseDate As Date
   Dim baseColumn As String
+  Dim SelectionCell As String
   
-  
-'  On Error GoTo catchError
+  On Error GoTo catchError
 
-  If setVal("startDay") >= setVal("baseDay") - 10 Then
+
+  If setVal("startDay") >= Range(setVal("cell_PlanStart") & ActiveCell.row) - 10 Then
     baseDate = setVal("startDay")
   Else
-    baseDate = setVal("baseDay") - 10
-    
+    baseDate = Range(setVal("cell_PlanStart") & ActiveCell.row) - 10
   End If
   
   baseColumn = WBS_Option.日付セル検索(baseDate)
-  Application.Goto Reference:=Range(baseColumn & 6), Scroll:=True
-
-
+  
+  ActiveWindow.ScrollColumn = Library.getColumnNo(baseColumn)
+  
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
@@ -631,17 +618,17 @@ Function changeShapes()
   If rng.Address(False, False) Like "*:*" Then
     tmp = Split(rng.Address(False, False), ":")
     changeShapesName = Replace(changeShapesName, "タスク_", "")
-    mainSheet.Range(setVal("cell_PlanStart") & changeShapesName) = Range(getColumnName(Range(tmp(0)).Column) & 4)
-    mainSheet.Range(setVal("cell_PlanEnd") & changeShapesName) = Range(getColumnName(Range(tmp(1)).Column) & 4)
+    sheetMain.Range(setVal("cell_PlanStart") & changeShapesName) = Range(getColumnName(Range(tmp(0)).Column) & 4)
+    sheetMain.Range(setVal("cell_PlanEnd") & changeShapesName) = Range(getColumnName(Range(tmp(1)).Column) & 4)
   Else
     tmp = rng.Address(False, False)
     changeShapesName = Replace(changeShapesName, "タスク_", "")
-    mainSheet.Range(setVal("cell_PlanStart") & changeShapesName) = Range(getColumnName(Range(tmp).Column) & 4)
-    mainSheet.Range(setVal("cell_PlanEnd") & changeShapesName) = Range(getColumnName(Range(tmp).Column) & 4)
+    sheetMain.Range(setVal("cell_PlanStart") & changeShapesName) = Range(getColumnName(Range(tmp).Column) & 4)
+    sheetMain.Range(setVal("cell_PlanEnd") & changeShapesName) = Range(getColumnName(Range(tmp).Column) & 4)
   End If
   
   '先行タスクの終了日+1を開始日に設定
-  newStartDay = mainSheet.Range(setVal("cell_PlanStart") & changeShapesName)
+  newStartDay = sheetMain.Range(setVal("cell_PlanStart") & changeShapesName)
   Call init.chkHollyday(newStartDay, HollydayName)
   Do While HollydayName <> ""
     newStartDay = newStartDay - 1
@@ -650,7 +637,7 @@ Function changeShapes()
   Range(setVal("cell_PlanStart") & changeShapesName) = newStartDay
   
   '終了日を再設定
-  newEndDay = mainSheet.Range(setVal("cell_PlanEnd") & changeShapesName)
+  newEndDay = sheetMain.Range(setVal("cell_PlanEnd") & changeShapesName)
   Call init.chkHollyday(newEndDay, HollydayName)
   Do While HollydayName <> ""
     newEndDay = newEndDay + 1
@@ -658,7 +645,7 @@ Function changeShapes()
   Loop
   Range(setVal("cell_PlanEnd") & changeShapesName) = newEndDay
   
-  If ActiveSheet.Name = TeamsPlannerSheetName Then
+  If ActiveSheet.Name = sheetTeamsPlannerName Then
     If Range(setVal("cell_Info") & changeShapesName) = "" Then
       Range(setVal("cell_Info") & changeShapesName) = setVal("TaskInfoStr_Change")
     ElseIf Range(setVal("cell_Info") & changeShapesName) Like "*" & setVal("TaskInfoStr_Change") & "*" Then
@@ -731,13 +718,10 @@ Function タスクのリンク設定(line As Long)
 
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
-
-
-
 
 
 

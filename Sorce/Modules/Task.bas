@@ -13,19 +13,19 @@ Function タスク名抽出(taskList As Collection)
   Set taskList = New Collection
   count = 1
   
-  endLine = setSheet.Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row
+  endLine = sheetSetting.Cells(Rows.count, Library.getColumnNo(setVal("cell_DataExtract"))).End(xlUp).row
   count = count + 1
   For line = 3 To endLine
-    If setSheet.Range(setVal("cell_DataExtract") & line) <> "" Then
+    If sheetSetting.Range(setVal("cell_DataExtract") & line) <> "" Then
       With taskList
-        .Add item:=setSheet.Range(setVal("cell_DataExtract") & line).Value, Key:=str(count)
+        .Add item:=sheetSetting.Range(setVal("cell_DataExtract") & line).Value, Key:=str(count)
       End With
       count = count + 1
     End If
   Next
   Exit Function
   
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
 
 End Function
@@ -44,10 +44,12 @@ Function 担当者抽出(memberList As Collection)
 '  On Error GoTo catchError
 
   Call init.setting
+  sheetMain.Select
   Set memberList = New Collection
   count = 1
+
   
-  endLine = mainSheet.Cells(Rows.count, 1).End(xlUp).row
+  endLine = sheetMain.Cells(Rows.count, 1).End(xlUp).row
   With memberList
     .Add item:="工程", Key:=str(count)
   End With
@@ -55,7 +57,7 @@ Function 担当者抽出(memberList As Collection)
   NoAssignorFlg = False
   
   For line = 6 To endLine
-    assignor = mainSheet.Range(setVal("cell_Assign") & line).Value
+    assignor = sheetMain.Range(setVal("cell_Assign") & line).Value
     If assignor <> "" Then
         If isCollection(memberList, assignor) = False Then
           With memberList
@@ -78,8 +80,8 @@ Function 担当者抽出(memberList As Collection)
 
 
 '  For line = 6 To endLine
-'    If mainSheet.Range(setVal("cell_Assign") & line).Value <> "" Then
-'      For Each assignName In Split(mainSheet.Range(setVal("cell_Assign") & line).Value, ",")
+'    If sheetMain.Range(setVal("cell_Assign") & line).Value <> "" Then
+'      For Each assignName In Split(sheetMain.Range(setVal("cell_Assign") & line).Value, ",")
 '        assignor = assignName
 '        If assignor <> "" And isCollection(memberList, assignor) = False Then
 '          With memberList
@@ -91,7 +93,7 @@ Function 担当者抽出(memberList As Collection)
 '    End If
 '  Next
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
 
 End Function
@@ -126,14 +128,15 @@ Function 担当者フィルター(filterName As String)
   Call ProgressBar.showStart
   Call init.setting
   
-  mainSheet.Select
+  sheetMain.Select
   Cells.EntireRow.Hidden = False
   endLine = Cells(Rows.count, 1).End(xlUp).row
   
   For line = 6 To endLine
     Call ProgressBar.showCount("担当者フィルター", line, endLine, "")
     
-    If Range(setVal("cell_Assign") & line).Text = filterName Or Range(setVal("cell_Assign") & line).Text = filterName Then
+    If filterName = "未割り当て" And Range(setVal("cell_Assign") & line).Text = "" Then
+    ElseIf Range(setVal("cell_Assign") & line).Text = filterName Or Range(setVal("cell_Assign") & line).Text = filterName Then
     Else
       Rows(line & ":" & line).EntireRow.Hidden = True
     End If
@@ -141,7 +144,7 @@ Function 担当者フィルター(filterName As String)
   Call ProgressBar.showEnd
   Call Library.endScript
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
 
 End Function
@@ -161,7 +164,7 @@ Function タスク名フィルター(filterNames As String)
   Call Library.startScript
   Call init.setting
   
-  mainSheet.Select
+  sheetMain.Select
   
   '非表示行を全て表示
   Cells.EntireRow.Hidden = False
@@ -187,7 +190,7 @@ Function タスク名フィルター(filterNames As String)
   
   Call Library.endScript
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
 
 End Function
@@ -204,7 +207,7 @@ Function 進捗コピー()
   
   Call Library.startScript
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
  
   endLine = Cells(Rows.count, 1).End(xlUp).row
   
@@ -214,7 +217,7 @@ Function 進捗コピー()
   
   Call Library.endScript(True)
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
 
   Call Library.showNotice(Err.Number, Err.Description, True)
@@ -232,7 +235,7 @@ Function 進捗率設定(progress As Long)
   
   Call Library.startScript
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
   
   line = ActiveCell.row
   If Range(setVal("cell_TaskArea") & line) <> "" Then
@@ -242,7 +245,7 @@ Function 進捗率設定(progress As Long)
   Call Library.endScript(True)
   
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
 
   Call Library.showNotice(Err.Number, Err.Description, True)
@@ -263,7 +266,7 @@ Function taskLink()
     
 '  On Error GoTo catchError
 
-  mainSheet.Select
+  sheetMain.Select
    
   oldLine = 0
   Set selectedCells = Selection
@@ -300,7 +303,7 @@ Function taskLink()
   Next
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
@@ -319,7 +322,7 @@ Function taskUnlink()
 '  On Error GoTo catchError
   Call Library.startScript
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
    
   oldLine = 0
   Set selectedCells = Selection
@@ -330,7 +333,7 @@ Function taskUnlink()
 
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
@@ -366,7 +369,7 @@ Function タスクの挿入()
   Call WBS_Option.行番号再設定
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
@@ -383,7 +386,7 @@ Function タスクの削除()
 '  On Error GoTo catchError
   Call Library.startScript
   Call init.setting
-  mainSheet.Select
+  sheetMain.Select
 
 
   Rows(Selection(1).row & ":" & Selection(Selection.count).row).Delete Shift:=xlUp
@@ -392,7 +395,7 @@ Function タスクの削除()
   Call Library.endScript(True)
 
   Exit Function
-'エラー発生時=====================================================================================
+'エラー発生時--------------------------------------------------------------------------------------
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
