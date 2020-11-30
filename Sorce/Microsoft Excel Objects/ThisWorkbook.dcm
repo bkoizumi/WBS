@@ -13,6 +13,7 @@ End Sub
 
 
 Private Sub Workbook_BeforeClose(Cancel As Boolean)
+  Call init.setting(True)
   Call Library.delRegistry(RegistryRibbonName)
 End Sub
 

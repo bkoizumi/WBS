@@ -546,23 +546,24 @@ Function オプション設定値格納()
   
   Call ProgressBar.showStart
   sheetSetting.Select
-  For line = 20 To sheetSetting.Range("B5")
-    Call ProgressBar.showCount("オプション設定値格納", line, sheetSetting.Range("B5"), sheetSetting.Range("A" & line) & ":" & getVal(sheetSetting.Range("A" & line)))
-    
-    
+  For line = 3 To sheetSetting.Range("B5")
+    'Call ProgressBar.showCount("オプション設定値格納", line, sheetSetting.Range("B5"), sheetSetting.Range("A" & line) & ":" & getVal(sheetSetting.Range("A" & line)))
     sheetSetting.Range(sheetSetting.Range("A" & line)).Select
-    Select Case sheetSetting.Range("A" & line)
-      Case "baseDay"
-        If getVal(sheetSetting.Range("A" & line)) = Format(Now, "yyyy/mm/dd") Then
-          sheetSetting.Range(sheetSetting.Range("A" & line)).FormulaR1C1 = "=TODAY()"
-        Else
+    
+    If IsEmpty(getVal(sheetSetting.Range("A" & line))) = False Then
+      Select Case sheetSetting.Range("A" & line)
+        Case "baseDay"
+          If getVal(sheetSetting.Range("A" & line)) = Format(Now, "yyyy/mm/dd") Then
+            sheetSetting.Range(sheetSetting.Range("A" & line)).FormulaR1C1 = "=TODAY()"
+          Else
+            sheetSetting.Range(sheetSetting.Range("A" & line)) = getVal(sheetSetting.Range("A" & line))
+          End If
+        
+        Case ""
+        Case Else
           sheetSetting.Range(sheetSetting.Range("A" & line)) = getVal(sheetSetting.Range("A" & line))
-        End If
-      
-      Case ""
-      Case Else
-        sheetSetting.Range(sheetSetting.Range("A" & line)) = getVal(sheetSetting.Range("A" & line))
-    End Select
+      End Select
+    End If
   Next
   
   'ショートカットキーの設定

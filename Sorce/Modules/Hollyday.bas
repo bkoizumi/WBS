@@ -66,6 +66,12 @@ Dim targetday As Integer
                     HollydayName = "Œš‘‹L”O‚Ì“ú"
                 End If
          End If
+        If targetyear > 2019 Then
+            If targetday = 23 Then
+                hantei = True
+                HollydayName = "“Vc’a¶“ú"
+            End If
+        End If
     Case 3
         If targetyear > 1948 Then
             If targetday = Syunbun(targetyear) Then
@@ -73,6 +79,8 @@ Dim targetday As Integer
                 HollydayName = "t•ª‚Ì“ú"
             End If
         End If
+
+        
     Case 4
         If targetday = 29 Then
             If targetyear > 1948 Then
@@ -171,7 +179,7 @@ Dim targetday As Integer
             End If
         End If
     Case 12
-        If targetyear > 1988 Then
+        If targetyear > 1988 And targetyear <= 2018 Then
             If targetday = 23 Then
                 hantei = True
                 HollydayName = "“Vc’a¶“ú"

@@ -12,7 +12,7 @@ Public sheetMain As Worksheet
 Public sheetTeamsPlanner As Worksheet
 
 'グローバル変数==================================
-Public Const thisAppName = "Work Breakdown Structure for Excel"
+Public Const thisAppName = "WorkBreakdownStructure4Excel"
 Public Const thisAppVersion = "0.0.3.0"
 
 
@@ -24,8 +24,8 @@ Public sheetMainName As String
 Public sheetTeamsPlannerName As String
 
 'レジストリ登録用サブキー
-Public Const RegistryKey As String = "B.Koizumi"
-Public Const RegistrySubKey As String = "WBS"
+Public Const RegistryKey As String = "WBS"
+Public Const RegistrySubKey As String = "Main"
 Public Const RibbonTabName As String = "WBSTab"
 Public RegistryRibbonName As String
 
