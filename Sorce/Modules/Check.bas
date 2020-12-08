@@ -124,19 +124,18 @@ Function タスクリスト確認()
   Dim workLoadP As Long
   
 '  On Error GoTo catchError
-   Call Library.showDebugForm("タスクリスト確認", "開始")
-
-    
-  ' 強制的に再計算させる
-  Application.CalculateFull
-  
   Call init.setting
+  Call Library.showDebugForm("タスクリスト確認", "開始")
   sheetMain.Select
+  
+  '強制的に再計算させる
+  sheetMain.Calculate
+  
   ErrorMeg = ""
 
   '入力チェック====================================================================================
   errorFlg = False
-  Call ProgressBar.showCount("タスクリスト確認", 0, 10, "入力チェック")
+  Call ctl_ProgressBar.showCount("タスクリスト確認", 0, 10, "入力チェック")
       
   'タスク名の設定
   endLine = Cells(Rows.count, 1).End(xlUp).row
@@ -327,7 +326,7 @@ Function タスクリスト確認()
   '親タスクなら、担当者(予定)に「工程」を割り当て
   Call Library.showDebugForm("タスクリスト確認", "親/子タスク判定")
   For line = 6 To endLine
-    Call ProgressBar.showCount("親/子タスク判定", line, endLine, "")
+    Call ctl_ProgressBar.showCount("親/子タスク判定", line, endLine, "")
     
     'タスクレベルが1ならリセット
     If Range(setVal("cell_LevelInfo") & line) = 1 Then
@@ -338,7 +337,7 @@ Function タスクリスト確認()
     If Range(setVal("cell_LevelInfo") & line) < Range("B" & line + 1) And Range("B" & line + 1) <> "" Then
       endTaskLine = line + 1
       Do While Range(setVal("cell_LevelInfo") & line).Value <= Range("B" & endTaskLine).Value And Range("B" & endTaskLine) <> ""
-        Call ProgressBar.showCount("親/子タスク判定", endTaskLine, endLine, "")
+        Call ctl_ProgressBar.showCount("親/子タスク判定", endTaskLine, endLine, "")
       
         If Range(setVal("cell_LevelInfo") & line).Value >= Range("B" & endTaskLine).Value Then
           endTaskLine = endTaskLine - 1
@@ -415,7 +414,7 @@ Label_nextFor:
   '子タスクのデータ確認
   Call Library.showDebugForm("タスクリスト確認", "子タスクのデータ確認")
   For line = 6 To endLine
-    Call ProgressBar.showCount("子タスクのデータ確認", line, endLine, "")
+    Call ctl_ProgressBar.showCount("子タスクのデータ確認", line, endLine, "")
 
 '    Call Library.showDebugForm("タスクリスト確認", "　" & Range(setVal("cell_Info") & line))
     
@@ -468,7 +467,7 @@ Label_nextFor:
   '親タスクのデータ確認============================================================================
   Call Library.showDebugForm("タスクリスト確認", "親タスクのデータ確認")
   For line = 6 To endLine
-    Call ProgressBar.showCount("親タスクのデータ確認", line, endLine, "")
+    Call ctl_ProgressBar.showCount("親タスクのデータ確認", line, endLine, "")
     If Range(setVal("cell_TaskInfoC") & line) <> "" Then
       taskAreas = Split(Range(setVal("cell_TaskInfoC") & line), ":")
       
@@ -480,7 +479,8 @@ Label_nextFor:
         End If
       Next
       If workStartDay <> 0 Then
-        Range(setVal("cell_PlanStart") & line) = workStartDay
+        'Range(setVal("cell_PlanStart") & line) = workStartDay
+        Range(setVal("cell_PlanStart") & line) = "=Min(" & setVal("cell_PlanStart") & taskAreas(0) & ":" & setVal("cell_PlanStart") & taskAreas(1) & ")"
       End If
       
       '予定日(終了)設定==================================================================================
@@ -491,7 +491,8 @@ Label_nextFor:
         End If
       Next
       If workEndDay <> 0 Then
-        Range(setVal("cell_PlanEnd") & line) = workEndDay
+'        Range(setVal("cell_PlanEnd") & line) = workEndDay
+        Range(setVal("cell_PlanEnd") & line) = "=Max(" & setVal("cell_PlanEnd") & taskAreas(0) & ":" & setVal("cell_PlanEnd") & taskAreas(1) & ")"
       End If
       
       
@@ -557,7 +558,7 @@ Label_nextFor:
   progress = 0
   lateOrEarly = 0
   For line = 6 To endLine
-    Call ProgressBar.showCount("全タスクのデータ集計", line, endLine, "")
+    Call ctl_ProgressBar.showCount("全タスクのデータ集計", line, endLine, "")
     
     If Range(setVal("cell_Assign") & line).Text <> "工程" Then
       Range(setVal("cell_Assign") & line).Select
@@ -582,6 +583,10 @@ Label_nextFor:
   End If
   
   Call Library.showDebugForm("タスクリスト確認", "終了")
+  
+  '強制的に再計算させる
+  sheetMain.Calculate
+  
   
   Exit Function
 'エラー発生時--------------------------------------------------------------------------------------

@@ -126,6 +126,19 @@ Public Sub getsize(control As IRibbonControl, ByRef setRibbonVal)
 End Sub
 
 
+'有効/無効切り替え ========================================================================
+Function getEnabled(control As IRibbonControl, ByRef returnedVal)
+  Call init.setting
+  If setVal("workMode") = "CD部" Then
+    returnedVal = False
+  Else
+    returnedVal = True
+  End If
+  
+End Function
+
+
+
 'Ribbonシートから内容を取得========================================================================
 Function getRibbonMenu(menuId As String, offsetVal As Long)
   Dim getString As String

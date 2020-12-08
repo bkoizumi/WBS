@@ -8,6 +8,19 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 
+Private Sub Worksheet_Calculate()
+  Dim Target As Range
+  
+'  If Intersect(Target, Columns("C:T")) Is Nothing Then
+'
+'  End If
+  
+  
+  
+End Sub
+
+
+'==================================================================================================
 Private Sub Worksheet_Change(ByVal Target As Range)
   Dim selectCells As String
   Dim line As Long, activeCellLine As Long
@@ -16,25 +29,23 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   
   Call init.setting
   selectCells = Selection.Address(False, False)
+  Call Library.startScript
 
 
   If Cells(Target.row, Target.Column).Style = "Error" Then
     Cells(Target.row, Target.Column).Style = "Normal"
   
-  ElseIf selectCells Like "*:*" Then
+  ElseIf selectCells Like "*:*" Or Cells(Target.row, 1) = "" Then
+    Call Library.endScript(True)
     Exit Sub
   
   
   '担当者を複数選択するとき
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) And Target.Value = "複数選択" Then
-    Call Library.startScript
     Call WBS_Option.担当者の複数選択
-    Call Library.endScript
   
   '担当者を複数選択でないとき
   ElseIf Target.Column = Library.getColumnNo(setVal("cell_Assign")) Then
-    Call Library.startScript
-    
     activeCellLine = ActiveCell.row
     line = activeCellLine + 1
       
@@ -47,23 +58,21 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     Range(setVal("cell_TaskAllocation") & Target.row) = ""
     Range(setVal("cell_Info") & Target.row) = ""
     
-    Call Library.endScript
-  ElseIf Intersect(Target, Columns("C:R")) Is Nothing Then
-    Exit Sub
-  Else
-    If Range("A" & Target.row) = "" And Cells(Target.row, Target.Column) <> "" Then
-      Call Library.startScript
-      
-      Call Calendar.行書式コピー(Target.row, Target.row)
-      'Range(setVal("cell_PlanStart") & Target.row).Select
-      Cells(Target.row, Target.Column).Select
-      
-      Call Library.endScript
-      Exit Sub
-    End If
-  End If
+  '予定日を変更した場合
+  ElseIf Target.Column = Library.getColumnNo(setVal("cell_PlanStart")) Or Target.Column = Library.getColumnNo(setVal("cell_PlanEnd")) Then
+    ActiveSheet.Shapes.Range(Array("タスク_" & Target.row)).Delete
+    Call Chart.計画線設定(Target.row)
+    Call 親タスク変更(Range(setVal("cell_TaskInfoP") & Target.row).Value)
     
+  ElseIf Intersect(Target, Columns("C:T")) Is Nothing Then
+    Exit Sub
   
+  '新規行追加
+  ElseIf Range("A" & Target.row) = "" And Cells(Target.row, Target.Column) <> "" Then
+    Call Calendar.行書式コピー(Target.row, Target.row)
+    Cells(Target.row, Target.Column).Select
+  End If
+  Call Library.endScript(True)
   Exit Sub
 
 'エラー発生時--------------------------------------------------------------------------------------
@@ -72,7 +81,17 @@ catchError:
 End Sub
 
 
+'==================================================================================================
+Private Function 親タスク変更(ByVal TargetRow As Long)
+  ActiveSheet.Shapes.Range(Array("タスク_" & TargetRow)).Delete
+  Call Chart.計画線設定(TargetRow)
+  If Range(setVal("cell_TaskInfoP") & TargetRow) <> "" Then
+    Call 親タスク変更(Range(setVal("cell_TaskInfoP") & TargetRow))
+  End If
+End Function
 
+
+'==================================================================================================
 Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   Dim line As Long
   
@@ -112,7 +131,6 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 catchError:
   Call Library.showNotice(Err.Number, Err.Description, True)
 End Sub
-
 
 
 '**************************************************************************************************

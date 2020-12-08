@@ -99,7 +99,7 @@ Function errorHandle(funcName As String, ByRef objErr As Object)
   
   Call MsgBox(message, vbCritical)
   Call endScript
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   
   Call outputLog(runTime & vbTab & objErr.Number & vbTab & objErr.Description)
 End Function
@@ -146,7 +146,7 @@ End Function
 Function endScript(Optional flg As Boolean = False)
 
   '強制的に再計算させる
-  Application.CalculateFull
+  Application.Calculate
 
  'アクティブセルの選択
   If SelectionCell <> "" And flg = True Then
@@ -1328,7 +1328,7 @@ Function showNotice(code As Long, Optional process As String, Optional runEndflg
   '画面描写制御終了処理
   If runEndflg = True Then
     Call endScript
-    Call ProgressBar.showEnd
+    Call ctl_ProgressBar.showEnd
     End
   End If
 End Function
@@ -1868,7 +1868,8 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function waitTime(timeVal As Long)
-  Sleep timeVal
+  DoEvents
+  Application.Wait [Now()] + timeVal / 86400000
   DoEvents
 End Function
 

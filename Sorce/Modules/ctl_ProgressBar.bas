@@ -1,4 +1,4 @@
-Attribute VB_Name = "ProgressBar"
+Attribute VB_Name = "ctl_ProgressBar"
 
 '**************************************************************************************************
 ' * プログレスバー表示制御
@@ -24,7 +24,7 @@ Public Sub showStart()
   myMsg1 = " 待機中"
 
   'ダイアログへ表示
-  With FProgress
+  With Frm_Progress
     .StartUpPosition = 0
     If ThisWorkbook.Worksheets("設定").Range("B3") = "develop" Then
       .top = Application.top + 50
@@ -87,7 +87,7 @@ Public Sub showStart()
     myBarSize = .Label3.Width
   End With
 
-  FProgress.Show vbModeless
+  Frm_Progress.Show vbModeless
 End Sub
 
 
@@ -102,7 +102,7 @@ Public Sub showCount(ProgressBarTitle As String, mypbProgCnt As Long, mypbSCount
     myJobCnt = Int(mypbProgCnt / mypbSCount * 100)
     myMsg2 = mypbProgCnt & "/" & mypbSCount & " (" & Int(myJobCnt) & "%)"
     
-    With FProgress
+    With Frm_Progress
       .Caption = ProgressBarTitle
       .Label2.Width = Int(myBarSize * myJobCnt / 100)
       .Label3.Caption = myMsg2
@@ -112,7 +112,7 @@ Public Sub showCount(ProgressBarTitle As String, mypbProgCnt As Long, mypbSCount
     myJobCnt = Int(mypbProgCnt / mypbSCount * 100)
     myMsg2 = ""
     
-    With FProgress
+    With Frm_Progress
       .Caption = ProgressBarTitle
       .Label2.Width = Int(myBarSize * myJobCnt / 100)
       .Label3.Caption = myMsg2
@@ -137,7 +137,7 @@ End Sub
 Public Sub showEnd()
   
   'ダイアログを閉じる
-  Unload FProgress
+  Unload Frm_Progress
   
 End Sub
 

@@ -108,7 +108,7 @@ Function makeCalendar()
   
   Do While today <= setVal("endDay")
     Cells(4, line) = today
-    Call ProgressBar.showCount("カレンダー生成", 0, 100, "")
+    Call ctl_ProgressBar.showCount("カレンダー生成", 0, 100, "")
     
     If Format(today, "d") = 1 Or line = Library.getColumnNo(setVal("calendarStartCol")) Then
       Cells(3, line) = today
@@ -220,7 +220,7 @@ Function 行書式コピー(startLine As Long, endLine As Long)
   
   cell_LineInfo = 1
   'タスクが記載されている場合、タスクレベルを値としてコピー
-  Application.CalculateFull
+  sheetMain.Calculate
   If Range(setVal("cell_TaskArea") & startLine) <> "" Then
     Range("B" & startLine & ":B" & endLine).Copy
     Range("B" & startLine & ":B" & endLine).PasteSpecial Paste:=xlPasteValues

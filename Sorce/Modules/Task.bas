@@ -125,7 +125,7 @@ Function 担当者フィルター(filterName As String)
 
   Unload FilterForm
   Call Library.startScript
-  Call ProgressBar.showStart
+  Call ctl_ProgressBar.showStart
   Call init.setting
   
   sheetMain.Select
@@ -133,7 +133,7 @@ Function 担当者フィルター(filterName As String)
   endLine = Cells(Rows.count, 1).End(xlUp).row
   
   For line = 6 To endLine
-    Call ProgressBar.showCount("担当者フィルター", line, endLine, "")
+    Call ctl_ProgressBar.showCount("担当者フィルター", line, endLine, "")
     
     If filterName = "未割り当て" And Range(setVal("cell_Assign") & line).Text = "" Then
     ElseIf Range(setVal("cell_Assign") & line).Text = filterName Or Range(setVal("cell_Assign") & line).Text = filterName Then
@@ -141,7 +141,7 @@ Function 担当者フィルター(filterName As String)
       Rows(line & ":" & line).EntireRow.Hidden = True
     End If
   Next
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript
   Exit Function
 'エラー発生時--------------------------------------------------------------------------------------

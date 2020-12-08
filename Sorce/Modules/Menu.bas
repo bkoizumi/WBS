@@ -107,13 +107,13 @@ Attribute M_オプション画面表示.VB_ProcData.VB_Invoke_Func = " \n14"
   Call Library.startScript
   Call init.setting(True)
   
-  Call WBS_Option.オプション画面表示
+  Call Ctl_Option.オプション画面表示
   
   Call M_カレンダー生成(True)
   Call M_ガントチャート生成
   Call WBS_Option.表示列設定
   
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript(True)
 End Sub
 
@@ -134,7 +134,7 @@ Sub M_カレンダー生成(Optional flg As Boolean = False)
   
   If flg = False Then
     Call Library.startScript
-    Call ProgressBar.showStart
+    Call ctl_ProgressBar.showStart
   End If
   
   '全ての行列を表示
@@ -147,7 +147,7 @@ Sub M_カレンダー生成(Optional flg As Boolean = False)
   Call WBS_Option.表示列設定
   
   If flg = False Then
-    Call ProgressBar.showEnd
+    Call ctl_ProgressBar.showEnd
     Call Library.endScript
   End If
 End Sub
@@ -184,14 +184,14 @@ Attribute M_全画面.VB_ProcData.VB_Invoke_Func = " \n14"
   Application.ScreenUpdating = False
   ActiveWindow.DisplayHeadings = False
   Application.DisplayFullScreen = True
+  Application.ScreenUpdating = True
   
-  With DispFullScreenForm
+  With Frm_FullScreen
     .StartUpPosition = 0
     .top = Application.top + 300
     .Left = Application.Left + 30
+    .Show vbModeless
   End With
-  Application.ScreenUpdating = True
-  DispFullScreenForm.Show vbModeless
 End Sub
 
 Sub M_タスク操作()
@@ -216,11 +216,11 @@ Attribute M_タスクチェック.VB_ProcData.VB_Invoke_Func = "C\n14"
   sheetMain.Select
   
   Call Library.startScript
-  Call ProgressBar.showStart
+  Call ctl_ProgressBar.showStart
   
   Call Check.タスクリスト確認
   
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript(True)
 
 End Sub
@@ -432,13 +432,13 @@ Sub M_ガントチャート生成のみ()
 Attribute M_ガントチャート生成のみ.VB_ProcData.VB_Invoke_Func = "A\n14"
   Call init.setting
   Call Library.startScript
-  Call ProgressBar.showStart
+  Call ctl_ProgressBar.showStart
   Call Library.showDebugForm("ガントチャート生成", "処理開始")
   
   Call Chart.ガントチャート生成
   
   Call Library.showDebugForm("ガントチャート生成", "処理完了")
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript(True)
 End Sub
 
@@ -449,14 +449,14 @@ Attribute M_ガントチャート生成.VB_ProcData.VB_Invoke_Func = "t\n14"
   Call init.setting
   
   Call Library.startScript
-  Call ProgressBar.showStart
+  Call ctl_ProgressBar.showStart
   
   If Range("viewMode") = "Normal" Then
     Call Check.タスクリスト確認
   End If
   Call Chart.ガントチャート生成
   
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript(True)
   Application.EnableEvents = True
 End Sub
@@ -469,13 +469,13 @@ Attribute M_センター.VB_ProcData.VB_Invoke_Func = " \n14"
 
   Call init.setting
   Call Library.startScript
-  Call ProgressBar.showStart
+  Call ctl_ProgressBar.showStart
   Call Library.showDebugForm("センターへ移動", "処理開始")
   
   Call Chart.センター
   
   Call Library.showDebugForm("センターへ移動", "処理完了")
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript(True)
 End Sub
 
@@ -494,12 +494,16 @@ Sub M_インポートExcel()
   Call init.setting
   endLine = sheetMain.Cells(Rows.count, 1).End(xlUp).row
   
-  If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
-    deleteFlg = True
-  Else
+  If setVal("workMode") = "CD部" Then
     deleteFlg = False
+  Else
+    If MsgBox("データを削除します", vbYesNo + vbExclamation) = vbYes Then
+      deleteFlg = True
+    Else
+      deleteFlg = False
+    End If
   End If
-  Call ProgressBar.showStart
+  Call ctl_ProgressBar.showStart
   
   
   Call import.ファイルインポート
@@ -515,7 +519,7 @@ Sub M_インポートExcel()
   Call WBS_Option.表示列設定
   Call M_画面再描写
   
-  Call ProgressBar.showEnd
+  Call ctl_ProgressBar.showEnd
   Call Library.endScript
   
   Call WBS_Option.saveAndRefresh

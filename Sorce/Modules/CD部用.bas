@@ -29,7 +29,7 @@ Function データコピー(filePath As String)
   targetEndLine = Cells(Rows.count, 2).End(xlUp).row - 1
   For line = 6 To targetEndLine
     If targetCalSheet.Range("B" & line) <> "" Then
-      Call ProgressBar.showCount(Dir(filePath), line, targetEndLine, targetCalSheet.Range("B" & line))
+      Call ctl_ProgressBar.showCount(Dir(filePath), line, targetEndLine, targetCalSheet.Range("B" & line))
       
       If targetCalSheet.Range("B" & line) Like "<*" Then
         sheetMain.Range(setVal("cell_TaskArea") & endLine) = targetCalSheet.Range("B" & line).Value

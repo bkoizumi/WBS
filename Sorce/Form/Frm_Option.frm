@@ -1,14 +1,14 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} OptionForm 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Frm_Option 
    Caption         =   "オプション - WBS"
    ClientHeight    =   8745
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   11970
-   OleObjectBlob   =   "optionForm.frx":0000
+   OleObjectBlob   =   "Frm_Option.frx":0000
    StartUpPosition =   1  'オーナー フォームの中央
 End
-Attribute VB_Name = "optionForm"
+Attribute VB_Name = "Frm_Option"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -493,7 +493,7 @@ Private Sub run_Click()
   Unload Me
   
   
-  Call WBS_Option.オプション設定値格納
+  Call Ctl_Option.オプション設定値格納
 
 End Sub
 
