@@ -62,7 +62,7 @@ Function ファイルインポート()
     ElseIf Library.chkSheetName("calendar") = True Then
       Call CD部用.データコピー(filePath)
     Else
-      Call Library.showNotice(405, "<" & Dir(filePath) & "ファイルにメイン または calendar>")
+      Call Library.showNotice(445, "<" & Dir(filePath) & "ファイルにメイン または calendar>")
     End If
   Next
 

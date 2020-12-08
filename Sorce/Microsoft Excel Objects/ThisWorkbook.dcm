@@ -23,19 +23,18 @@ End Sub
 
 
 
-
+'==================================================================================================
 Private Sub Workbook_SheetSelectionChange(ByVal Sh As Object, ByVal Target As Range)
   If Range("lineColorFlg") = True Then
     Application.ScreenUpdating = True
   End If
 End Sub
 
-
+'==================================================================================================
 Private Sub Workbook_Open()
 
   On Error GoTo catchError
   
-
   Call init.setting(True)
   Call Library.startScript
   
@@ -45,7 +44,7 @@ Private Sub Workbook_Open()
   
   If setVal("debugMode") <> "develop" Then
     tmpSheet.Visible = xlSheetVeryHidden
-    sheetNotice.Visible = xlSheetVeryHidden
+'    sheetNotice.Visible = xlSheetVeryHidden
     sheetTeamsPlanner.Visible = xlSheetVeryHidden
     Worksheets("ƒTƒ“ƒvƒ‹").Visible = xlSheetVeryHidden
   End If

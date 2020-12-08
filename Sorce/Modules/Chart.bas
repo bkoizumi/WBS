@@ -302,7 +302,7 @@ Function イナズマ線設定(line As Long)
   
   If Not (setVal("startDay") <= setVal("baseDay") And setVal("baseDay") <= setVal("endDay")) Then
     If setVal("setLightning") = True Then
-      Call Library.showNotice(50)
+      Call Library.showNotice(450)
       setVal("setLightning") = False
       Range("setLightning") = False
     End If

@@ -128,7 +128,7 @@ Function 選択シート確認()
 
   If ActiveSheet.Name = sheetMainName Or ActiveSheet.Name = sheetTeamsPlannerName Then
   Else
-    Call Library.showNotice(404, , True)
+    Call Library.showNotice(454, , True)
   End If
 
 
