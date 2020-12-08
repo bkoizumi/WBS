@@ -123,7 +123,7 @@ Function 担当者フィルター(filterName As String)
 
 '  On Error GoTo catchError
 
-  Unload FilterForm
+  Unload Frm_Filter
   Call Library.startScript
   Call ctl_ProgressBar.showStart
   Call init.setting
@@ -160,7 +160,7 @@ Function タスク名フィルター(filterNames As String)
   On Error GoTo catchError
   Call Library.showDebugForm("タスク名フィルター", "開始")
 
-  Unload FilterForm
+  Unload Frm_Filter
   Call Library.startScript
   Call init.setting
   

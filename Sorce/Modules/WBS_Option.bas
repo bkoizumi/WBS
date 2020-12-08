@@ -574,7 +574,7 @@ End Function
 Function ’S“–Ò‚Ì•¡”‘I‘ğ()
   Dim line As Long, endLine As Long, colLine As Long, endColLine As Long
   
-  With AssignorForm
+  With Frm_Assignor
     .StartUpPosition = 0
     .top = Application.top + (ActiveWindow.Width / 8)
     .Left = Application.Left + (ActiveWindow.Height / 8)

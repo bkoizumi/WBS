@@ -230,13 +230,12 @@ Sub M_フィルター()
 Attribute M_フィルター.VB_ProcData.VB_Invoke_Func = " \n14"
   Call init.setting
   
-  With FilterForm
+  With Frm_Filter
     .StartUpPosition = 0
     .top = Application.top + (ActiveWindow.Width / 8)
     .Left = Application.Left + (ActiveWindow.Height / 8)
+    .Show
   End With
-  
-  FilterForm.Show
 End Sub
 
 

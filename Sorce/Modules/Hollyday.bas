@@ -114,26 +114,71 @@ Dim targetday As Integer
             End If
         End If
     Case 7
-        If targetyear > 1995 And targetyear <> 2020 Then
-            If 2004 > targetyear Then
+            '海の日[7月の第3月曜日]---------------------------------------------
+            '東京オリンピック競技大会・東京パラリンピック競技大会特別措置法等の一部を改正する法律
+            If targetyear = 2020 Then
+              If targetday = 23 Then
+                hantei = True
+                HollydayName = "海の日"
+              End If
+            ElseIf targetyear = 2021 Then
+              If targetday = 22 Then
+                hantei = True
+                HollydayName = "海の日"
+              End If
+              
+            '
+            ElseIf targetyear > 1995 Then
+              If 2004 > targetyear Then
                 If targetday = 20 Then
                     hantei = True
                     HollydayName = "海の日"
                 End If
-            Else
+              Else
                 If CInt(Format(DaiXYoubi(targetyear, 7, 3, 0), "d")) = targetday Then
-                    hantei = True
-                    HollydayName = "海の日"
+                  hantei = True
+                  HollydayName = "海の日"
                 End If
+              End If
             End If
-        End If
+            
+            
+            '東京オリンピック競技大会・東京パラリンピック競技大会特別措置法等の一部を改正する法律
+            If targetyear = 2020 Then
+              If targetday = 24 Then
+                hantei = True
+                HollydayName = "スポーツの日"
+              End If
+              
+            ElseIf targetyear = 2021 Then
+              If targetday = 23 Then
+                hantei = True
+                HollydayName = "スポーツの日"
+              End If
+            End If
+            
     Case 8
-            If targetyear >= 2016 And targetyear <> 2020 Then
-                If targetday = 11 Then
-                    hantei = True
-                    HollydayName = "山の日"
-                End If
-             End If
+            '山の日[8/11]---------------------------------------------
+            '東京オリンピック競技大会・東京パラリンピック競技大会特別措置法等の一部を改正する法律
+            If targetyear = 2021 Then
+              If targetday = 8 Then
+                hantei = True
+                HollydayName = "山の日"
+              End If
+            ElseIf targetyear = 2020 Then
+              If targetday = 10 Then
+                hantei = True
+                HollydayName = "山の日"
+              End If
+              
+            ElseIf targetyear >= 2016 And targetday = 11 Then
+              hantei = True
+              HollydayName = "山の日"
+            End If
+
+                
+                
+                
     Case 9
         If targetyear > 1965 Then
             If 2004 > targetyear Then
@@ -155,18 +200,28 @@ Dim targetday As Integer
             End If
         End If
     Case 10
+      '体育の日[10/10→10月の第2月曜日]---------------------------------------------
         If targetyear > 1965 Then
-            If 2000 > targetyear Then
-                If targetday = 10 Then
-                    hantei = True
-                    HollydayName = "体育の日"
-                End If
-            ElseIf targetyear > 1999 Then
-                If CInt(Format(DaiXYoubi(targetyear, 10, 2, 1), "d")) = targetday Then
-                    hantei = True
-                    HollydayName = "体育の日"
-                End If
+          If 2000 > targetyear Then
+            If targetday = 10 Then
+              hantei = True
+              HollydayName = "体育の日"
             End If
+          ElseIf targetyear > 1999 And targetyear < 2020 Then
+            If CInt(Format(DaiXYoubi(targetyear, 10, 2, 1), "d")) = targetday Then
+              hantei = True
+              HollydayName = "体育の日"
+            End If
+          ElseIf targetyear = 2020 Or targetyear = 2021 Then
+            '東京オリンピック競技大会・東京パラリンピック競技大会特別措置法等の一部を改正する法律
+            '7月に移動
+            
+          ElseIf targetyear > 2020 Then
+            If CInt(Format(DaiXYoubi(targetyear, 10, 2, 1), "d")) = targetday Then
+              hantei = True
+              HollydayName = "スポーツの日"
+            End If
+          End If
         End If
     Case 11
         If targetyear > 1947 Then
@@ -264,8 +319,8 @@ Dim days As Integer
                             Exit Function
                         End If
                     Next i
-                HollydayName = "振替休日"
-                FurikaeKyujitsu = True
+                    HollydayName = "振替休日"
+                    FurikaeKyujitsu = True
                 Else
                     FurikaeKyujitsu = False
                     HollydayName = ""
@@ -335,18 +390,18 @@ Public Function TokubetsunaKyujitsu(targetdate As Date, HollydayName As String) 
         TokubetsunaKyujitsu = True
     End If
     
-    If targetdate = "2020/07/23" Then
-        HollydayName = "海の日"
-        TokubetsunaKyujitsu = True
-    End If
-    If targetdate = "2020/07/24" Then
-        HollydayName = "スポーツの日"
-        TokubetsunaKyujitsu = True
-    End If
-    If targetdate = "2020/08/10" Then
-        HollydayName = "山の日"
-        TokubetsunaKyujitsu = True
-    End If
+'    If targetdate = "2020/07/23" Or targetdate = "2021/07/22" Then
+'        HollydayName = "海の日"
+'        TokubetsunaKyujitsu = True
+'    End If
+'    If targetdate = "2020/07/24" Or targetdate = "2021/07/23" Then
+'        HollydayName = "スポーツの日"
+'        TokubetsunaKyujitsu = True
+'    End If
+'    If targetdate = "2020/08/10" Or targetdate = "2021/08/08" Then
+'        HollydayName = "山の日"
+'        TokubetsunaKyujitsu = True
+'    End If
     
     
     '会社指定休日の設定

@@ -128,12 +128,13 @@ Private Sub run_Click()
   
   Select Case True
     Case memberList.Enabled = True
-      Call Task.担当者フィルター(FilterForm.memberList.Value)
+      Call Task.担当者フィルター(Frm_Filter.memberList.Value)
       
     Case taskLeveList.Enabled = True
-    
+      Unload Me
+      
     Case taskNameList.Enabled = True
-      With FilterForm.taskNameList
+      With Frm_Filter.taskNameList
         For i = 0 To .ListCount - 1
             If .Selected(i) = True Then
               If filterName = "" Then
