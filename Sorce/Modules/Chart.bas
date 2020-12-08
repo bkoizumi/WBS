@@ -583,8 +583,6 @@ Function beforeChangeShapes()
   ActiveSheet.Shapes.Range(Array(Application.Caller)).Select
   changeShapesName = Application.Caller
   
-'  Call Library.setArrayPush(selectShapesName, Application.Caller)
-  
   With ActiveSheet.Shapes(changeShapesName)
     .ScaleWidth 0.9792388451, msoFalse, msoScaleFromBottomRight
     .ScaleWidth 0.9792388451, msoFalse, msoScaleFromTopLeft

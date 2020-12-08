@@ -98,8 +98,15 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
   Call init.setting
   If changeShapesName <> "" Then
     Call Library.startScript
+    line = Replace(changeShapesName, "タスク_", "")
     Call Chart.changeShapes
+    
+    ActiveSheet.Calculate
+    Call 親タスク変更(Range(setVal("cell_TaskInfoP") & line).Value)
+    
     Call Library.endScript(True)
+    
+    
   ElseIf Cells(Target.row, Target.Column) = "＋" Then
     Call Library.startScript
     line = Target.row + 1
@@ -124,6 +131,8 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
     Range(setVal("cell_TaskArea") & Target.row + 1).Select
     Call Library.endScript
   End If
+  
+  
   
   Exit Sub
 

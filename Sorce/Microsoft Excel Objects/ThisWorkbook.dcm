@@ -8,19 +8,16 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Private Sub Workbook_Activate()
-'  Call ctl_ribbon.setRibbonTabActive
+  Call init.setting(True)
+  Call ctl_ribbon.setRibbonTabActive
 End Sub
 
 
+'==================================================================================================
 Private Sub Workbook_BeforeClose(Cancel As Boolean)
   Call init.setting(True)
   Call Library.delRegistry(RegistryRibbonName)
 End Sub
-
-'Private Sub Workbook_Deactivate()
-'  Application.StatusBar = False
-'End Sub
-
 
 
 '==================================================================================================
