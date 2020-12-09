@@ -34,18 +34,18 @@ Private Sub Workbook_Open()
   
   Call init.setting(True)
   Call Library.startScript
-  
+
   Call Library.showDebugForm("Workbook_Open", "処理開始")
   Call Check.項目列チェック
   Call menu.M_ショートカット設定
-  
+
   If setVal("debugMode") <> "develop" Then
     tmpSheet.Visible = xlSheetVeryHidden
 '    sheetNotice.Visible = xlSheetVeryHidden
     sheetTeamsPlanner.Visible = xlSheetVeryHidden
     Worksheets("サンプル").Visible = xlSheetVeryHidden
   End If
-  
+
   sheetMain.Select
   Call Library.endScript
   Call Library.showDebugForm("Workbook_Open", "処理終了")
