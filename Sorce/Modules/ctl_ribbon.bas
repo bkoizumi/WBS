@@ -21,21 +21,33 @@ Public PressT_B015 As Boolean
 '**************************************************************************************************
 '読み込み時処理====================================================================================
 Function onLoad(ribbon As IRibbonUI)
+  On Error GoTo catchError
+  
   Set ribbonUI = ribbon
   
   Call init.setting(True)
+  Call Library.delRegistry(RegistryRibbonName)
+
   Call Library.setRegistry(RegistryRibbonName, CStr(ObjPtr(ribbonUI)))
   
   ribbonUI.ActivateTab (RibbonTabName)
   
   'リボンの表示を更新する
   ribbonUI.Invalidate
+
+  Exit Function
+'エラー発生時--------------------------------------------------------------------------------------
+catchError:
+  Call Library.showNotice(400, "Ctl_Ribbon.onLoad", True)
 End Function
+
 
 
 'リボンタブアクティブ==============================================================================
 Function setRibbonTabActive()
   Dim regVal As String
+  
+  On Error GoTo catchError
   
   regVal = Library.getRegistry(RegistryRibbonName)
   If regVal = "" Then
@@ -51,6 +63,11 @@ Function setRibbonTabActive()
   End If
   ribbonUI.ActivateTab (RibbonTabName)
   ribbonUI.Invalidate
+  
+  Exit Function
+'エラー発生時--------------------------------------------------------------------------------------
+catchError:
+  Call Library.showNotice(400, "Ctl_Ribbon.setRibbonTabActive", True)
 End Function
 
 
@@ -90,6 +107,8 @@ Public Sub getLabel(control As IRibbonControl, ByRef setRibbonVal)
   setRibbonVal = getRibbonMenu(control.ID, 2)
 End Sub
 
+
+'onAction==========================================================================================
 Sub getonAction(control As IRibbonControl)
   Dim setRibbonVal As String
 

@@ -52,17 +52,17 @@ Function ファイルインポート()
     Call ctl_ProgressBar.showCount("ファイルインポート", i + 1, UBound(filePaths) + 1, "対象：" & Dir(filePath))
     
     '指定ファイルオープンし、シートの存在確認
-    Set targetBook = Workbooks.Open(FileName:=filePath, ReadOnly:=True)
+    Set targetBook = Workbooks.Open(fileName:=filePath, ReadOnly:=True)
     Windows(targetBook.Name).WindowState = xlMinimized
     Call Library.startScript
     targetBook.Activate
     
-    If Library.chkSheetName("メイン") = True Then
+    If Library.chkSheetExists("メイン") = True Then
       Call データコピー(filePath)
-    ElseIf Library.chkSheetName("calendar") = True Then
+    ElseIf Library.chkSheetExists("calendar") = True Then
       Call CD部用.データコピー(filePath)
     Else
-      Call Library.showNotice(445, "<" & Dir(filePath) & "ファイルにメイン または calendar>")
+      Call Library.showNotice(405, "<" & Dir(filePath) & "ファイルにメイン または calendar>")
     End If
   Next
 
@@ -99,7 +99,7 @@ Function データコピー(filePath As String)
 
   Call ctl_ProgressBar.showCount("ファイルインポート", prgbarCnt, 100, "対象：" & Dir(filePath))
   
-  If Library.chkSheetName("メイン") = True Then
+  If Library.chkSheetExists("メイン") = True Then
     'インポートファイルの設定読み込み
     With targetSetVal
       For line = 3 To targetBook.Sheets("設定").Cells(Rows.count, 1).End(xlUp).row

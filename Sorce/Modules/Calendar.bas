@@ -33,7 +33,7 @@ Function 書式設定()
   Columns(setVal("cell_AchievementStart") & ":" & setVal("cell_AchievementEnd")).NumberFormatLocal = "m/d;@"
   
   '進捗率
-  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).ColumnWidth = 8
+  Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).ColumnWidth = 6
   Columns(setVal("cell_ProgressLast") & ":" & setVal("cell_Progress")).NumberFormatLocal = "0_ ;[赤]-0 "
   
   'タスク情報
@@ -47,11 +47,11 @@ Function 書式設定()
   
   
   '遅早工数
-  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).ColumnWidth = 10
+  Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).ColumnWidth = 8
   Columns(setVal("cell_LateOrEarly") & ":" & setVal("cell_LateOrEarly")).NumberFormatLocal = "0.00_ ;[赤]-0.00 "
   
   '備考
-  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).ColumnWidth = 40
+  Columns(setVal("cell_Note") & ":" & setVal("cell_Note")).ColumnWidth = 30
 
   
   'カレンダー部分

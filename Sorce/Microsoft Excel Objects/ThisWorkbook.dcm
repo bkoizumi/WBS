@@ -35,7 +35,6 @@ Private Sub Workbook_Open()
   Call init.setting(True)
   Call Library.startScript
 
-  Call Library.showDebugForm("Workbook_Open", "処理開始")
   Call Check.項目列チェック
   Call menu.M_ショートカット設定
 
@@ -48,7 +47,6 @@ Private Sub Workbook_Open()
 
   sheetMain.Select
   Call Library.endScript
-  Call Library.showDebugForm("Workbook_Open", "処理終了")
 
 
   Exit Sub

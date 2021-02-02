@@ -68,14 +68,14 @@ Function setting(Optional reCheckFlg As Boolean)
   
 '  On Error GoTo catchError
   
+  If logFile <> "" And reCheckFlg <> True Then
+    Exit Function
+  End If
+  
   If ThisWorkbook.Worksheets("設定").Range("B3") = "develop" Then
     ThisWorkbook.Save
   End If
   
-  If logFile <> "" And reCheckFlg <> True Then
-    Exit Function
-  End If
-
 Label_reset:
   
   'ブックの設定------------------------------------------------------------------------------------
@@ -239,8 +239,11 @@ Function 名前定義()
   
   
   endLine = sheetSetting.Cells(Rows.count, 11).End(xlUp).row
-  sheetSetting.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & endLine).Name = "担当者"
-
+  If setVal("workMode") = "CD部" Then
+    sheetSetting.Range(setVal("cell_AssignorList") & "3:" & setVal("cell_AssignorList") & endLine).Name = "担当者"
+  Else
+    sheetSetting.Range(setVal("cell_AssignorList") & "4:" & setVal("cell_AssignorList") & endLine).Name = "担当者"
+  End If
   endLine = sheetSetting.Cells(Rows.count, 17).End(xlUp).row
   sheetSetting.Range(setVal("cell_CompanyHoliday") & "3:" & setVal("cell_CompanyHoliday") & endLine).Name = "休日リスト"
 

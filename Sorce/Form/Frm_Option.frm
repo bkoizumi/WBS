@@ -226,7 +226,7 @@ Function chkScope(minVal As MSForms.TextBox, maxVal As MSForms.TextBox)
   ElseIf maxVal.Text = 0 Then
     chkScope = True
   Else
-    message.Caption = "”ÍˆÍİ’è‚ª¬—§‚µ‚Ü‚¹‚ñ"
+    Message.Caption = "”ÍˆÍİ’è‚ª¬—§‚µ‚Ü‚¹‚ñ"
     chkScope = False
   End If
   

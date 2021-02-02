@@ -77,17 +77,25 @@ Private Sub Worksheet_Change(ByVal Target As Range)
 
 'エラー発生時--------------------------------------------------------------------------------------
 catchError:
-  Call Library.showNotice(Err.Number, Err.Description, True)
+  Call Library.endScript(True)
+'  Call Library.showNotice(Err.Number, Err.Description, True)
 End Sub
 
 
 '==================================================================================================
 Private Function 親タスク変更(ByVal TargetRow As Long)
+  On Error GoTo catchError
+
   ActiveSheet.Shapes.Range(Array("タスク_" & TargetRow)).Delete
   Call Chart.計画線設定(TargetRow)
   If Range(setVal("cell_TaskInfoP") & TargetRow) <> "" Then
     Call 親タスク変更(Range(setVal("cell_TaskInfoP") & TargetRow))
   End If
+
+'エラー発生時--------------------------------------------------------------------------------------
+catchError:
+  Call Library.endScript
+'  Call Library.showNotice(Err.Number, Err.Description, True)
 End Function
 
 
@@ -149,7 +157,8 @@ End Sub
 '**************************************************************************************************
 Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
   
-'  Call WBS_Option.右クリックメニュー(Target, Cancel)
+  Call WBS_Option.右クリックメニュー(Target, Cancel)
+  'Call WBS_Option.右クリックメニュー_独自メニューのみ(Target, Cancel)
   
 End Sub
 

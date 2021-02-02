@@ -21,12 +21,13 @@ Function ガントチャート生成()
   
   For line = 6 To endLine
     '計画線生成
-    If Not (sheetMain.Range(setVal("cell_PlanStart") & line) = "" Or sheetMain.Range(setVal("cell_PlanEnd") & line) = "") Then
+    If Not (Range(setVal("cell_PlanStart") & line) = "" Or Range(setVal("cell_PlanEnd") & line) = "") Then
       Call 計画線設定(line)
     End If
 
     '実績線生成
-    If Range(setVal("cell_AchievementStart") & line) <> "" And Range(setVal("cell_AchievementEnd") & line) <> "" And sheetMain.Range(setVal("cell_Progress") & line) >= 0 Then
+    'If Range(setVal("cell_AchievementStart") & line) <> "" And Range(setVal("cell_AchievementEnd") & line) <> "" And sheetMain.Range(setVal("cell_Progress") & line) >= 0 Then
+    If Range(setVal("cell_AchievementStart") & line) <> "" And Range(setVal("cell_Progress") & line) >= 0 Then
       Call 実績線設定(line)
     End If
     
@@ -41,7 +42,7 @@ Function ガントチャート生成()
     End If
     
     '進捗が100%なら非表示
-    If setVal("setDispProgress100") = True And sheetMain.Range(setVal("cell_Progress") & line) = 100 Then
+    If setVal("setDispProgress100") = True And Range(setVal("cell_Progress") & line) = 100 Then
       Rows(line & ":" & line).EntireRow.Hidden = True
     End If
 
@@ -231,12 +232,15 @@ Function 実績線設定(line As Long)
 '  Call Library.showDebugForm("実績線設定", "　終了日:" & Range(setVal("cell_AchievementEnd") & line))
 '  Call Library.showDebugForm("実績線設定", "　進捗　:" & Range(setVal("cell_Progress") & line))
   
+  '開始日が入力済み
   If Range(setVal("cell_AchievementStart") & line) <> "" Then
     startColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementStart") & line))
   End If
-  
+
+  '終了日が未入力
   If Range(setVal("cell_AchievementEnd") & line) = "" Then
-'    endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
+    endColumn = WBS_Option.日付セル検索(Range(setVal("cell_PlanEnd") & line))
+  
   
   '進捗が100%のとき
   ElseIf Range(setVal("cell_Progress") & line) = 100 Then
@@ -245,19 +249,13 @@ Function 実績線設定(line As Long)
     Else
       endColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementEnd") & line))
     End If
-  
   Else
     endColumn = WBS_Option.日付セル検索(Range(setVal("cell_AchievementEnd") & line))
   End If
-
-  
   
   Call Library.getRGB(setVal("lineColor_Achievement"), Red, Green, Blue)
-
-  
   With Range(startColumn & line & ":" & endColumn & line)
     .Select
-    
     If Range(setVal("cell_Progress") & line) = "" Or Range(setVal("cell_Progress") & line) = 0 Then
       shapesWith = 0
     Else
@@ -302,7 +300,7 @@ Function イナズマ線設定(line As Long)
   
   If Not (setVal("startDay") <= setVal("baseDay") And setVal("baseDay") <= setVal("endDay")) Then
     If setVal("setLightning") = True Then
-      Call Library.showNotice(450)
+      Call Library.showNotice(400, "基準日が範囲外に設定されているためイナズマ線は引かれません")
       setVal("setLightning") = False
       Range("setLightning") = False
     End If
@@ -578,17 +576,13 @@ End Function
 ' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
 '**************************************************************************************************
 Function beforeChangeShapes()
-
-  Call Library.startScript
   ActiveSheet.Shapes.Range(Array(Application.Caller)).Select
   changeShapesName = Application.Caller
   
   With ActiveSheet.Shapes(changeShapesName)
-    .ScaleWidth 0.9792388451, msoFalse, msoScaleFromBottomRight
-    .ScaleWidth 0.9792388451, msoFalse, msoScaleFromTopLeft
+    .ScaleWidth 0.9888687862, msoFalse, msoScaleFromMiddle
+    .ScaleHeight 0.5619815222, msoFalse, msoScaleFromMiddle
   End With
-  
-  Call Library.endScript
 End Function
 
 

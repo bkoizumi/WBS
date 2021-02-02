@@ -7,13 +7,16 @@ Attribute VB_Name = "WBS_Option"
 '**************************************************************************************************
 Function 右クリックメニュー(Target As Range, Cancel As Boolean)
   Dim menu01 As CommandBarControl
+  Dim cmdBra As CommandBarControl
   
   Call init.setting
   
   '標準状態にリセット
   Application.CommandBars("Cell").Reset
-
+ 
+  
   With CommandBars("Cell").Controls.Add(Before:=1, Type:=msoControlPopup)
+  'With CommandBars("Cell").Controls.Add(Type:=msoControlPopup)
     .Caption = "WBS"
     With .Controls.Add(Temporary:=True)
       .Caption = "タスクにスクロール"
@@ -46,77 +49,65 @@ Function 右クリックメニュー(Target As Range, Cancel As Boolean)
       .OnAction = "menu.M_タスクの削除"
     End With
   End With
-  
-  
-'  If setVal("debugMode") <> "develop" Then
-'    '標準状態にリセット
-'    Application.CommandBars("Cell").Reset
-'
-'    If setVal("debugMode") <> "develop" Then
-'      '右クリックメニューをクリア
-'      For Each menu01 In Application.CommandBars("Cell").Controls
-'        'Debug.Print menu01.Caption
-'        Select Case True
-'          Case menu01.Caption Like "切り取り*"
-'          Case menu01.Caption Like "コピー*"
-'          Case menu01.Caption Like "数式と値のクリア*"
-'          Case menu01.Caption Like "貼り付け*"
-''          Case menu01.Caption Like "セルの書式設定*"
-''          Case menu01.Caption Like "挿入*"
-''          Case menu01.Caption Like "削除*"
-''          Case menu01.Caption Like "コメントの*"
-'          Case Else
-'            menu01.Visible = False
-'        End Select
-'      Next
-'    End If
-'  End If
-'
-'
-'
-'
-'  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
-'      .Caption = "タスクにスクロール"
-'      .OnAction = "menu.M_タスクにスクロール"
-'  End With
-'
-'  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
-'      .Caption = "タイムラインに追加"
-'      .OnAction = "menu.M_タイムラインに追加"
-'  End With
-'
-'  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
-'      .BeginGroup = True
-'      .Caption = "タスクのレベル上げ"
-'      .FaceId = 3161
-'      .OnAction = "menu.M_インデント増"
-'  End With
-'
-'  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
-'      .Caption = "タスクのレベル下げ"
-'      .FaceId = 3162
-'      .OnAction = "menu.M_インデント減"
-'  End With
-'
-'  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
-'      .BeginGroup = True
-'      .Caption = "タスクの挿入"
-'      .FaceId = 296
-'      .OnAction = "menu.M_タスクの挿入"
-'  End With
-'
-'  With Application.CommandBars("Cell").Controls.Add(Temporary:=True)
-'      .Caption = "タスクの削除"
-'      .FaceId = 293
-'      .OnAction = "menu.M_タスクの削除"
-'  End With
-
 
   Application.CommandBars("Cell").ShowPopup
   Application.CommandBars("Cell").Reset
   Cancel = True
 End Function
 
+
+Function 右クリックメニュー_独自メニューのみ(Target As Range, Cancel As Boolean)
+  Dim menu01 As CommandBarControl
+  Dim cmdBra As CommandBarControl
+  
+  Call init.setting
+  
+  '標準状態にリセット
+  Application.CommandBars("Cell").Reset
+
+  '全てのメニューを一旦削除
+  For Each cmdBra In Application.CommandBars("Cell").Controls
+    cmdBra.Visible = False
+  Next
+  
+  
+  With CommandBars("Cell")
+    With .Controls.Add()
+      .Caption = "タスクにスクロール"
+      .OnAction = "menu.M_タスクにスクロール"
+    End With
+    With .Controls.Add()
+      .Caption = "タイムラインに追加"
+      .OnAction = "menu.M_タイムラインに追加"
+    End With
+    With .Controls.Add()
+      .BeginGroup = True
+      .Caption = "タスクのレベル上げ"
+      .FaceId = 3161
+      .OnAction = "menu.M_インデント増"
+    End With
+    With .Controls.Add()
+      .Caption = "タスクのレベル下げ"
+      .FaceId = 3162
+      .OnAction = "menu.M_インデント減"
+    End With
+    With .Controls.Add()
+      .BeginGroup = True
+      .Caption = "タスクの挿入"
+      .FaceId = 296
+      .OnAction = "menu.M_タスクの挿入"
+    End With
+    With .Controls.Add()
+      .Caption = "タスクの削除"
+      .FaceId = 293
+      .OnAction = "menu.M_タスクの削除"
+    End With
+  End With
+
+  Application.CommandBars("Cell").ShowPopup
+  Application.CommandBars("Cell").Reset
+  Cancel = True
+End Function
 
 
 ' *************************************************************************************************
@@ -128,7 +119,7 @@ Function 選択シート確認()
 
   If ActiveSheet.Name = sheetMainName Or ActiveSheet.Name = sheetTeamsPlannerName Then
   Else
-    Call Library.showNotice(454, , True)
+    Call Library.showNotice(400, "選択されているシートではカレンダーを生成できません", True)
   End If
 
 
@@ -178,6 +169,27 @@ catchError:
 '  Call Library.showNotice(Err.Number, Err.Description)
   日付セル検索 = setVal("calendarStartCol")
 
+End Function
+
+'**************************************************************************************************
+' * 営業日数計算
+' *
+' * @author Bunpei.Koizumi<bunpei.koizumi@gmail.com>
+'**************************************************************************************************
+Function 営業日数計算(startDay As Date, endDay As Date) As Integer
+  Dim cntDay As Integer
+  Dim chkDay As Date
+  Dim HollydayName As String
+  
+  cntDay = 0
+  For chkDay = startDay To endDay
+    Call init.chkHollyday(chkDay, HollydayName)
+    If HollydayName = "" Then
+      cntDay = cntDay + 1
+    End If
+  Next
+
+ 営業日数計算 = cntDay
 End Function
 
 

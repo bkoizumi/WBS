@@ -140,6 +140,8 @@ Function タスクリスト確認()
   'タスク名の設定
   endLine = Cells(Rows.count, 1).End(xlUp).row
   
+  Call 行書式コピー(6, endLine)
+    
   'カレンダーの開始日とタスクの開始日を確認
   tmpSheet.Cells.Delete Shift:=xlUp
   endLine = Cells(Rows.count, Library.getColumnNo(setVal("cell_PlanStart"))).End(xlUp).row
@@ -422,25 +424,25 @@ Label_nextFor:
     If Range(setVal("cell_LevelInfo") & line) = "" Then Exit For
     
     If Range(setVal("cell_Assign") & line) <> "工程" And Range(setVal("cell_Info") & line) <> setVal("TaskInfoStr_Multi") Then
-      '実績日(開始と終了)が入力されていれば、進捗を100にする=======================================
+      '実績日(開始と終了)が入力されていれば、進捗を100にする
       If Range(setVal("cell_AchievementStart") & line) <> "" And Range(setVal("cell_AchievementEnd") & line) <> "" Then
         Range(setVal("cell_Progress") & line) = 100
       End If
-    
-      '作業工数(予定)の算出=========================================================================-
+      
+      '--------------------------------------------------------------------------------------------
+      '作業工数(予定)の算出
       If Range(setVal("cell_PlanStart") & line) <> "" And Range(setVal("cell_PlanEnd") & line) <> "" Then
         If Range(setVal("cell_WorkLoadP") & line).Formula Like "=*" Or Range(setVal("cell_WorkLoadP") & line) = "" Then
           Range(setVal("cell_WorkLoadP") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Range(setVal("cell_PlanStart") & line), Range(setVal("cell_PlanEnd") & line), "0000011", Range("休日リスト"))
         End If
       End If
       
-      '作業工数(実績)の算出=========================================================================-
+      '--------------------------------------------------------------------------------------------
+      '作業工数(実績)の算出
       If Range(setVal("cell_PlanStart") & line) <> "" And Range(setVal("cell_PlanEnd") & line) <> "" Then
         If Range(setVal("cell_WorkLoadA") & line).Formula Like "=*" Or Range(setVal("cell_WorkLoadA") & line) = "" Then
           If Range(setVal("cell_PlanStart") & line) <= setVal("baseDay") Then
             Range(setVal("cell_WorkLoadA") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Range(setVal("cell_PlanStart") & line), setVal("baseDay"), "0000011", Range("休日リスト"))
-'          Else
-'            Range(setVal("cell_WorkLoadA") & line) = "=" & WorksheetFunction.NetworkDays_Intl(Date, Range(setVal("cell_PlanStart") & line), "0000011", Range("休日リスト"))
           End If
         End If
       End If
@@ -451,7 +453,8 @@ Label_nextFor:
 '        Range(setVal("cell_Progress") & line) = "=" & 0
       End If
       
-      '遅早工数の計算===============================================================================-
+      '--------------------------------------------------------------------------------------------
+      '遅早工数の計算
 '      Range(setVal("cell_Progress") & line).Select
       
       '遅早工数=(作業工数_実績-(作業工数_予定/進捗率))*-1

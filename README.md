@@ -10,15 +10,15 @@ Microsoft Excel 2016 x86
 
 
 
-## リボンメニュー
+## 画面ショット
+### リボンメニュー
 <img src="Docs/ribbonUI.png" width="80%">  
 
+### メイン画面
+<img src="Docs/All.png" width="80%">  
 
-
-
-
-
-
+### 右クリックメニュー
+<img src="Docs/右クリックメニュー.png" >  
 
 
 
